@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <script src="https://kit.fontawesome.com/aa77aa11e4.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html#"><img src="img/Logo.png" alt="" style="height: 150px;"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#Nosotros">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#Servicios">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Necesidades.html">Necesidades Educativas Especiales</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#Contacto">Contáctenos</a></li>
+                    </ul>
+                    <form class="d-flex" role="search">
+                        <!-- cambia solo el tipo -->
+                        <button class="btn btn-outline-success"type="button"data-bs-toggle="modal"data-bs-target="#exampleModal">INGRESAR
+                        </button>
+                      </form>
+                      
+                </div>
+            </div>
+        </nav>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ingresar</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="emailInput" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordInput" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="passwordInput" placeholder="Contraseña">
+                        </div>
+                    </div>
+                    <p>¿Todavía no te has registrado? <a href="registro.html">REGISTRATE</a></p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary">Ingresar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="container mt-5 mb-5">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        ¿Qué es una Necesidad Educativa Especial?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="media/aa.png" alt="" class="img-fluid">
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Las necesidades Educativas Especiales (NEE)</strong>hacen referencia a aquellos apoyos adicionales que algunos estudiantes requieren para acceder a una educación en igualdad de condiciones.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Tipos de Necesidades Educativas Especiales
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample"></div>
+                  <div class="col-md-6">
+                    <p>
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <p><strong>Síndrome de Asperger:</strong> Parte del espectro autista, con inteligencia promedio o superior y dificultades sociales.</p>
+                            <p><strong>TDAH:</strong> Problemas de concentración, impulsividad e hiperactividad que afectan el rendimiento.</p>
+                            <p><strong>TOC:</strong> Pensamientos recurrentes y compulsiones que buscan reducir la ansiedad.</p>
+                            <p><strong>Ansiedad:</strong> Trastorno emocional que interfiere en la participación académica y social.</p>
+                            <p><strong>Dislexia:</strong> Dificultad para leer y escribir debido al procesamiento del lenguaje.</p>
+                            <p><strong>Discalculia:</strong> Dificultad para comprender números, operaciones y conceptos matemáticos.</p>
+                            <p><strong>TEA:</strong> Condición del neurodesarrollo que afecta comunicación y relaciones sociales.</p>
+                            <p> <strong>Dispraxia</strong> Trastorno del desarrollo motor que dificulta la coordinación de movimientos y afecta tareas como escribir o vestirse.</p>
+                            <p><strong>Hipoacusia</strong> Disminución parcial de la capacidad auditiva que afecta la comprensión oral y el aprendizaje en el aula.</p>
+                            <p><strong>Trastorno del lenguaje expresivo</strong> Dificultad para expresar ideas verbalmente, limitando la fluidez y el vocabulario del estudiante.</p>
+                          </div>
+                          <div class="col-md-6 text-center">
+                            <img src="media/eee.jpg" alt="">
+                            <br>
+                            <img src="media/iiii.jpg" alt="">
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        ¿Qué es una discapacidad?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                              <img src="media/Captura de pantalla 2025-04-23 100920.png" alt="">
+                            </div>
+                            <div class="col-md-6">
+                              <p>Es una <b>condición</b> que afecta la capacidad de una persona para realizar actividades o funciones, ya sea fisicas, mentales, sensoriales o intelectuales.</p>
+                            </div>
+                        <div>
+    
+                        
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-primary text-light pt-5 pb-4">
+        <div class="container">
+          <div class="row text-center text-md-start">
+            <!-- Logo -->
+            <div class="col-md-3 col-sm-12 mb-4">
+              <a href="index.html#">
+                <img src="img/Logo.png" alt="Logo Traspasemos" style="height: 200px;">
+              </a>
+            </div>
+      
+            <!-- Nuestra Empresa -->
+            <div class="col-md-3 col-sm-12 mb-4">
+              <h5 class="text-uppercase mb-3">Nuestra Empresa</h5>
+              <p>
+                Somos una plataforma dedicada a mejorar la educación inclusiva y apoyar a estudiantes con Necesidades Educativas Especiales (NEE).
+              </p>
+              <p>Contáctanos para más información o asesoría profesional.</p>
+            </div>
+      
+            <!-- Contáctanos -->
+            <div class="col-md-3 col-sm-12 mb-4">
+              <h5 class="text-uppercase mb-3">Contáctanos</h5>
+              <ul class="list-unstyled">
+                <li>
+                  <a href="mailto:traspasemosinfo@gmail.com" class="text-light">
+                    <i class="fas fa-envelope"></i> traspasemosinfo@gmail.com
+                  </a>
+                </li>
+                <li>
+                  <a href="https://goo.gl/maps/XXXX" target="_blank" class="text-light">
+                    <i class="fas fa-map-marker-alt"></i> Cll 84 #74 - 60
+                  </a>
+                </li>
+              </ul>
+            </div>
+      
+           <!-- Redes Sociales y Políticas -->
+    <div class="col-md-3 col-sm-12 mb-4">
+        <h5 class="text-uppercase mb-3">Síguenos</h5>
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <a href="https://whatsapp.com/channel/0029Vb7OrhCEAKWITy7xk80w" target="_blank" class="social-icon">
+                <img src="img/WhatsApp.svg.webp" alt="WhatsApp" class="img-fluid" style="width: 50px; height: 50px;">
+            </a>
+            <a href="https://www.facebook.com/ieluislopezdemesamedellin" target="_blank" class="social-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" alt="Facebook" class="img-fluid" style="width: 45px; height: 45px;">
+            </a>
+        </div>
+        <a href="#" class="text-light d-block">Política de Tratamiento de Datos</a>
+        <a href="#" class="text-light d-block">Términos y Servicios</a>
+    </div>
+    
+          </div>
+          <hr class="bg-light" />
+          <p class="text-center mb-0">&copy; 2025 Traspasemos. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+</body>
+</html>
