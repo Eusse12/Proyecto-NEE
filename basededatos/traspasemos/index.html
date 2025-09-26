@@ -53,30 +53,33 @@
 
           <!-- Modal -->
           <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel">Ingresar</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <div class="mb-3">
-                              <label for="exampleFormControlInput1" class="form-label">Correo Electrónico</label>
-                              <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-                          </div>
-                          <div class="mb-3">
-                              <label for="exampleFormControlTextarea1" class="form-label">Contraseña</label>
-                              <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="Contraseña">
-                          </div>
-                      </div>
-                      <p>¿Todavía no te has registrado ?<a  href="registro.php">REGISTRATE</a></p>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="button" class="btn btn-primary">INGRESAR</button>
-                      </div>
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form method="POST" action="login.php"> <!-- 🔹 Aquí apuntamos al PHP -->
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Ingresar</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="correo" class="form-label">Correo Electrónico</label>
+                      <input type="email" class="form-control" id="correo" name="correo" placeholder="name@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="clave" class="form-label">Contraseña</label>
+                      <input type="password" class="form-control" id="clave" name="clave" placeholder="Contraseña" required>
+                    </div>
+                  </div>
+                  <p class="text-center">¿Todavía no te has registrado? <a href="registro.php">REGÍSTRATE</a></p>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Ingresar</button>
+                  </div>
+                </form>
               </div>
+            </div>
           </div>
+
       </header>
       <section>
         <div id="carouselExampleCaptions" class="carousel slide">
