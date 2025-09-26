@@ -1,21 +1,32 @@
 <?php
-// db.php debe contener tu conexión (host, usuario, contraseña, base de datos)
-include("db.php");
+include("db.php"); // incluye solo la conexión
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $nombre = $_POST["nombre"];
-  $correo = $_POST["correo"];
-  $clave  = password_hash($_POST["clave"], PASSWORD_DEFAULT);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $nombre = $_POST["nombre"];
+    $correo = $_POST["correo"];
+    $clave  = password_hash($_POST["clave"], PASSWORD_DEFAULT);
 
-  $sql = "INSERT INTO usuarios (nombre, correo, clave) VALUES ('$nombre', '$correo', '$clave')";
-  
-  if ($conn->query($sql) === TRUE) {
-    header("Location: index.html");
-    exit();
-  } else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
-  }
+    // comprobar si existe el correo
+    $check = "SELECT id FROM usuarios WHERE correo='$correo' LIMIT 1";
+    $result = $conn->query($check);
+
+    if ($result && $result->num_rows > 0) {
+        echo "<div class='alert alert-warning'>⚠️ El correo <b>$correo</b> ya está registrado.</div>";
+    } else {
+        $sql = "INSERT INTO usuarios (nombre, correo, clave) 
+                VALUES ('$nombre', '$correo', '$clave')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "<div class='alert alert-success'>✅ Usuario registrado correctamente.</div>";
+            // opcional: redirigir después de unos segundos
+            // header("Refresh:2; url=index.html");
+        } else {
+            echo "<div class='alert alert-danger'>❌ Error al registrar: " . $conn->error . "</div>";
+        }
+    }
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
