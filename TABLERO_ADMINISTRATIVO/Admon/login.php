@@ -1,23 +1,29 @@
 <?php
+// ----------------------
+// PROCESO DE LOGIN
+// ----------------------
 session_start();
 
-// Conexión a la base de datos
+// Configuración BD
 $host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "traspasemos";
+$user = "root";   // en XAMPP es root por defecto
+$pass = "";       // sin contraseña en XAMPP
+$dbname = "traspasemos";
 
-$conn = new mysqli($host, $user, $pass, $db);
+// Conectar
+$conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
-    die("Error en la conexión: " . $conn->connect_error);
+    die("❌ Error de conexión: " . $conn->connect_error);
 }
 
-// Procesar login
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $correo   = $_POST['correo'];
-    $password = $_POST['password'];
+$mensaje = "";
 
-    // Buscar usuario
+// Si el formulario fue enviado
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $correo = $_POST['correo'];
+    $clave  = $_POST['clave'];
+
+    // Buscar usuario por correo
     $sql = "SELECT * FROM usuarios WHERE correo = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $correo);
@@ -25,74 +31,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $result = $stmt->get_result();
 
     if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
+        $usuario = $result->fetch_assoc();
 
         // Verificar contraseña
-        if (password_verify($password, $user['password'])) {
-            // Guardar sesión
-            $_SESSION['admin_id']   = $user['id'];
-            $_SESSION['admin_name'] = $user['nombre_completo'];
-            $_SESSION['tipo']       = $user['tipo_usuario'];
-
-            // Redirigir al tablero
-            header("Location: usuarios.php");
-            exit();
+        if (password_verify($clave, $usuario['clave'])) {
+            $_SESSION['usuario'] = $usuario['nombre_completo'];
+            $mensaje = "✅ Sesión iniciada correctamente. Bienvenido " . $usuario['nombre_completo'];
+            // Aquí podrías redirigir, ejemplo:
+            // header("Location: usuarios.php"); exit;
         } else {
-            $error = "Contraseña incorrecta";
+            $mensaje = "❌ Contraseña incorrecta.";
         }
     } else {
-        $error = "El correo no está registrado";
+        $mensaje = "⚠️ No existe una cuenta con ese correo.";
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - TRASPASEMOS</title>
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-primary">
+<body class="bg-light">
 
-<div class="container">
-
-    <!-- Card Login -->
+  <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-xl-5 col-lg-6 col-md-8">
-            <div class="card o-hidden border-0 shadow-lg my-5">
-                <div class="card-body p-5">
-                    <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Iniciar Sesión</h1>
-                    </div>
-                    <?php if (!empty($error)): ?>
-                        <div class="alert alert-danger text-center">
-                            <?= $error ?>
-                        </div>
-                    <?php endif; ?>
-                    <form method="post" action="">
-                        <div class="form-group">
-                            <input type="email" name="correo" class="form-control form-control-user"
-                                   placeholder="Correo electrónico" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="password" class="form-control form-control-user"
-                                   placeholder="Contraseña" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                            Ingresar
-                        </button>
-                    </form>
-                    <hr>
-                    <div class="text-center">
-                        <a class="small" href="registro.php">¿No tienes cuenta? ¡Regístrate!</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+      <div class="col-md-5">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-4">
+            <h2 class="text-center mb-4">🔑 Iniciar Sesión</h2>
+            
+            <!-- Mostrar mensaje si existe -->
+            <?php if ($mensaje): ?>
+              <div class="alert alert-info text-center"><?= $mensaje ?></div>
+            <?php endif; ?>
 
-</div>
+            <!-- Formulario de login -->
+            <form method="POST" action="">
+              <div class="mb-3">
+                <label for="correo" class="form-label">Correo electrónico</label>
+                <input type="email" name="correo" id="correo" class="form-control" placeholder="ejemplo@correo.com" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="clave" class="form-label">Contraseña</label>
+                <input type="password" name="clave" id="clave" class="form-control" placeholder="********" required>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+            </form>
+
+            <div class="text-center mt-3">
+              <a href="registro.php">¿No tienes cuenta? Regístrate</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
