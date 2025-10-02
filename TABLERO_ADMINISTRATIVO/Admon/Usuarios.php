@@ -1,3 +1,21 @@
+<?php
+session_start();
+
+// Conexión a la base de datos
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "traspasemos";
+
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("Error en la conexión: " . $conn->connect_error);
+}
+
+// Consulta usuarios
+$sql = "SELECT * FROM usuarios";
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -112,6 +130,7 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Login Screens:</h6>
+                        <!-- Cambié a login.html por si no tienes login.php -->
                         <a class="collapse-item" href="login.html">Login</a>
                         <a class="collapse-item" href="register.html">Register</a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
@@ -130,9 +149,9 @@
                     <span>Charts</span></a>
             </li>
 
-            <!-- Nav Item - Tables -->
+            <!-- Nav Item - Tables (ahora apunta a usuarios.php) -->
             <li class="nav-item active">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="usuarios.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Tables</span></a>
             </li>
@@ -328,7 +347,9 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    <?= isset($_SESSION['admin_name']) ? htmlspecialchars($_SESSION['admin_name']) : 'Douglas McGee' ?>
+                                </span>
                                 <img class="img-profile rounded-circle"
                                     src="img/undraw_profile.svg">
                             </a>
@@ -372,10 +393,14 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="d-flex justify-content-end m-3">
+<<<<<<< HEAD:TABLERO_ADMINISTRATIVO/Admon/Usuarios.html
                            
 <!-- Botón para activar el modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
  Abrir Modal
+=======
+                           <button type="button" class="btn btn-primary align-content-end" data-toggle="modal" data-target="#modalAgregarUsuario">Agregar <i class="fa fa-plus-circle" aria-hidden="true"></i>
+>>>>>>> d90bc3c548c17129e7ffd9762a4d87865b1db46c:TABLERO_ADMINISTRATIVO/Admon/Usuarios.php
 </button>
 <!-- Contenido del Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -416,24 +441,35 @@
                                     </thead>
                                     
                                     <tbody>
-                                        <tr>
-                                            <th>1</th>
-                                            <th>Administrador</th>
-                                            <th>Cédula</th>
-                                            <th>33.816.156</th>
-                                            <th>Dianeth Yamile León Valencia</th>
-                                            <th>dianethyamilel@gmail.com</th>
-                                            <th>3135417303</th>
-                                            <th><button type="button" class="btn btn-info"><i class="fa fa-users" aria-hidden="true"></i>
-</i>
-                                                </button>
-                                            </th>
-                                            <th><button type="button" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </th>
-                                        </tr>
-                                      
+                                       <?php if ($result && $result->num_rows > 0): ?>
+                                           <?php while ($row = $result->fetch_assoc()): ?>
+                                               <tr>
+                                                   <td><?= htmlspecialchars($row['id']); ?></td>
+                                                   <td><?= htmlspecialchars($row['tipo_usuario']); ?></td>
+                                                    <td><?= htmlspecialchars($row['tipo_documento']); ?></td>
+                                                   <td><?= htmlspecialchars($row['identificacion']); ?></td>
+                                                   <td><?= htmlspecialchars($row['nombre_completo']); ?></td>
+                                                   <td><?= htmlspecialchars($row['correo']); ?></td>
+                                                   <td><?= htmlspecialchars($row['celular']); ?></td>
+                                                   <td class="text-center">
+                                                       <a class="btn btn-info" href="editar_usuario.php?id=<?= urlencode($row['id']); ?>">
+                                                           <i class="fa fa-edit" aria-hidden="true"></i>
+                                                       </a>
+                                                   </td>
+                                                   <td class="text-center">
+                                                       <a class="btn btn-danger" href="eliminar_usuario.php?id=<?= urlencode($row['id']); ?>" onclick="return confirm('¿Eliminar usuario?');">
+                                                           <i class="fa fa-trash" aria-hidden="true"></i>
+                                                       </a>
+                                                   </td>
+                                               </tr>
+                                           <?php endwhile; ?>
+                                       <?php else: ?>
+                                           <tr>
+                                               <td colspan="9" class="text-center">⚠️ No hay usuarios registrados</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -486,6 +522,52 @@
         </div>
     </div>
 
+    <!-- Modal Agregar Usuario (ejemplo básico) -->
+    <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" role="dialog" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <form action="guardar_usuario.php" method="post" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Agregar Usuario</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+          </div>
+          <div class="modal-body">
+              <div class="form-group">
+                  <label>Tipo Usuario</label>
+                  <input type="text" name="tipo_usuario" class="form-control" required>
+              </div>
+              <div class="form-group">
+                  <label>Tipo Documento</label>
+                  <input type="text" name="tipo_documento" class="form-control" required>
+              </div>
+              <div class="form-group">
+                  <label>Identificación</label>
+                  <input type="text" name="identificacion" class="form-control" required>
+              </div>
+              <div class="form-group">
+                  <label>Nombre Completo</label>
+                  <input type="text" name="nombre_completo" class="form-control" required>
+              </div>
+              <div class="form-group">
+                  <label>Correo</label>
+                  <input type="email" name="correo" class="form-control" required>
+              </div>
+              <div class="form-group">
+                  <label>Celular</label>
+                  <input type="text" name="celular" class="form-control">
+              </div>
+              <div class="form-group">
+                  <label>Contraseña</label>
+                  <input type="password" name="password" class="form-control" required>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+            <button class="btn btn-primary" type="submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -506,3 +588,7 @@
 </body>
 
 </html>
+<?php
+// cerrar conexión
+$conn->close();
+?>
