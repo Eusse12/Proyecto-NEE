@@ -1,10 +1,7 @@
 <?php
-// ----------------------
-// PROCESO DE REGISTRO
-// ----------------------
 $host = "localhost";
-$user = "root";   // en XAMPP es root
-$pass = "";       // en XAMPP no hay contraseña
+$user = "root";   
+$pass = "";       
 $dbname = "traspasemos";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
@@ -14,7 +11,6 @@ if ($conn->connect_error) {
 
 $mensaje = "";
 
-// Si se envió el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre   = $_POST['nombre'];
     $correo   = $_POST['correo'];
@@ -22,32 +18,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $tipo_usuario = $_POST['tipo_usuario'];
     $tipo_documento = $_POST['tipo_documento'];
     $identificacion = $_POST['identificacion'];
-    $clave    = password_hash($_POST['clave'], PASSWORD_DEFAULT);
+    $clave    = $_POST['clave'];
+    $clave2   = $_POST['clave2'];
 
-    // Validar que no exista el correo
-    $check = $conn->prepare("SELECT id FROM usuarios WHERE correo = ?");
-    $check->bind_param("s", $correo);
-    $check->execute();
-    $check->store_result();
-
-    if ($check->num_rows > 0) {
-        $mensaje = "⚠️ Este correo ya está registrado.";
+    // Validar contraseñas
+    if ($clave !== $clave2) {
+        $mensaje = "⚠️ Las contraseñas no coinciden.";
     } else {
-        $sql = "INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssss", $tipo_usuario, $tipo_documento, $identificacion, $nombre, $correo, $celular, $clave);
+        $clave_hash = password_hash($clave, PASSWORD_DEFAULT);
 
-        if ($stmt->execute()) {
-            $mensaje = "✅ Usuario registrado correctamente.";
-            // Redirigir si quieres:
-            // header("Location: login.php"); exit;
+        // Validar que no exista correo
+        $check = $conn->prepare("SELECT id FROM usuarios WHERE correo = ?");
+        $check->bind_param("s", $correo);
+        $check->execute();
+        $check->store_result();
+
+        if ($check->num_rows > 0) {
+            $mensaje = "⚠️ Este correo ya está registrado.";
         } else {
-            $mensaje = "❌ Error al registrar: " . $conn->error;
+            $sql = "INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssssss", $tipo_usuario, $tipo_documento, $identificacion, $nombre, $correo, $celular, $clave_hash);
+
+            if ($stmt->execute()) {
+                // ✅ Redirigir al login después del registro
+                header("Location: login.php");
+                exit;
+            } else {
+                $mensaje = "❌ Error al registrar: " . $conn->error;
+            }
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

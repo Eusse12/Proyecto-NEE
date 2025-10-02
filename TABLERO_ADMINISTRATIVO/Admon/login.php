@@ -1,29 +1,22 @@
 <?php
-// ----------------------
-// PROCESO DE LOGIN
-// ----------------------
 session_start();
 
-// Configuración BD
 $host = "localhost";
-$user = "root";   // en XAMPP es root por defecto
-$pass = "";       // sin contraseña en XAMPP
+$user = "root";   
+$pass = "";       
 $dbname = "traspasemos";
 
-// Conectar
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
-    die("❌ Error de conexión: " . $conn->connect_error);
+    die("❌ Error en la conexión: " . $conn->connect_error);
 }
 
 $mensaje = "";
 
-// Si el formulario fue enviado
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $correo = $_POST['correo'];
     $clave  = $_POST['clave'];
 
-    // Buscar usuario por correo
     $sql = "SELECT * FROM usuarios WHERE correo = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $correo);
@@ -32,13 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($result->num_rows === 1) {
         $usuario = $result->fetch_assoc();
-
-        // Verificar contraseña
         if (password_verify($clave, $usuario['clave'])) {
             $_SESSION['usuario'] = $usuario['nombre_completo'];
-            $mensaje = "✅ Sesión iniciada correctamente. Bienvenido " . $usuario['nombre_completo'];
-            // Aquí podrías redirigir, ejemplo:
-            // header("Location: usuarios.php"); exit;
+            // ✅ Redirigir al index
+            header("Location: index.html");
+            exit;
         } else {
             $mensaje = "❌ Contraseña incorrecta.";
         }
@@ -47,6 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
