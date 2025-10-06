@@ -393,14 +393,9 @@ $result = $conn->query($sql);
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="d-flex justify-content-end m-3">
-<<<<<<< HEAD:TABLERO_ADMINISTRATIVO/Admon/usuarios.php
-                           
-<!-- Botón para activar el modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
- Abrir Modal
-=======
-                           <button type="button" class="btn btn-primary align-content-end" data-toggle="modal" data-target="#modalAgregarUsuario">Agregar <i class="fa fa-plus-circle" aria-hidden="true"></i>
->>>>>>> d90bc3c548c17129e7ffd9762a4d87865b1db46c:TABLERO_ADMINISTRATIVO/Admon/Usuarios.php
+
+<button type="button" class="btn btn-primary align-content-end" data-toggle="modal" data-target="#modalAgregarUsuario">Agregar <i class="fa fa-plus-circle" aria-hidden="true"></i>
+        
 </button>
 <!-- Contenido del Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
