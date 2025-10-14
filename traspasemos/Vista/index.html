@@ -319,32 +319,30 @@
         <div class="col-md-6 col-sm-12">
             <div class="card mb-4 p-3">
                 <h3 class="text-center mt-3 mb-4">Formulario de Contacto</h3>
-                <form>
+                <form action="guardar_contacto.php" method="POST">
+                  <div class="mb-3">
+                      <label for="nombre" class="form-label">Nombre</label>
+                      <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Tu nombre completo" required>
+                  </div>
+                
+                 <div class="mb-3">
+                     <label for="email" class="form-label">Correo Electrónico</label>
+                     <input type="email" class="form-control" id="email" name="email" placeholder="Tu correo electrónico" required>
+                 </div>
+                
+                 <div class="mb-3">
+                     <label for="telefono" class="form-label">Teléfono</label>
+                     <input type="tel" class="form-control" id="telefono" name="telefono" placeholder="Tu número de teléfono">
+                 </div>
+                
+                 <div class="mb-3">
+                     <label for="mensaje" class="form-label">Mensaje</label>
+                     <textarea class="form-control" id="mensaje" name="mensaje" rows="4" placeholder="Escribe tu mensaje" required></textarea>
+                 </div>
+                
+                 <button type="submit" class="btn btn-primary w-100">Enviar</button>
+              </form>
 
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Tu nombre completo" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="Tu correo electrónico" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="telefono" placeholder="Tu número de teléfono">
-                    </div>
-
-                   
-                    <div class="mb-3">
-                        <label for="mensaje" class="form-label">Mensaje</label>
-                        <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje" required></textarea>
-                    </div>
-
-              
-                    <button type="submit" class="btn btn-primary w-100">Enviar</button>
-                </form>
             </div>
         </div>
 
