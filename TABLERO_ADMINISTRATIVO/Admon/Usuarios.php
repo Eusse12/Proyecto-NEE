@@ -521,45 +521,48 @@ $result = $conn->query($sql);
     <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" role="dialog" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <form action="guardar_usuario.php" method="post" class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Agregar Usuario</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-          </div>
-          <div class="modal-body">
-              <div class="form-group">
-                  <label>Tipo Usuario</label>
-                  <input type="text" name="tipo_usuario" class="form-control" required>
-              </div>
-              <div class="form-group">
-                  <label>Tipo Documento</label>
-                  <input type="text" name="tipo_documento" class="form-control" required>
-              </div>
-              <div class="form-group">
-                  <label>Identificación</label>
-                  <input type="text" name="identificacion" class="form-control" required>
-              </div>
-              <div class="form-group">
-                  <label>Nombre Completo</label>
-                  <input type="text" name="nombre_completo" class="form-control" required>
-              </div>
-              <div class="form-group">
-                  <label>Correo</label>
-                  <input type="email" name="correo" class="form-control" required>
-              </div>
-              <div class="form-group">
-                  <label>Celular</label>
-                  <input type="text" name="celular" class="form-control">
-              </div>
-              <div class="form-group">
-                  <label>Contraseña</label>
-                  <input type="password" name="password" class="form-control" required>
-              </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-            <button class="btn btn-primary" type="submit">Guardar</button>
+         <div class="modal-header">
+           <h5 class="modal-title">Agregar Usuario</h5>
+           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">×</span>
+           </button>
+         </div>
+         <div class="modal-body">
+             <div class="form-group">
+                 <label>Tipo Usuario</label>
+                 <input type="text" name="tipo_usuario" class="form-control" required>
+             </div>
+             <div class="form-group">
+                 <label>Tipo Documento</label>
+                 <input type="text" name="tipo_documento" class="form-control" required>
+             </div>
+             <div class="form-group">
+                 <label>Identificación</label>
+                 <input type="text" name="identificacion" class="form-control" required>
+             </div>
+             <div class="form-group">
+                 <label>Nombre Completo</label>
+                 <input type="text" name="nombre_completo" class="form-control" required>
+             </div>
+             <div class="form-group">
+                 <label>Correo</label>
+                 <input type="email" name="correo" class="form-control" required>
+             </div>
+             <div class="form-group">
+                 <label>Celular</label>
+                 <input type="text" name="celular" class="form-control">
+             </div>
+             <div class="form-group">
+                 <label>Contraseña</label>
+                 <input type="password" name="password" class="form-control" required>
+             </div>
+         </div>
+         <div class="modal-footer">
+           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+           <button class="btn btn-primary" type="submit">Guardar</button>
           </div>
         </form>
+                                            
       </div>
     </div>
 
