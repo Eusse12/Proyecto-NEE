@@ -1,0 +1,34 @@
+crear una base de datos llamada "traspasemos"
+
+poner este codigo para crear la tabla usuarios:
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_usuario VARCHAR(50) NOT NULL,
+    tipo_documento VARCHAR(50) NOT NULL,
+    identificacion VARCHAR(50) NOT NULL,
+    nombre_completo VARCHAR(150) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    celular VARCHAR(20) NOT NULL,
+    clave VARCHAR(255) NOT NULL
+);
+
+crear tabla de contacto:
+
+CREATE TABLE contacto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    mensaje TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+opcional:
+
+INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
+VALUES 
+('Administrador', 'Cédula', '33.816.156', 'Dianeth Yamile León Valencia', 'dianethyamilel@gmail.com', '3135417303', MD5('123456'));
+
+
