@@ -36,9 +36,10 @@ CREATE TABLE sedes (
 );
 
 CREATE TABLE grados (
-  id_grado INT AUTO_INCREMENT PRIMARY KEY,
-  nombre_grado VARCHAR(50) NOT NULL
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
 );
+
 
 
 
