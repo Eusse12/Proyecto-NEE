@@ -100,3 +100,5 @@ VALUES
 ('Administrador', 'Cédula', '33.816.156', 'Dianeth Yamile León Valencia', 'dianethyamilel@gmail.com', '3135417303', MD5('123456'));
 
 
+Explicación tablas dashboard:
+Aspecto Academico: 
