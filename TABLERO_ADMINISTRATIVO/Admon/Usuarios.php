@@ -29,17 +29,14 @@ $result = $conn->query($sql);
 
     <title>TRASPASEMOS</title>
 
-    <!-- Custom fonts for this template -->
+    <!-- Custom fonts for this template.....-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+        rel="stlesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this page -->
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.css" rel="stylesheet">
 
 </head>
 
@@ -53,61 +50,79 @@ $result = $conn->query($sql);
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                <img src="img/Logo.png" alt="">
                 </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3"></div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="index.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>TRASPASEMOS</span></a>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Componentes</span>
+                    <span>Components</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Personalizar Componentes:</h6>
-                        <a class="collapse-item" href="buttons.html">Botones</a>
-                        <a class="collapse-item" href="cards.html">Tarjetas</a>
+                        <h6 class="collapse-header">Custom Components:</h6>
+                        <a class="collapse-item" href="buttons.html">Buttons</a>
+                        <a class="collapse-item" href="cards.html">Cards</a>
                     </div>
                 </div>
             </li>
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="charts.html">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Charts</span></a>
+            </li>            
+            <li class="nav-item">
+                <a class="nav-link" href="usuarios.php">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Usuarios</span></a>
+            </li>
+  <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="charts.html">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Charts</span></a>
+            </li>            
+            <li class="nav-item">
+                <a class="nav-link" href="usuarios.php">
+                   <i class="fa-solid fa-flag-checkered"></i>
+                    <span>Reportes</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilidades</span>
+                    <span>Configuración</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Personalizar Utilidades:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colores</a>
-                        <a class="collapse-item" href="utilities-border.html">Margenes</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animacion</a>
-                        <a class="collapse-item" href="utilities-other.html">Otros</a>
+                       
+                        <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
+                        <a class="collapse-item" href="TipoIdentifica.html">Tipo Usuario</a>
+                        <a class="collapse-item" href="Grado.html">Grado</a>
+                        <a class="collapse-item" href="Depto.html">Departamento</a>
                     </div>
                 </div>
             </li>
@@ -117,7 +132,7 @@ $result = $conn->query($sql);
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Complementos
+                Addons
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
@@ -125,19 +140,19 @@ $result = $conn->query($sql);
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>Paginas</span>
+                    <span>Pages</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Login Screens:</h6>
                         <!-- Cambié a login.php por si no tienes login.php -->
-                        <a class="collapse-item" href="login.php">Acceso</a>
-                        <a class="collapse-item" href="register.php">Registro</a>
-                        <a class="collapse-item" href="forgot-password.html">Has olvidado la contraseña</a>
+                        <a class="collapse-item" href="login.php">Login</a>
+                        <a class="collapse-item" href="register.php">Register</a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Paginas</a>
-                        <a class="collapse-item" href="blank.html">Pagina en blanco</a>
+                        <a class="collapse-item" href="404.html">404 Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a>
                     </div>
                 </div>
             </li>
@@ -153,7 +168,7 @@ $result = $conn->query($sql);
             <li class="nav-item active">
                 <a class="nav-link" href="usuarios.php">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Tablas</span></a>
+                    <span>Tables</span></a>
             </li>
 
             <!-- Divider -->
@@ -165,6 +180,8 @@ $result = $conn->query($sql);
             </div>
 
         </ul>
+        <!-- End of Sidebar -->
+
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
