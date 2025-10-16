@@ -1,0 +1,163 @@
+-- ===========================================================
+-- 📚 BASE DE DATOS: traspasemos
+-- ===========================================================
+CREATE DATABASE IF NOT EXISTS traspasemos CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE traspasemos;
+
+-- ===========================================================
+-- 🧍‍♂️ TABLA USUARIOS
+-- ===========================================================
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_usuario VARCHAR(50) NOT NULL,
+    tipo_documento VARCHAR(50) NOT NULL,
+    identificacion VARCHAR(20) NOT NULL UNIQUE,
+    nombre_completo VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    celular VARCHAR(20),
+    clave VARCHAR(255) NOT NULL
+);
+
+-- Insertar usuario administrador de ejemplo
+INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
+VALUES ('Administrador', 'Cédula', '33816156', 'Dianeth Yamile León Valencia', 'dianethyamilel@gmail.com', '3135417303', MD5('admin123'));
+
+-- ===========================================================
+-- 📩 TABLA CONTACTO (Formulario del sitio principal)
+-- ===========================================================
+CREATE TABLE contacto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    mensaje TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ===========================================================
+-- 🏫 TABLA GRADO
+-- ===========================================================
+CREATE TABLE grado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+-- Ejemplo de grados
+INSERT INTO grado (nombre) VALUES
+('Grado 6'), ('Grado 7'), ('Grado 8'), ('Grado 9'), ('Grado 10'), ('Grado 11');
+
+-- ===========================================================
+-- 🏢 TABLA SEDE (por si una institución tiene varias sedes)
+-- ===========================================================
+CREATE TABLE sede (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(150)
+);
+
+-- ===========================================================
+-- 🕒 TABLA JORNADA (mañana, tarde, noche)
+-- ===========================================================
+CREATE TABLE jornada (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+INSERT INTO jornada (nombre) VALUES ('Mañana'), ('Tarde'), ('Noche');
+
+-- ===========================================================
+-- 👩‍🏫 TABLA GRUPO
+-- ===========================================================
+CREATE TABLE grupo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(100) NOT NULL,
+    id_sede INT,
+    id_jornada INT,
+    director_grupo VARCHAR(100),
+    id_grado INT,
+    FOREIGN KEY (id_sede) REFERENCES sede(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_jornada) REFERENCES jornada(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_grado) REFERENCES grado(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- ===========================================================
+-- 👨‍👧 TABLA ACUDIENTE
+-- ===========================================================
+CREATE TABLE acudiente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    parentesco VARCHAR(50),
+    telefono VARCHAR(20),
+    correo VARCHAR(100)
+);
+
+-- ===========================================================
+-- 🧒 TABLA DATOS DEL ESTUDIANTE
+-- ===========================================================
+CREATE TABLE datosestud (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    fecha_nacimiento DATE,
+    id_grupo INT,
+    direccion VARCHAR(150),
+    barrio VARCHAR(100),
+    id_ciudad INT,
+    id_departamento INT,
+    eps VARCHAR(100),
+    id_acudiente INT,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_grupo) REFERENCES grupo(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- ===========================================================
+-- 🌎 TABLAS DE LOCALIZACIÓN (CIUDAD / DEPARTAMENTO)
+-- ===========================================================
+CREATE TABLE departamento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE ciudad (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    id_departamento INT,
+    FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- ===========================================================
+-- 🔗 RELACIONES BÁSICAS DE REFERENCIA
+-- ===========================================================
+INSERT INTO departamento (nombre) VALUES ('Antioquia'), ('Cundinamarca'), ('Valle del Cauca');
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Medellín', 1),
+('Bogotá', 2),
+('Cali', 3);
+
+-- ===========================================================
+-- ✅ VISTAS OPCIONALES (para consultas rápidas)
+-- ===========================================================
+CREATE OR REPLACE VIEW vista_estudiantes AS
+SELECT 
+    e.id AS id_estudiante,
+    u.nombre_completo AS estudiante,
+    g.descripcion AS grupo,
+    gr.nombre AS grado,
+    e.fecha_nacimiento,
+    e.direccion,
+    e.barrio,
+    c.nombre AS ciudad,
+    d.nombre AS departamento,
+    e.eps,
+    a.nombre_completo AS acudiente
+FROM datosestud e
+LEFT JOIN usuarios u ON e.id_usuario = u.id
+LEFT JOIN grupo g ON e.id_grupo = g.id
+LEFT JOIN grado gr ON g.id_grado = gr.id
+LEFT JOIN ciudad c ON e.id_ciudad = c.id
+LEFT JOIN departamento d ON e.id_departamento = d.id
+LEFT JOIN acudiente a ON e.id_acudiente = a.id;
+
+-- ===========================================================
+-- 🎉 FIN DE LA BASE DE DATOS
+-- ===========================================================
