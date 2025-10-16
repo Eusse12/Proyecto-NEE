@@ -1,3 +1,71 @@
+creacion de tablas principales:
+
+CREATE TABLE grupos (
+    id_grupo INT AUTO_INCREMENT PRIMARY KEY,          -- Identificador único del grupo
+    descripcion VARCHAR(100) NOT NULL,                -- Ej: "Grupo 9-A", "Preescolar B", etc.
+    id_sede INT,                                      -- Relación con la tabla 'sedes'
+    jornada VARCHAR(50) NOT NULL,                     -- Ej: "Mañana", "Tarde", "Noche"
+    director_grupo VARCHAR(100),                      -- Nombre del docente director del grupo
+    id_grado INT,                                     -- Relación con la tabla 'grados'
+    
+    -- 🔗 Llaves foráneas
+    CONSTRAINT fk_grupo_sede FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+    CONSTRAINT fk_grupo_grado FOREIGN KEY (id_grado) REFERENCES grados(id_grado)
+);
+
+
+CREATE TABLE ciudades (
+  id_ciudad INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_ciudad VARCHAR(50)
+);
+
+CREATE TABLE departamentos (
+  id_departamento INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_departamento VARCHAR(50)
+);
+
+CREATE TABLE acudientes (
+  id_acudiente INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_acudiente VARCHAR(100),
+  telefono VARCHAR(20)
+);
+
+CREATE TABLE sedes (
+  id_sede INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_sede VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE grados (
+  id_grado INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_grado VARCHAR(50) NOT NULL
+);
+
+
+
+crear tabla de datos de estudiantes:
+
+CREATE TABLE datosestud (
+    id_dato_estud INT AUTO_INCREMENT PRIMARY KEY,       -- Identificador único del registro
+    id_usuario INT NOT NULL,                            -- Relación con la tabla 'usuarios'
+    fecha_nacimiento DATE NOT NULL,
+    id_grupo INT,                                       -- Relación con la tabla 'grupos'
+    direccion VARCHAR(150),
+    barrio VARCHAR(100),
+    id_ciudad INT,                                      -- Relación con la tabla 'ciudades'
+    id_departamento INT,                                -- Relación con la tabla 'departamentos'
+    eps VARCHAR(100),
+    id_acudiente INT,                                   -- Relación con la tabla 'acudientes'
+    
+    -- 🔗 Llaves foráneas (para mantener integridad referencial)
+    CONSTRAINT fk_datos_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_datos_grupo FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo),
+    CONSTRAINT fk_datos_ciudad FOREIGN KEY (id_ciudad) REFERENCES ciudades(id_ciudad),
+    CONSTRAINT fk_datos_departamento FOREIGN KEY (id_departamento) REFERENCES departamentos(id_departamento),
+    CONSTRAINT fk_datos_acudiente FOREIGN KEY (id_acudiente) REFERENCES acudientes(id_acudiente)
+);
+
+
+
 crear una base de datos llamada "traspasemos"
 
 poner este codigo para crear la tabla usuarios:
