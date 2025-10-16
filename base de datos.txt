@@ -101,4 +101,11 @@ VALUES
 
 
 Explicación tablas dashboard:
-Aspecto Academico: 
+Aspecto Academico: El aspecto académico se refiere al conjunto de habilidades, hábitos, actitudes y procesos relacionados con el aprendizaje escolar. Es el eje que nos permite evaluar cómo un estudiante adquiere, comprende, aplica y comunica los conocimientos que se trabajan dentro del aula.
+
+Desde la mirada de la UAI y la atención a estudiantes NEE, el aspecto académico no se centra solo en las notas o el rendimiento, sino en cómo cada estudiante accede al aprendizaje según sus capacidades, ritmos y estilos.
+
+
+Apecto comportamental: El aspecto comportamental hace referencia al conjunto de conductas, actitudes y formas de relacionarse que un estudiante manifiesta en los diferentes contextos escolares: aula, recreo, transporte, actividades extracurriculares, etc.
+
+Desde la psicología educativa, este aspecto nos permite analizar cómo el estudiante se comporta, se autorregula y se adapta a las normas de convivencia y al entorno social.
