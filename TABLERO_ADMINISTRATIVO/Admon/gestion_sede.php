@@ -3,8 +3,8 @@
 // CONFIGURACIÓN DE CONEXIÓN
 // ============================
 $servername = "localhost";
-$username = "root"; // cambia si usas otro usuario
-$password = "";     // cambia si tienes contraseña
+$username = "root";
+$password = "";
 $dbname = "traspasemos";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -23,7 +23,7 @@ switch ($accion) {
     // LISTAR SEDES
     // ============================
     case 'listar':
-        $sql = "SELECT id_sede AS id, nombre_sede AS nombre FROM sede ORDER BY id_sede ASC";
+        $sql = "SELECT id, nombre, direccion FROM sede ORDER BY id ASC";
         $result = $conn->query($sql);
 
         $sedes = [];
@@ -41,16 +41,16 @@ switch ($accion) {
     // ============================
     case 'agregar':
         $nombre = $_POST['nombresede'] ?? '';
-        $id = $_POST['sedeId'] ?? '';
+        $direccion = $_POST['direccion'] ?? '';
 
-        if (empty($nombre) || empty($id)) {
+        if (empty($nombre) || empty($direccion)) {
             echo json_encode(["success" => false, "message" => "⚠ Faltan datos para registrar la sede."]);
             exit;
         }
 
-        $sql = "INSERT INTO sede (id_sede, nombre_sede) VALUES (?, ?)";
+        $sql = "INSERT INTO sede (nombre, direccion) VALUES (?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("is", $id, $nombre);
+        $stmt->bind_param("ss", $nombre, $direccion);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true, "message" => "✅ Sede agregada correctamente."]);
@@ -64,17 +64,18 @@ switch ($accion) {
     // EDITAR SEDE
     // ============================
     case 'editar':
-        $nombre = $_POST['nombresede'] ?? '';
         $id = $_POST['sedeId'] ?? '';
+        $nombre = $_POST['nombresede'] ?? '';
+        $direccion = $_POST['direccion'] ?? '';
 
-        if (empty($nombre) || empty($id)) {
+        if (empty($id) || empty($nombre) || empty($direccion)) {
             echo json_encode(["success" => false, "message" => "⚠ Faltan datos para editar la sede."]);
             exit;
         }
 
-        $sql = "UPDATE sede SET nombre_sede = ? WHERE id_sede = ?";
+        $sql = "UPDATE sede SET nombre = ?, direccion = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $nombre, $id);
+        $stmt->bind_param("ssi", $nombre, $direccion, $id);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true, "message" => "✅ Sede actualizada correctamente."]);
@@ -95,7 +96,7 @@ switch ($accion) {
             exit;
         }
 
-        $sql = "DELETE FROM sede WHERE id_sede = ?";
+        $sql = "DELETE FROM sede WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $id);
 
@@ -107,9 +108,6 @@ switch ($accion) {
         $stmt->close();
         break;
 
-    // ============================
-    // ACCIÓN NO RECONOCIDA
-    // ============================
     default:
         echo json_encode(["success" => false, "message" => "⚠ Acción no válida."]);
         break;
