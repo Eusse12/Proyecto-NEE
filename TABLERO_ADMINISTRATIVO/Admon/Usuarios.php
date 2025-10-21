@@ -121,8 +121,13 @@ $result = $conn->query($sql);
                        
                         <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
                         <a class="collapse-item" href="TipoIdentifica.html">Tipo Usuario</a>
-                        <a class="collapse-item" href="Grado.html">Grado</a>
-                        <a class="collapse-item" href="Depto.html">Departamento</a>
+                        <a class="collapse-item" href="grados_tablas.html">Grado</a>
+                        <a class="collapse-item" href="Sedes.html">Sede</a>
+                        <a class="collapse-item" href="Grupos.html">Grupos</a>
+                        <a class="collapse-item" href="Aspectos_complementarios.html" >Aspectos complementarios</a>
+                        <a class="collapse-item" href="Aspectos_academicos.html">Aspectos academicos</a>
+                        <a class="collapse-item" href="Tipo_usuario.html">Tipos de usuarios</a>
+                        <a class="collapse-item" href="tipos_de_estudiantes.html">Tipos de estudiantes</a>
                     </div>
                 </div>
             </li>
