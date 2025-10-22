@@ -55,6 +55,31 @@ CREATE TABLE sede (
     direccion VARCHAR(150)
 );
 
+CREATE TABLE aspectos_academicos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_aspecto VARCHAR(150) NOT NULL,
+    descripcion TEXT NOT NULL,
+    area VARCHAR(100) NOT NULL,
+    ponderacion DECIMAL(5,2) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Tabla de aspectos complementarios
+CREATE TABLE aspectos_complementarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    grado VARCHAR(50),
+    responsable VARCHAR(100),
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
+    descripcion TEXT,
+    observaciones TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 -- ===========================================================
 -- 🕒 TABLA JORNADA (mañana, tarde, noche)
 -- ===========================================================

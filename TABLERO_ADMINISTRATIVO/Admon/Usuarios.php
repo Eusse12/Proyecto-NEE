@@ -102,7 +102,7 @@ if (isset($_SESSION['mensaje'])) {
                 <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
-                        <a class="collapse-item" href="grados_tablas.html">Grado</a>
+                        <a class="collapse-item" href="grado.php">Grado</a>
                         <a class="collapse-item" href="Sedes.html">Sede</a>
                         <a class="collapse-item" href="Grupos.html">Grupos</a>
                     </div>
