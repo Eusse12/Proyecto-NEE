@@ -102,9 +102,13 @@ if (isset($_SESSION['mensaje'])) {
                 <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
+                        <a class="collapse-item" href="TipoUsuario.html">Tipo Usuario</a>
+                        <a class="collapse-item" href="TipoEstudiante.html">Tipo Estudiante</a>
                         <a class="collapse-item" href="grado.php">Grado</a>
-                        <a class="collapse-item" href="Sedes.html">Sede</a>
-                        <a class="collapse-item" href="Grupos.html">Grupos</a>
+                        <a class="collapse-item" href="sede.php">Sede</a>
+                        <a class="collapse-item" href="Grupo.php">Grupos</a>
+                        <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
+                        <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
                     </div>
                 </div>
             </li>
