@@ -10,25 +10,60 @@
 <body id="page-top">
 
 <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon">
-                <img src="img/Logo.png" alt="Logo" class="img-fluid" style="max-width: 130px; height: auto;">
+                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
             </div>
         </a>
+
         <hr class="sidebar-divider my-0">
-        <li class="nav-item active">
+
+        <li class="nav-item">
             <a class="nav-link" href="index.html">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Menú Principal</span></a>
+                <span>TRASPASEMOS</span>
+            </a>
         </li>
+
         <hr class="sidebar-divider">
-        <li class="nav-item active">
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-wrench"></i>
-                <span>Tipos de Usuarios</span></a>
+
+        <li class="nav-item">
+            <a class="nav-link" href="Usuarios.php">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Usuarios</span>
+            </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="charts.html">
+                <i class="fas fa-fw fa-chart-area"></i>
+                <span>Reportes</span>
+            </a>
+        </li>
+
         <hr class="sidebar-divider d-none d-md-block">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Configuración</span>
+            </a>
+            <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
+                    <a class="collapse-item" href="grado.php">Grado</a>
+                    <a class="collapse-item" href="Sedes.html">Sede</a>
+                    <a class="collapse-item" href="Grupo.php">Grupos</a>
+                    <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
+                    <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
+                    <a class="collapse-item active" href="Tipo_usuario.html">Tipos de Usuarios</a>
+                    <a class="collapse-item" href="Tipo_Estudiante.html">Tipos de Estudiantes</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
     </ul>
 
     <div id="content-wrapper" class="d-flex flex-column">

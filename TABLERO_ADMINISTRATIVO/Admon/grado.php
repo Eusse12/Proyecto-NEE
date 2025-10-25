@@ -5,25 +5,13 @@ $user = "root";
 $pass = "";
 $database = "traspasemos";
 
-// Conectar a la base de datos
 $conn = new mysqli($host, $user, $pass, $database);
 
-// Verificar conexión
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
 $conn->set_charset("utf8mb4");
-
-// Crear tabla si no existe
-$crearTabla = "CREATE TABLE IF NOT EXISTS grado (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-
-if (!$conn->query($crearTabla)) {
-    die("Error al crear la tabla: " . $conn->error);
-}
 
 $mensaje = "";
 $tipoMensaje = "";
@@ -139,12 +127,12 @@ if (isset($_GET['editar'])) {
     }
 }
 
-// Listar todos los grado
+// Listar todos los grados
 $sql = "SELECT * FROM grado ORDER BY id ASC";
 $result = $conn->query($sql);
 
 if ($result === false) {
-    die("Error al obtener los grado: " . $conn->error);
+    die("Error al obtener los grados: " . $conn->error);
 }
 ?>
 <!DOCTYPE html>
@@ -152,7 +140,7 @@ if ($result === false) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grado</title>
+    <title>Grados</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link href="css/sb-admin-2.css" rel="stylesheet">
@@ -160,27 +148,64 @@ if ($result === false) {
 <body id="page-top">
 
 <div id="wrapper">
+    <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon">
-                <img src="img/Logo.png" alt="Logo" class="img-fluid" style="max-width: 130px; height: auto;">
+                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
             </div>
         </a>
+
         <hr class="sidebar-divider my-0">
-        <li class="nav-item active">
+
+        <li class="nav-item">
             <a class="nav-link" href="index.html">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Menú Principal</span></a>
+                <span>TRASPASEMOS</span>
+            </a>
         </li>
+
         <hr class="sidebar-divider">
-        <li class="nav-item active">
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-wrench"></i>
-                <span>Grado</span></a>
+
+        <li class="nav-item">
+            <a class="nav-link" href="Usuarios.php">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Usuarios</span>
+            </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="charts.html">
+                <i class="fas fa-fw fa-chart-area"></i>
+                <span>Reportes</span>
+            </a>
+        </li>
+
         <hr class="sidebar-divider d-none d-md-block">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Configuración</span>
+            </a>
+            <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
+                    <a class="collapse-item active" href="grado.php">Grado</a>
+                    <a class="collapse-item" href="Sedes.html">Sede</a>
+                    <a class="collapse-item" href="Grupo.php">Grupos</a>
+                    <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
+                    <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
+                    <a class="collapse-item" href="Tipo_usuario.html">Tipos de Usuarios</a>
+                    <a class="collapse-item" href="Tipo_Estudiante.html">Tipos de Estudiantes</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
     </ul>
 
+    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <div class="container-fluid mt-4">
@@ -233,10 +258,10 @@ if ($result === false) {
                     </div>
                 </div>
 
-                <!-- Tabla de grado -->
+                <!-- Tabla de grados -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3" style="background-color: #1fbeac;">
-                        <h6 class="m-0 font-weight-bold text-white text-center">Tabla - grado Registrados</h6>
+                        <h6 class="m-0 font-weight-bold text-white text-center">Tabla - Grados Registrados</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -259,7 +284,7 @@ if ($result === false) {
                                                     <i class="fas fa-edit"></i> Editar
                                                 </a>
                                                 <form method="POST" style="display: inline-block;" 
-                                                      onsubmit="return confirm('⚠ ¿Estás seguro de que deseas eliminar este grado?');">
+                                                      onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este grado?');">
                                                     <input type="hidden" name="accion" value="eliminar">
                                                     <input type="hidden" name="gradoId" value="<?= $grado['id'] ?>">
                                                     <button type="submit" class="btn btn-danger btn-sm">
@@ -272,7 +297,7 @@ if ($result === false) {
                                     <?php else: ?>
                                         <tr>
                                             <td colspan="3" class="text-center text-muted">
-                                                <i class="fas fa-info-circle"></i> No hay grado registrados
+                                                <i class="fas fa-info-circle"></i> No hay grados registrados
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -290,7 +315,7 @@ if ($result === false) {
         <footer class="sticky-footer bg-light">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Tu Proyecto 2025</span>
+                    <span>Copyright &copy; TRASPASEMOS 2025</span>
                 </div>
             </div>
         </footer>
@@ -303,6 +328,8 @@ if ($result === false) {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
 
 </body>
 </html>
