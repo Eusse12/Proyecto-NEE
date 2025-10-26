@@ -1,5 +1,7 @@
 <?php
-// Configuración de conexión
+// =============================
+// CONFIGURACIÓN DE CONEXIÓN
+// =============================
 $host = "localhost";
 $user = "root";
 $pass = "";
@@ -13,8 +15,12 @@ $conn->set_charset("utf8mb4");
 
 $mensaje = "";
 $tipo = "";
+$editar = false;
+$aspectoEditar = null;
 
-// Procesar formulario
+// =============================
+// PROCESAR ACCIONES
+// =============================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $accion = $_POST["accion"] ?? "";
     $id = intval($_POST["id"] ?? 0);
@@ -23,26 +29,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $area = trim($_POST["area"] ?? "");
     $ponderacion = floatval($_POST["ponderacion"] ?? 0);
 
+    // AGREGAR
     if ($accion === "agregar") {
         if ($nombre === "" || $descripcion === "" || $area === "" || $ponderacion <= 0) {
-            $mensaje = "⚠ Todos los campos son obligatorios y la ponderación debe ser mayor que 0.";
+            $mensaje = "⚠️ Todos los campos son obligatorios.";
             $tipo = "warning";
         } else {
             $stmt = $conn->prepare("INSERT INTO aspectos_academicos (nombre_aspecto, descripcion, area, ponderacion) VALUES (?, ?, ?, ?)");
-            if (!$stmt) {
-                die("❌ Error en prepare(): " . $conn->error);
-            }
             $stmt->bind_param("sssd", $nombre, $descripcion, $area, $ponderacion);
             if ($stmt->execute()) {
                 $mensaje = "✅ Aspecto académico agregado correctamente.";
                 $tipo = "success";
             } else {
-                $mensaje = "❌ Error al guardar: " . $stmt->error;
+                $mensaje = "❌ Error al agregar: " . $stmt->error;
                 $tipo = "danger";
             }
             $stmt->close();
         }
-    } elseif ($accion === "eliminar" && $id > 0) {
+    }
+
+    // EDITAR
+    elseif ($accion === "editar" && $id > 0) {
+        $stmt = $conn->prepare("UPDATE aspectos_academicos SET nombre_aspecto=?, descripcion=?, area=?, ponderacion=? WHERE id=?");
+        $stmt->bind_param("sssdi", $nombre, $descripcion, $area, $ponderacion, $id);
+        if ($stmt->execute()) {
+            $mensaje = "✏️ Aspecto académico actualizado correctamente.";
+            $tipo = "success";
+        } else {
+            $mensaje = "❌ Error al actualizar: " . $stmt->error;
+            $tipo = "danger";
+        }
+        $stmt->close();
+    }
+
+    // ELIMINAR
+    elseif ($accion === "eliminar" && $id > 0) {
         $stmt = $conn->prepare("DELETE FROM aspectos_academicos WHERE id = ?");
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
@@ -56,18 +77,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// Consulta de registros
-$result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
-if (!$result) {
-    die("❌ Error al obtener los aspectos académicos: " . $conn->error);
+// CARGAR PARA EDICIÓN
+if (isset($_GET["editar"])) {
+    $editar = true;
+    $idEditar = intval($_GET["editar"]);
+    $resultEdit = $conn->query("SELECT * FROM aspectos_academicos WHERE id = $idEditar");
+    $aspectoEditar = $resultEdit->fetch_assoc();
 }
+
+// CONSULTAR REGISTROS
+$result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aspectos Académicos - TRASPASEMOS</title>
+    <title>Aspectos Académicos</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link href="css/sb-admin-2.css" rel="stylesheet">
@@ -75,129 +100,118 @@ if (!$result) {
 <body id="page-top">
 
 <div id="wrapper">
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon">
-                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+                <img src="img/logo.png" alt="Logo" style="max-width: 120px;">
             </div>
         </a>
-
         <hr class="sidebar-divider my-0">
-
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link" href="index.html">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>TRASPASEMOS</span>
             </a>
         </li>
-
         <hr class="sidebar-divider">
-
         <li class="nav-item">
-            <a class="nav-link" href="Usuarios.php">
-                <i class="fas fa-fw fa-user"></i>
-                <span>Usuarios</span>
-            </a>
+            <a class="nav-link" href="Usuarios.php"><i class="fas fa-fw fa-user"></i> <span>Usuarios</span></a>
         </li>
-
         <hr class="sidebar-divider d-none d-md-block">
-
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig">
-                <i class="fas fa-fw fa-wrench"></i>
-                <span>Configuración</span>
+                <i class="fas fa-fw fa-wrench"></i> <span>Configuración</span>
             </a>
             <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
                     <a class="collapse-item" href="grado.php">Grado</a>
-                    <a class="collapse-item" href="Sede.php">Sede</a>
                     <a class="collapse-item" href="Grupo.php">Grupos</a>
                     <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
                     <a class="collapse-item active" href="aspecto_academico.php">Aspectos Académicos</a>
-                    <a class="collapse-item" href="Tipo_usuario.php">Tipos de Usuarios</a>
-                    <a class="collapse-item" href="Tipo_Estudiante.php">Tipos de Estudiantes</a>
                 </div>
             </div>
         </li>
-
         <hr class="sidebar-divider">
     </ul>
 
-    <!-- Content Wrapper -->
+    <!-- CONTENIDO -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content" class="p-4">
 
-            <!-- Mensajes -->
             <?php if ($mensaje): ?>
-                <div class="alert alert-<?= $tipo ?> alert-dismissible fade show" role="alert">
-                    <i class="fas fa-<?= $tipo === 'success' ? 'check-circle' : ($tipo === 'warning' ? 'exclamation-triangle' : 'times-circle') ?>"></i>
+                <div class="alert alert-<?= $tipo ?> alert-dismissible fade show">
                     <?= $mensaje ?>
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                 </div>
             <?php endif; ?>
 
-            <!-- Formulario de Registro -->
+            <!-- FORMULARIO -->
             <div class="card shadow mb-4">
-                <div class="card-header py-3 bg-primary text-white">
-                    <h6 class="m-0 font-weight-bold text-center">Registrar Aspecto Académico</h6>
+                <div class="card-header bg-<?= $editar ? 'warning' : 'success' ?> text-white">
+                    <h5 class="text-center"><?= $editar ? '✏️ Editar Aspecto Académico' : '➕ Registrar Aspecto Académico' ?></h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="">
-                        <input type="hidden" name="accion" value="agregar">
+                        <input type="hidden" name="accion" value="<?= $editar ? 'editar' : 'agregar' ?>">
+                        <?php if ($editar): ?>
+                            <input type="hidden" name="id" value="<?= $aspectoEditar['id'] ?>">
+                        <?php endif; ?>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>Nombre del Aspecto <span class="text-danger">*</span></label>
                                 <input type="text" name="nombre_aspecto" class="form-control" 
-                                       placeholder="Ej: Desempeño en Matemáticas" required>
+                                       value="<?= $editar ? htmlspecialchars($aspectoEditar['nombre_aspecto']) : '' ?>" placeholder="Ej: Desempeño en Matemáticas"  required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Área Académica <span class="text-danger">*</span></label>
+                                <label>Área <span class="text-danger">*</span></label>
                                 <input type="text" name="area" class="form-control" 
-                                       placeholder="Ej: Ciencias Naturales, Lenguaje..." required>
+                                       value="<?= $editar ? htmlspecialchars($aspectoEditar['area']) : '' ?>" placeholder="Ej: Ciencias Naturales, Lenguaje..." required>
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label>Ponderación (%) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" name="ponderacion" class="form-control" 
-                                       placeholder="Ej: 25.00" required>
+                                <input type="number" name="ponderacion" class="form-control" step="0.01" min="0" max="100"
+                                       value="<?= $editar ? htmlspecialchars($aspectoEditar['ponderacion']) : '' ?>" placeholder="Ej: 25.00" required>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label>Descripción <span class="text-danger">*</span></label>
+                                <textarea name="descripcion" class="form-control" rows="3" placeholder="Ej: Desempeño en Matemáticas"  required><?= $editar ? htmlspecialchars($aspectoEditar['descripcion']) : '' ?></textarea>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label>Descripción <span class="text-danger">*</span></label>
-                            <textarea name="descripcion" class="form-control" rows="3" 
-                                      placeholder="Descripción del aspecto académico..." required></textarea>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-<?= $editar ? 'warning' : 'success' ?> btn-lg">
+                                <i class="fas fa-<?= $editar ? 'save' : 'plus' ?>"></i>
+                                <?= $editar ? 'Actualizar' : 'Guardar' ?>
+                            </button>
+                            <?php if ($editar): ?>
+                                <a href="aspecto_academico.php" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            <?php endif; ?>
                         </div>
-
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save"></i> Guardar
-                        </button>
-                        <a href="index.html" class="btn btn-secondary">
-                            <i class="fas fa-home"></i> Volver al Inicio
-                        </a>
                     </form>
                 </div>
             </div>
 
-            <!-- Tabla de Registros -->
+            <!-- TABLA -->
             <div class="card shadow">
-                <div class="card-header bg-info text-white">
-                    <h6 class="m-0 font-weight-bold text-center">Listado de Aspectos Académicos</h6>
+                <div class="card-header bg-primary text-white text-center">
+                    <h5>📋 Lista de Aspectos Académicos</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead class="bg-primary text-white text-center">
+                        <table class="table table-bordered table-hover text-center">
+                            <thead class="bg-primary text-white">
                                 <tr>
                                     <th>ID</th>
                                     <th>Nombre</th>
                                     <th>Área</th>
-                                    <th>Ponderación (%)</th>
+                                    <th>Ponderación</th>
                                     <th>Descripción</th>
                                     <th>Fecha</th>
                                     <th>Acciones</th>
@@ -207,13 +221,16 @@ if (!$result) {
                                 <?php if ($result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            <td class="text-center"><?= $row['id'] ?></td>
+                                            <td><?= $row['id'] ?></td>
                                             <td><?= htmlspecialchars($row['nombre_aspecto']) ?></td>
                                             <td><?= htmlspecialchars($row['area']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($row['ponderacion']) ?>%</td>
+                                            <td><?= htmlspecialchars($row['ponderacion']) ?>%</td>
                                             <td><?= htmlspecialchars($row['descripcion']) ?></td>
-                                            <td class="text-center"><?= date('d/m/Y', strtotime($row['fecha_creacion'])) ?></td>
-                                            <td class="text-center">
+                                            <td><?= date("d/m/Y", strtotime($row['fecha_creacion'])) ?></td>
+                                            <td>
+                                                <a href="?editar=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
                                                 <form method="POST" style="display:inline-block;" onsubmit="return confirm('¿Eliminar este registro?');">
                                                     <input type="hidden" name="accion" value="eliminar">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
@@ -225,9 +242,7 @@ if (!$result) {
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php else: ?>
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted">No hay registros disponibles</td>
-                                    </tr>
+                                    <tr><td colspan="7" class="text-muted">No hay registros</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -237,23 +252,16 @@ if (!$result) {
 
         </div>
 
-        <!-- Footer -->
         <footer class="sticky-footer bg-light mt-4">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; TRASPASEMOS 2025</span>
-                </div>
+            <div class="container my-auto text-center">
+                <span>© TRASPASEMOS 2025</span>
             </div>
         </footer>
     </div>
 </div>
 
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="js/sb-admin-2.min.js"></script>
-
 </body>
 </html>
+
 <?php $conn->close(); ?>
