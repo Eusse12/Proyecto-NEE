@@ -20,20 +20,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id = intval($_POST["id"] ?? 0);
     $nombre = trim($_POST["nombre_aspecto"] ?? "");
     $descripcion = trim($_POST["descripcion"] ?? "");
-    $grado = trim($_POST["grado_asociado"] ?? "");
+    $area = trim($_POST["area"] ?? "");
+    $ponderacion = floatval($_POST["ponderacion"] ?? 0);
 
     if ($accion === "agregar") {
-        if ($nombre === "" || $descripcion === "") {
-            $mensaje = "Todos los campos obligatorios deben llenarse.";
+        if ($nombre === "" || $descripcion === "" || $area === "" || $ponderacion <= 0) {
+            $mensaje = "⚠ Todos los campos son obligatorios y la ponderación debe ser mayor que 0.";
             $tipo = "warning";
         } else {
-            $stmt = $conn->prepare("INSERT INTO aspectos_academicos (nombre_aspecto, descripcion, grado_asociado) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $nombre, $descripcion, $grado);
+            $stmt = $conn->prepare("INSERT INTO aspectos_academicos (nombre_aspecto, descripcion, area, ponderacion) VALUES (?, ?, ?, ?)");
+            if (!$stmt) {
+                die("❌ Error en prepare(): " . $conn->error);
+            }
+            $stmt->bind_param("sssd", $nombre, $descripcion, $area, $ponderacion);
             if ($stmt->execute()) {
-                $mensaje = "Aspecto académico agregado correctamente.";
+                $mensaje = "✅ Aspecto académico agregado correctamente.";
                 $tipo = "success";
             } else {
-                $mensaje = "Error al guardar: " . $stmt->error;
+                $mensaje = "❌ Error al guardar: " . $stmt->error;
                 $tipo = "danger";
             }
             $stmt->close();
@@ -42,10 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare("DELETE FROM aspectos_academicos WHERE id = ?");
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
-            $mensaje = "Registro eliminado correctamente.";
+            $mensaje = "🗑️ Registro eliminado correctamente.";
             $tipo = "success";
         } else {
-            $mensaje = "Error al eliminar.";
+            $mensaje = "❌ Error al eliminar: " . $stmt->error;
             $tipo = "danger";
         }
         $stmt->close();
@@ -55,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // Consulta de registros
 $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
 if (!$result) {
-    die("Error al obtener los aspectos académicos: " . $conn->error);
+    die("❌ Error al obtener los aspectos académicos: " . $conn->error);
 }
 ?>
 <!DOCTYPE html>
@@ -147,12 +151,20 @@ if (!$result) {
                             <div class="form-group col-md-6">
                                 <label>Nombre del Aspecto <span class="text-danger">*</span></label>
                                 <input type="text" name="nombre_aspecto" class="form-control" 
-                                       placeholder="Ej: Desempeño en matemáticas" required>
+                                       placeholder="Ej: Desempeño en Matemáticas" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Grado Asociado</label>
-                                <input type="text" name="grado_asociado" class="form-control" 
-                                       placeholder="Ej: 10° o 11°">
+                                <label>Área Académica <span class="text-danger">*</span></label>
+                                <input type="text" name="area" class="form-control" 
+                                       placeholder="Ej: Ciencias Naturales, Lenguaje..." required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Ponderación (%) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" name="ponderacion" class="form-control" 
+                                       placeholder="Ej: 25.00" required>
                             </div>
                         </div>
 
@@ -184,8 +196,9 @@ if (!$result) {
                                 <tr>
                                     <th>ID</th>
                                     <th>Nombre</th>
+                                    <th>Área</th>
+                                    <th>Ponderación (%)</th>
                                     <th>Descripción</th>
-                                    <th>Grado</th>
                                     <th>Fecha</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -196,15 +209,15 @@ if (!$result) {
                                         <tr>
                                             <td class="text-center"><?= $row['id'] ?></td>
                                             <td><?= htmlspecialchars($row['nombre_aspecto']) ?></td>
+                                            <td><?= htmlspecialchars($row['area']) ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($row['ponderacion']) ?>%</td>
                                             <td><?= htmlspecialchars($row['descripcion']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($row['grado_asociado'] ?: 'N/A') ?></td>
                                             <td class="text-center"><?= date('d/m/Y', strtotime($row['fecha_creacion'])) ?></td>
                                             <td class="text-center">
-                                                <form method="POST" style="display: inline-block;" 
-                                                      onsubmit="return confirm('¿Está seguro de eliminar este registro?');">
+                                                <form method="POST" style="display:inline-block;" onsubmit="return confirm('¿Eliminar este registro?');">
                                                     <input type="hidden" name="accion" value="eliminar">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
+                                                    <button type="submit" class="btn btn-danger btn-sm">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -213,7 +226,7 @@ if (!$result) {
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted">No hay registros disponibles</td>
+                                        <td colspan="7" class="text-center text-muted">No hay registros disponibles</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
