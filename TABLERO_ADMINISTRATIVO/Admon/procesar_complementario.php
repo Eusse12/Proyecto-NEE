@@ -17,7 +17,7 @@ $sql = "INSERT INTO aspectos_complementarios
 VALUES ('$nombre', '$categoria', '$grado', '$responsable', '$estado', '$descripcion', '$observaciones')";
 
 if ($conn->query($sql) === TRUE) {
-    header("Location: ascp_complt.php?mensaje=✅ Registro guardado exitosamente");
+    header("Location: aspecto_complementario.php?mensaje=✅ Registro guardado exitosamente");
     exit();
 } else {
     echo "Error al guardar: " . $conn->error;
