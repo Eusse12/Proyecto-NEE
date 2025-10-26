@@ -37,12 +37,7 @@
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="charts.html">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Reportes</span>
-            </a>
-        </li>
+        
 
         <hr class="sidebar-divider d-none d-md-block">
 
@@ -59,7 +54,7 @@
                     <a class="collapse-item" href="Grupo.php">Grupos</a>
                     <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
                     <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
-                    <a class="collapse-item" href="Tipo_usuario.html">Tipos de Usuarios</a>
+                    <a class="collapse-item" href="Tipo_usuario.php">Tipos de Usuarios</a>
                     <a class="collapse-item active" href="Tipo_Estudiante.php">Tipos de Estudiantes</a>
                 </div>
             </div>
