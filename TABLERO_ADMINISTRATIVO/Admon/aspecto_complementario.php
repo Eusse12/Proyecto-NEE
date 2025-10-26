@@ -1,5 +1,5 @@
 <?php
-// 🔹 Conexión directa a la base de datos
+// Conexión a la base de datos
 $conn = new mysqli("localhost", "root", "", "traspasemos");
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
@@ -7,7 +7,7 @@ if ($conn->connect_error) {
 
 $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : "";
 
-// 🔹 Obtener todos los registros
+// Obtener todos los registros
 $sql = "SELECT * FROM aspectos_complementarios ORDER BY id DESC";
 $result = $conn->query($sql);
 ?>
@@ -24,55 +24,55 @@ $result = $conn->query($sql);
 
 <div id="wrapper">
   <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-            <div class="sidebar-brand-icon">
-                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
-            </div>
-        </a>
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+      <div class="sidebar-brand-icon">
+        <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+      </div>
+    </a>
 
-        <hr class="sidebar-divider my-0">
+    <hr class="sidebar-divider my-0">
 
-        <li class="nav-item">
-            <a class="nav-link" href="index.html">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>TRASPASEMOS</span>
-            </a>
-        </li>
+    <li class="nav-item">
+      <a class="nav-link" href="index.html">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>TRASPASEMOS</span>
+      </a>
+    </li>
 
-        <hr class="sidebar-divider">
+    <hr class="sidebar-divider">
 
-        <li class="nav-item">
-            <a class="nav-link" href="Usuarios.php">
-                <i class="fas fa-fw fa-user"></i>
-                <span>Usuarios</span>
-            </a>
-        </li>
+    <li class="nav-item">
+      <a class="nav-link" href="Usuarios.php">
+        <i class="fas fa-fw fa-user"></i>
+        <span>Usuarios</span>
+      </a>
+    </li>
 
-        
-        <hr class="sidebar-divider d-none d-md-block">
+    <hr class="sidebar-divider d-none d-md-block">
 
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig">
-                <i class="fas fa-fw fa-wrench"></i>
-                <span>Configuración</span>
-            </a>
-            <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
-                    <a class="collapse-item" href="grado.php">Grado</a>
-                    <a class="collapse-item" href="Sede.php">Sede</a>
-                    <a class="collapse-item" href="Grupo.php">Grupos</a>
-                    <a class="collapse-item active" href="aspecto_complementario.php">Aspectos Complementarios</a>
-                    <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
-                    <a class="collapse-item" href="Tipo_usuario.php">Tipos de Usuarios</a>
-                    <a class="collapse-item" href="Tipo_Estudiante.php">Tipos de Estudiantes</a>
-                </div>
-            </div>
-        </li>
+    <!-- Menú Configuración arreglado -->
+    <li class="nav-item">
+      <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseConfig" aria-expanded="true">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Configuración</span>
+      </a>
+      <div id="collapseConfig" class="collapse show" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
+          <a class="collapse-item" href="grado.php">Grado</a>
+          <a class="collapse-item" href="Sede.php">Sede</a>
+          <a class="collapse-item" href="Grupo.php">Grupos</a>
+          <a class="collapse-item active" href="aspecto_complementario.php">Aspectos Complementarios</a>
+          <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
+          <a class="collapse-item" href="Tipo_usuario.php">Tipos de Usuarios</a>
+          <a class="collapse-item" href="Tipo_Estudiante.php">Tipos de Estudiantes</a>
+        </div>
+      </div>
+    </li>
 
-        <hr class="sidebar-divider">
-    </ul>
+    <hr class="sidebar-divider">
+  </ul>
 
   <!-- Content -->
   <div id="content-wrapper" class="d-flex flex-column">
@@ -144,7 +144,7 @@ $result = $conn->query($sql);
           </div>
         </div>
 
-        <!-- TABLA -->
+        <!-- TABLA con botones -->
         <div class="card shadow mt-4">
           <div class="card-header bg-primary text-white text-center">
             <h5><i class="fas fa-list"></i> Aspectos Complementarios Registrados</h5>
@@ -162,6 +162,7 @@ $result = $conn->query($sql);
                     <th>Estado</th>
                     <th>Descripción</th>
                     <th>Observaciones</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -176,10 +177,81 @@ $result = $conn->query($sql);
                         <td><?= htmlspecialchars($fila['estado']) ?></td>
                         <td><?= htmlspecialchars($fila['descripcion']) ?></td>
                         <td><?= htmlspecialchars($fila['observaciones']) ?></td>
+                        <td class="text-nowrap">
+                          <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal<?= $fila['id'] ?>">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-danger btn-sm ml-1" onclick="confirmarEliminar(<?= $fila['id'] ?>, '<?= htmlspecialchars($fila['nombre'], ENT_QUOTES) ?>')">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
+
+                      <!-- Modal Editar -->
+                      <div class="modal fade" id="editModal<?= $fila['id'] ?>" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Editar Aspecto Complementario</h5>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <form action="procesar_complementario.php" method="POST">
+                              <input type="hidden" name="accion" value="editar">
+                              <input type="hidden" name="id" value="<?= $fila['id'] ?>">
+                              <div class="modal-body">
+                                <div class="form-row">
+                                  <div class="form-group col-md-6">
+                                    <label>Nombre</label>
+                                    <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($fila['nombre']) ?>" required>
+                                  </div>
+                                  <div class="form-group col-md-6">
+                                    <label>Categoría</label>
+                                    <select name="categoria" class="form-control" required>
+                                      <option value="Convivencia" <?= $fila['categoria'] == 'Convivencia' ? 'selected' : '' ?>>Convivencia</option>
+                                      <option value="Valores" <?= $fila['categoria'] == 'Valores' ? 'selected' : '' ?>>Valores</option>
+                                      <option value="Participación" <?= $fila['categoria'] == 'Participación' ? 'selected' : '' ?>>Participación</option>
+                                      <option value="Presentación" <?= $fila['categoria'] == 'Presentación' ? 'selected' : '' ?>>Presentación</option>
+                                      <option value="Otro" <?= $fila['categoria'] == 'Otro' ? 'selected' : '' ?>>Otro</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col-md-5">
+                                    <label>Grado</label>
+                                    <input type="text" name="grado" class="form-control" value="<?= htmlspecialchars($fila['grado']) ?>">
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label>Responsable</label>
+                                    <input type="text" name="responsable" class="form-control" value="<?= htmlspecialchars($fila['responsable']) ?>">
+                                  </div>
+                                  <div class="form-group col-md-3">
+                                    <label>Estado</label>
+                                    <select name="estado" class="form-control">
+                                      <option value="Activo" <?= $fila['estado'] == 'Activo' ? 'selected' : '' ?>>Activo</option>
+                                      <option value="Inactivo" <?= $fila['estado'] == 'Inactivo' ? 'selected' : '' ?>>Inactivo</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label>Descripción</label>
+                                  <textarea name="descripcion" class="form-control" rows="3"><?= htmlspecialchars($fila['descripcion']) ?></textarea>
+                                </div>
+                                <div class="form-group">
+                                  <label>Observaciones</label>
+                                  <textarea name="observaciones" class="form-control" rows="3"><?= htmlspecialchars($fila['observaciones']) ?></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
                     <?php endwhile; ?>
                   <?php else: ?>
-                    <tr><td colspan="8" class="text-center text-muted">No hay registros</td></tr>
+                    <tr><td colspan="9" class="text-center text-muted">No hay registros</td></tr>
                   <?php endif; ?>
                 </tbody>
               </table>
@@ -192,7 +264,16 @@ $result = $conn->query($sql);
   </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function confirmarEliminar(id, nombre) {
+  if (confirm('¿Eliminar "' + nombre + '"?')) {
+    window.location.href = 'procesar_complementario.php?accion=eliminar&id=' + id;
+  }
+}
+</script>
+
 </body>
 </html>
 <?php $conn->close(); ?>
