@@ -198,9 +198,20 @@ $result = $conn->query($sql);
                                             <td><?= htmlspecialchars($row['correo']) ?></td>
                                             <td class="text-center"><?= htmlspecialchars($row['celular']) ?></td>
                                             <td class="text-center">
-                                                <a href="editar_usuario.php?id=<?= urlencode($row['id']) ?>" class="btn btn-warning btn-sm">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                                               <button 
+                                                   type="button"
+                                                    class="btn btn-warning btn-sm btnEditarUsuario"
+                                                      data-id="<?= $row['id'] ?>"
+                                                         data-tipo_usuario="<?= htmlspecialchars($row['tipo_usuario']) ?>"
+                                                          data-tipo_documento="<?= htmlspecialchars($row['tipo_documento']) ?>"
+                                                            data-identificacion="<?= htmlspecialchars($row['identificacion']) ?>"
+                                                           data-nombre="<?= htmlspecialchars($row['nombre_completo']) ?>"
+                                                          data-correo="<?= htmlspecialchars($row['correo']) ?>"
+                                                          data-celular="<?= htmlspecialchars($row['celular']) ?>"
+                                                              >
+                                                          <i class="fas fa-edit"></i>
+                                                          </button>
+
                                                 <form method="POST" style="display: inline-block;" 
                                                       onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este usuario?');">
                                                     <input type="hidden" name="accion" value="eliminar">
@@ -346,6 +357,81 @@ $result = $conn->query($sql);
         </form>
     </div>
 </div>
+<!-- Modal Editar Usuario -->
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <form action="editar_usuario.php" method="POST" class="modal-content">
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title"><i class="fas fa-user-edit"></i> Editar Usuario</h5>
+        <button class="close text-white" type="button" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id" id="editId">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Tipo Usuario</label>
+              <select name="tipo_usuario" id="editTipoUsuario" class="form-control" required>
+                <option value="">Seleccione...</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Docente">Docente</option>
+                <option value="Estudiante">Estudiante</option>
+                <option value="Acudiente">Acudiente</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Tipo Documento</label>
+              <select name="tipo_documento" id="editTipoDocumento" class="form-control" required>
+                <option value="">Seleccione...</option>
+                <option value="CC">Cédula de Ciudadanía</option>
+                <option value="TI">Tarjeta de Identidad</option>
+                <option value="CE">Cédula de Extranjería</option>
+                <option value="RC">Registro Civil</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Identificación</label>
+              <input type="text" name="identificacion" id="editIdentificacion" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Celular</label>
+              <input type="text" name="celular" id="editCelular" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nombre Completo</label>
+          <input type="text" name="nombre_completo" id="editNombreCompleto" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input type="email" name="correo" id="editCorreo" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-warning" type="submit"><i class="fas fa-save"></i> Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <!-- Scripts -->
 <script src="vendor/jquery/jquery.min.js"></script>
@@ -355,6 +441,25 @@ $result = $conn->query($sql);
 <script src="vendor/datatables/jquery.dataTables.min.js"></script>
 <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 <script src="js/demo/datatables-demo.js"></script>
+<script>
+$(document).ready(function() {
+  $('.btnEditarUsuario').on('click', function() {
+    const usuario = $(this).data();
+
+    // Llenar los campos del formulario
+    $('#editId').val(usuario.id);
+    $('#editTipoUsuario').val(usuario.tipo_usuario);
+    $('#editTipoDocumento').val(usuario.tipo_documento);
+    $('#editIdentificacion').val(usuario.identificacion);
+    $('#editNombreCompleto').val(usuario.nombre);
+    $('#editCorreo').val(usuario.correo);
+    $('#editCelular').val(usuario.celular);
+
+    // Mostrar el modal
+    $('#modalEditarUsuario').modal('show');
+  });
+});
+</script>
 
 </body>
 </html>
