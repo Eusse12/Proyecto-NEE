@@ -1,136 +1,460 @@
-<?php
-include 'db.php';
-header('Content-Type: application/json');
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipos de Estudiantes - TRASPASEMOS</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="css/sb-admin-2.css" rel="stylesheet">
+</head>
+<body id="page-top">
 
-$accion = isset($_POST['accion']) ? $_POST['accion'] : '';
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <div class="sidebar-brand-icon">
+                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+            </div>
+        </a>
 
-switch ($accion) {
-    case 'listar':
-        listarTiposEstudiantes($conn);
-        break;
-    case 'agregar':
-        agregarTipoEstudiante($conn);
-        break;
-    case 'editar':
-        editarTipoEstudiante($conn);
-        break;
-    case 'eliminar':
-        eliminarTipoEstudiante($conn);
-        break;
-    default:
-        echo json_encode(['success' => false, 'message' => 'Acción no válida']);
-        break;
-}
+        <hr class="sidebar-divider my-0">
 
-$conn->close();
+        <li class="nav-item">
+            <a class="nav-link" href="index.html">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>TRASPASEMOS</span>
+            </a>
+        </li>
 
-function listarTiposEstudiantes($conn) {
-    $sql = "SELECT IdTipoEstudiante as id, Descripcion as descripcion FROM tipoestudiante ORDER BY IdTipoEstudiante ASC";
-    $result = $conn->query($sql);
-    
-    $tipos = [];
-    if ($result && $result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $tipos[] = $row;
+        <hr class="sidebar-divider">
+
+        <li class="nav-item">
+            <a class="nav-link" href="Usuarios.php">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Usuarios</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="charts.html">
+                <i class="fas fa-fw fa-chart-area"></i>
+                <span>Reportes</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Configuración</span>
+            </a>
+            <div id="collapseConfig" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="TipoDocumento.html">Tipo Documento</a>
+                    <a class="collapse-item" href="grado.php">Grado</a>
+                    <a class="collapse-item" href="sede.php">Sede</a>
+                    <a class="collapse-item" href="Grupo.php">Grupos</a>
+                    <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
+                    <a class="collapse-item" href="aspecto_academico.php">Aspectos Académicos</a>
+                    <a class="collapse-item" href="Tipo_usuario.html">Tipos de Usuarios</a>
+                    <a class="collapse-item active" href="Tipo_Estudiante.php">Tipos de Estudiantes</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+    </ul>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid mt-4">
+                
+                <!-- Alertas dinámicas -->
+                <div id="alertContainer"></div>
+                
+                <!-- Formulario Agregar/Editar -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3" id="cardHeaderForm" style="background-color: #1cc88a;">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-plus"></i>
+                            <span id="tituloForm">Agregar Nuevo Tipo de Estudiante</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <form id="formTipoEstudiante">
+                            <input type="hidden" id="accion" value="agregar">
+                            <input type="hidden" id="idOriginal" value="">
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label for="tipoEstudianteId">ID <span class="text-danger">*</span></label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="tipoEstudianteId" 
+                                           name="tipoEstudianteId"
+                                           placeholder="Ej: 1" 
+                                           min="1" 
+                                           required>
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="descripcionTipoEstudiante">Descripción <span class="text-danger">*</span></label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="descripcionTipoEstudiante" 
+                                           name="descripcionTipoEstudiante"
+                                           placeholder="Ej: Regular, Becado, Visitante" 
+                                           maxlength="100" 
+                                           required>
+                                </div>
+                                <div class="form-group col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-success btn-block" id="btnSubmit">
+                                        <i class="fas fa-plus"></i>
+                                        <span id="textoBoton">Agregar</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary ml-2" id="btnCancelar" style="display: none;">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabla de Tipos de Estudiantes -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3" style="background-color: #1fbeac;">
+                        <h6 class="m-0 font-weight-bold text-white text-center">Tabla - Tipos de Estudiantes Registrados</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="tablaTiposEstudiantes" width="100%" cellspacing="0">
+                                <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th width="10%">ID</th>
+                                        <th width="60%">Descripción</th>
+                                        <th width="30%" class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">
+                                            <i class="fas fa-spinner fa-spin"></i> Cargando datos...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="index.html" class="btn btn-secondary mt-3">
+                            <i class="fas fa-home"></i> Volver al Menú Principal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="sticky-footer bg-light">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; TRASPASEMOS 2025</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    // Cargar datos al iniciar
+    cargarTiposEstudiantes();
+
+    /**
+     * Mostrar alerta
+     */
+    function mostrarAlerta(tipo, mensaje) {
+        const alertHTML = `
+            <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+                ${mensaje}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+        $('#alertContainer').html(alertHTML);
+        
+        // Auto-ocultar después de 5 segundos
+        setTimeout(() => {
+            $('.alert').alert('close');
+        }, 5000);
+        
+        // Scroll hacia arriba para ver la alerta
+        $('html, body').animate({ scrollTop: 0 }, 300);
+    }
+
+    /**
+     * Cargar todos los tipos de estudiantes
+     */
+    function cargarTiposEstudiantes() {
+        $.ajax({
+            url: 'gestion_tipo_estudiante.php',
+            type: 'POST',
+            data: { accion: 'listar' },
+            dataType: 'json',
+            beforeSend: function() {
+                $('#tablaTiposEstudiantes tbody').html(`
+                    <tr>
+                        <td colspan="3" class="text-center">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando datos...
+                        </td>
+                    </tr>
+                `);
+            },
+            success: function(response){
+                if(response.success) {
+                    if(response.data && response.data.length > 0) {
+                        let html = '';
+                        response.data.forEach(function(tipo){
+                            html += `
+                                <tr>
+                                    <td>${escapeHtml(tipo.id)}</td>
+                                    <td>${escapeHtml(tipo.descripcion)}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-warning btn-sm btnEditar" 
+                                                data-id="${escapeHtml(tipo.id)}" 
+                                                data-descripcion="${escapeHtml(tipo.descripcion)}">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-danger btn-sm btnEliminar" 
+                                                data-id="${escapeHtml(tipo.id)}">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        $('#tablaTiposEstudiantes tbody').html(html);
+                    } else {
+                        $('#tablaTiposEstudiantes tbody').html(`
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">
+                                    <i class="fas fa-info-circle"></i> No hay tipos de estudiantes registrados
+                                </td>
+                            </tr>
+                        `);
+                    }
+                } else {
+                    mostrarAlerta('danger', '❌ ' + response.message);
+                    $('#tablaTiposEstudiantes tbody').html(`
+                        <tr>
+                            <td colspan="3" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle"></i> Error al cargar los datos
+                            </td>
+                        </tr>
+                    `);
+                }
+            },
+            error: function(xhr, status, error){
+                console.error('Error AJAX:', error);
+                console.error('Respuesta:', xhr.responseText);
+                mostrarAlerta('danger', '❌ Error al cargar los tipos de estudiantes. Por favor, intenta nuevamente.');
+                $('#tablaTiposEstudiantes tbody').html(`
+                    <tr>
+                        <td colspan="3" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i> Error de conexión
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    /**
+     * Enviar formulario (Agregar o Editar)
+     */
+    $('#formTipoEstudiante').submit(function(e){
+        e.preventDefault();
+        
+        const id = $('#tipoEstudianteId').val().trim();
+        const descripcion = $('#descripcionTipoEstudiante').val().trim();
+        const accion = $('#accion').val();
+        const idOriginal = $('#idOriginal').val();
+
+        // Validaciones
+        if(id === '' || parseInt(id) < 1){
+            mostrarAlerta('warning', '⚠ Por favor, ingresa un ID válido (mayor a 0).');
+            $('#tipoEstudianteId').focus();
+            return;
         }
-    }
-    
-    echo json_encode(['success' => true, 'data' => $tipos]);
-}
 
-function agregarTipoEstudiante($conn) {
-    $id = isset($_POST['tipoEstudianteId']) ? intval($_POST['tipoEstudianteId']) : 0;
-    $descripcion = isset($_POST['descripcionTipoEstudiante']) ? trim($_POST['descripcionTipoEstudiante']) : '';
-    
-    if ($id <= 0) {
-        echo json_encode(['success' => false, 'message' => 'El ID debe ser un número mayor a 0']);
-        return;
-    }
-    
-    if (empty($descripcion)) {
-        echo json_encode(['success' => false, 'message' => 'La descripción es obligatoria']);
-        return;
-    }
-    
-    // Verificar si el ID ya existe
-    $stmt_check = $conn->prepare("SELECT IdTipoEstudiante FROM tipoestudiante WHERE IdTipoEstudiante = ?");
-    $stmt_check->bind_param("i", $id);
-    $stmt_check->execute();
-    $stmt_check->store_result();
-    
-    if ($stmt_check->num_rows > 0) {
-        echo json_encode(['success' => false, 'message' => 'Ya existe un tipo de estudiante con ese ID']);
-        $stmt_check->close();
-        return;
-    }
-    $stmt_check->close();
-    
-    // Insertar nuevo tipo de estudiante
-    $stmt = $conn->prepare("INSERT INTO tipoestudiante (IdTipoEstudiante, Descripcion) VALUES (?, ?)");
-    $stmt->bind_param("is", $id, $descripcion);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => '✅ Tipo de estudiante agregado correctamente', 'id' => $id]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al agregar: ' . $conn->error]);
-    }
-    
-    $stmt->close();
-}
+        if(descripcion === ''){
+            mostrarAlerta('warning', '⚠ Por favor, ingresa una descripción.');
+            $('#descripcionTipoEstudiante').focus();
+            return;
+        }
 
-function editarTipoEstudiante($conn) {
-    $id = isset($_POST['tipoEstudianteId']) ? intval($_POST['tipoEstudianteId']) : 0;
-    $descripcion = isset($_POST['descripcionTipoEstudiante']) ? trim($_POST['descripcionTipoEstudiante']) : '';
-    
-    if ($id <= 0) {
-        echo json_encode(['success' => false, 'message' => 'ID no válido']);
-        return;
+        if(descripcion.length > 100){
+            mostrarAlerta('warning', '⚠ La descripción no puede exceder los 100 caracteres.');
+            $('#descripcionTipoEstudiante').focus();
+            return;
+        }
+
+        // Deshabilitar botón
+        $('#btnSubmit').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Procesando...');
+
+        $.ajax({
+            url: 'gestion_tipo_estudiante.php',
+            type: 'POST',
+            data: { 
+                accion: accion,
+                tipoEstudianteId: id,
+                descripcionTipoEstudiante: descripcion,
+                idOriginal: idOriginal
+            },
+            dataType: 'json',
+            success: function(response){
+                if(response.success) {
+                    mostrarAlerta('success', '✅ ' + response.message);
+                    resetearFormulario();
+                    cargarTiposEstudiantes();
+                } else {
+                    mostrarAlerta('danger', '❌ ' + response.message);
+                }
+            },
+            error: function(xhr, status, error){
+                console.error('Error AJAX:', error);
+                console.error('Respuesta:', xhr.responseText);
+                mostrarAlerta('danger', '❌ Error al procesar la solicitud. Por favor, intenta nuevamente.');
+            },
+            complete: function(){
+                $('#btnSubmit').prop('disabled', false);
+                actualizarBotonSubmit();
+            }
+        });
+    });
+
+    /**
+     * Editar tipo de estudiante
+     */
+    $(document).on('click', '.btnEditar', function(){
+        const id = $(this).data('id');
+        const descripcion = $(this).data('descripcion');
+        
+        // Llenar formulario
+        $('#tipoEstudianteId').val(id).prop('readonly', true);
+        $('#descripcionTipoEstudiante').val(descripcion);
+        $('#idOriginal').val(id);
+        $('#accion').val('editar');
+        
+        // Cambiar estilo del formulario
+        $('#cardHeaderForm').css('background-color', '#f6c23e');
+        $('#tituloForm').html('<i class="fas fa-edit"></i> Editar Tipo de Estudiante');
+        $('#btnSubmit').removeClass('btn-success').addClass('btn-warning');
+        $('#textoBoton').text('Actualizar');
+        $('#btnSubmit i').removeClass('fa-plus').addClass('fa-save');
+        $('#btnCancelar').show();
+        
+        // Scroll al formulario
+        $('html, body').animate({
+            scrollTop: $('#formTipoEstudiante').offset().top - 100
+        }, 500);
+    });
+
+    /**
+     * Eliminar tipo de estudiante
+     */
+    $(document).on('click', '.btnEliminar', function(){
+        const id = $(this).data('id');
+        
+        if(confirm('⚠️ ¿Estás seguro de que deseas eliminar este tipo de estudiante?\n\nEsta acción no se puede deshacer.')) {
+            $.ajax({
+                url: 'gestion_tipo_estudiante.php',
+                type: 'POST',
+                data: { 
+                    accion: 'eliminar',
+                    tipoEstudianteId: id
+                },
+                dataType: 'json',
+                success: function(response){
+                    if(response.success) {
+                        mostrarAlerta('success', '🗑️ ' + response.message);
+                        cargarTiposEstudiantes();
+                    } else {
+                        mostrarAlerta('danger', '❌ ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error('Error AJAX:', error);
+                    console.error('Respuesta:', xhr.responseText);
+                    mostrarAlerta('danger', '❌ Error al eliminar el tipo de estudiante. Por favor, intenta nuevamente.');
+                }
+            });
+        }
+    });
+
+    /**
+     * Cancelar edición
+     */
+    $('#btnCancelar').click(function(){
+        resetearFormulario();
+    });
+
+    /**
+     * Resetear formulario
+     */
+    function resetearFormulario() {
+        $('#formTipoEstudiante')[0].reset();
+        $('#tipoEstudianteId').prop('readonly', false);
+        $('#idOriginal').val('');
+        $('#accion').val('agregar');
+        
+        $('#cardHeaderForm').css('background-color', '#1cc88a');
+        $('#tituloForm').html('<i class="fas fa-plus"></i> Agregar Nuevo Tipo de Estudiante');
+        $('#btnSubmit').removeClass('btn-warning').addClass('btn-success');
+        $('#textoBoton').text('Agregar');
+        $('#btnSubmit i').removeClass('fa-save').addClass('fa-plus');
+        $('#btnCancelar').hide();
     }
-    
-    if (empty($descripcion)) {
-        echo json_encode(['success' => false, 'message' => 'La descripción es obligatoria']);
-        return;
-    }
-    
-    // Actualizar tipo de estudiante
-    $stmt = $conn->prepare("UPDATE tipoestudiante SET Descripcion = ? WHERE IdTipoEstudiante = ?");
-    $stmt->bind_param("si", $descripcion, $id);
-    
-    if ($stmt->execute()) {
-        if ($stmt->affected_rows > 0) {
-            echo json_encode(['success' => true, 'message' => '✅ Tipo de estudiante actualizado correctamente']);
+
+    /**
+     * Actualizar texto del botón según acción
+     */
+    function actualizarBotonSubmit() {
+        const accion = $('#accion').val();
+        if(accion === 'agregar') {
+            $('#btnSubmit').html('<i class="fas fa-plus"></i> <span id="textoBoton">Agregar</span>');
         } else {
-            echo json_encode(['success' => false, 'message' => 'No se encontró el tipo de estudiante o no hubo cambios']);
+            $('#btnSubmit').html('<i class="fas fa-save"></i> <span id="textoBoton">Actualizar</span>');
         }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al actualizar: ' . $conn->error]);
     }
-    
-    $stmt->close();
-}
 
-function eliminarTipoEstudiante($conn) {
-    $id = isset($_POST['tipoEstudianteId']) ? intval($_POST['tipoEstudianteId']) : 0;
-    
-    if ($id <= 0) {
-        echo json_encode(['success' => false, 'message' => 'ID no válido']);
-        return;
+    /**
+     * Función para escapar HTML
+     */
+    function escapeHtml(text) {
+        if(text === null || text === undefined) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
     }
-    
-    // Eliminar tipo de estudiante
-    $stmt = $conn->prepare("DELETE FROM tipoestudiante WHERE IdTipoEstudiante = ?");
-    $stmt->bind_param("i", $id);
-    
-    if ($stmt->execute()) {
-        if ($stmt->affected_rows > 0) {
-            echo json_encode(['success' => true, 'message' => '✅ Tipo de estudiante eliminado correctamente']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'No se encontró el tipo de estudiante']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al eliminar: ' . $conn->error]);
-    }
-    
-    $stmt->close();
-}
-?>
+});
+</script>
+
+</body>
+</html>

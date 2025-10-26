@@ -120,7 +120,7 @@ if (!$result) {
                     <a class="collapse-item" href="aspecto_complementario.php">Aspectos Complementarios</a>
                     <a class="collapse-item active" href="aspecto_academico.php">Aspectos Académicos</a>
                     <a class="collapse-item" href="Tipo_usuario.html">Tipos de Usuarios</a>
-                    <a class="collapse-item" href="Tipo_Estudiante.html">Tipos de Estudiantes</a>
+                    <a class="collapse-item" href="Tipo_Estudiante.php">Tipos de Estudiantes</a>
                 </div>
             </div>
         </li>
