@@ -221,13 +221,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="reportes.php">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Reportes</span>
-            </a>
-        </li>
-
         <hr class="sidebar-divider d-none d-md-block">
 
         <li class="nav-item">
