@@ -267,40 +267,6 @@ $result = $conn->query($sql);
                                 <div class="form-group col-md-6">
                                     <label>Departamento</label>
                                     <select name="id_departamento" class="form-control">
-                                        <option value="">Seleccione...</option>
-                                        <option value="">Amazonia</option>
-                                        <option value="">Antioquia</option>
-                                        <option value="">Arauca</option>
-                                        <option value="">Atlantico</option>
-                                        <option value="">Bolivar</option>
-                                        <option value="">Boyacá</option>
-                                        <option value="">Caldas</option>
-                                        <option value="">Caquetá</option>
-                                        <option value="">Casanare</option>
-                                        <option value="">Cauca</option>
-                                        <option value="">Cesar</option>
-                                        <option value="">Chocó</option>
-                                        <option value="">Córdoba</option>
-                                        <option value="">Cundinamarca</option>
-                                        <option value="">Guainía</option>
-                                        <option value="">Guviare</option>
-                                        <option value="">Huila</option>
-                                        <option value="">La Guajira</option>
-                                        <option value="">Magdalena</option>
-                                        <option value="">Meta</option>
-                                        <option value="">Nariño</option>
-                                        <option value="">Norte de Santander</option>
-                                        <option value="">Putamayo</option>
-                                        <option value="">Quindío</option>
-                                        <option value="">Risaralda</option>
-                                        <option value="">San Andrés y Provivencia</option>
-                                        <option value="">Santander</option>
-                                        <option value="">Sucre</option>
-                                        <option value="">Tolima</option>
-                                        <option value="">Valle del cauca</option>
-                                        <option value="">Vaupés</option>
-                                        <option value="">Vichada</option>
-
                                         <?php
                                         $deps = $conn->query("SELECT id, nombre FROM departamento");
                                         while ($d = $deps->fetch_assoc()) {
