@@ -15,14 +15,16 @@ $result = $conn->query($sql);
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aspectos Complementarios</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link href="css/sb-admin-2.css" rel="stylesheet">
 </head>
 <body id="page-top">
 
 <div id="wrapper">
+  <!-- Sidebar -->
   <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
         <div class="sidebar-brand-icon">
@@ -107,31 +109,38 @@ $result = $conn->query($sql);
     </li>
 
     <hr class="sidebar-divider d-none d-md-block">
-</ul>
-  <!-- Content -->
-  <div id="content-wrapper" class="d-flex flex-column">
-    <div id="content" class="p-4">
+  </ul>
 
-      <div class="container-fluid">
-        <div class="card shadow">
-          <div class="card-header bg-success text-white text-center">
-            <h4><i class="fas fa-user-check"></i> Registro de Aspectos Complementarios</h4>
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+      <div class="container-fluid mt-4">
+        
+        <?php if ($mensaje): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($mensaje) ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <?php endif; ?>
+
+        <!-- Formulario Agregar -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3" style="background-color: #1cc88a;">
+            <h6 class="m-0 font-weight-bold text-white">
+              <i class="fas fa-plus"></i> Agregar Nuevo Aspecto Complementario
+            </h6>
           </div>
           <div class="card-body">
-
-            <?php if ($mensaje): ?>
-              <div class="alert alert-success text-center"><?= htmlspecialchars($mensaje) ?></div>
-            <?php endif; ?>
-
-            <!-- FORMULARIO -->
             <form action="procesar_complementario.php" method="POST">
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label>Nombre del Aspecto Complementario</label>
+                  <label>Nombre del Aspecto Complementario <span class="text-danger">*</span></label>
                   <input type="text" name="nombre" class="form-control" required placeholder="Ej: Respeto, Puntualidad, Convivencia...">
                 </div>
                 <div class="form-group col-md-6">
-                  <label>Categoría</label>
+                  <label>Categoría <span class="text-danger">*</span></label>
                   <select name="categoria" class="form-control" required>
                     <option value="">Seleccione...</option>
                     <option value="Convivencia">Convivencia</option>
@@ -171,32 +180,32 @@ $result = $conn->query($sql);
                 <textarea name="observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales o recomendaciones..."></textarea>
               </div>
 
-              <div class="text-center mt-4">
-                <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Guardar</button>
-              </div>
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Agregar
+              </button>
             </form>
           </div>
         </div>
 
-        <!-- TABLA con botones -->
-        <div class="card shadow mt-4">
-          <div class="card-header bg-primary text-white text-center">
-            <h5><i class="fas fa-list"></i> Aspectos Complementarios Registrados</h5>
+        <!-- Tabla -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3" style="background-color: #1fbeac;">
+            <h6 class="m-0 font-weight-bold text-white text-center">Tabla - Aspectos Complementarios Registrados</h6>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-                <thead class="bg-info text-white">
+              <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="bg-primary text-white">
                   <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Grado</th>
-                    <th>Responsable</th>
-                    <th>Estado</th>
-                    <th>Descripción</th>
-                    <th>Observaciones</th>
-                    <th>Acciones</th>
+                    <th width="5%">ID</th>
+                    <th width="15%">Nombre</th>
+                    <th width="10%">Categoría</th>
+                    <th width="8%">Grado</th>
+                    <th width="12%">Responsable</th>
+                    <th width="8%">Estado</th>
+                    <th width="17%">Descripción</th>
+                    <th width="17%">Observaciones</th>
+                    <th width="8%" class="text-center">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -211,12 +220,12 @@ $result = $conn->query($sql);
                         <td><?= htmlspecialchars($fila['estado']) ?></td>
                         <td><?= htmlspecialchars($fila['descripcion']) ?></td>
                         <td><?= htmlspecialchars($fila['observaciones']) ?></td>
-                        <td class="text-nowrap">
+                        <td class="text-center text-nowrap">
                           <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal<?= $fila['id'] ?>">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-edit"></i> Editar
                           </button>
-                          <button class="btn btn-danger btn-sm ml-1" onclick="confirmarEliminar(<?= $fila['id'] ?>, '<?= htmlspecialchars($fila['nombre'], ENT_QUOTES) ?>')">
-                            <i class="fas fa-trash"></i>
+                          <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(<?= $fila['id'] ?>, '<?= htmlspecialchars($fila['nombre'], ENT_QUOTES) ?>')">
+                            <i class="fas fa-trash"></i> Eliminar
                           </button>
                         </td>
                       </tr>
@@ -285,24 +294,45 @@ $result = $conn->query($sql);
                       </div>
                     <?php endwhile; ?>
                   <?php else: ?>
-                    <tr><td colspan="9" class="text-center text-muted">No hay registros</td></tr>
+                    <tr>
+                      <td colspan="9" class="text-center text-muted">
+                        <i class="fas fa-info-circle"></i> No hay registros
+                      </td>
+                    </tr>
                   <?php endif; ?>
                 </tbody>
               </table>
             </div>
+            <a href="index.html" class="btn btn-secondary mt-3">
+              <i class="fas fa-home"></i> Volver al Menú Principal
+            </a>
           </div>
         </div>
 
       </div>
     </div>
+    
+    <footer class="sticky-footer bg-light">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>Copyright &copy; TRASPASEMOS 2025</span>
+        </div>
+      </div>
+    </footer>
   </div>
 </div>
 
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+</a>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
 <script>
 function confirmarEliminar(id, nombre) {
-  if (confirm('¿Eliminar "' + nombre + '"?')) {
+  if (confirm('⚠ ¿Estás seguro de eliminar "' + nombre + '"?')) {
     window.location.href = 'procesar_complementario.php?accion=eliminar&id=' + id;
   }
 }

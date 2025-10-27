@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // AGREGAR
     if ($accion === "agregar") {
         if ($nombre === "" || $descripcion === "" || $area === "" || $ponderacion <= 0) {
-            $mensaje = "⚠️ Todos los campos son obligatorios.";
+            $mensaje = "⚠ Todos los campos son obligatorios.";
             $tipo = "warning";
         } else {
             $stmt = $conn->prepare("INSERT INTO aspectos_academicos (nombre_aspecto, descripcion, area, ponderacion) VALUES (?, ?, ?, ?)");
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare("UPDATE aspectos_academicos SET nombre_aspecto=?, descripcion=?, area=?, ponderacion=? WHERE id=?");
         $stmt->bind_param("sssdi", $nombre, $descripcion, $area, $ponderacion, $id);
         if ($stmt->execute()) {
-            $mensaje = "✏️ Aspecto académico actualizado correctamente.";
+            $mensaje = "✏ Aspecto académico actualizado correctamente.";
             $tipo = "success";
         } else {
             $mensaje = "❌ Error al actualizar: " . $stmt->error;
@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare("DELETE FROM aspectos_academicos WHERE id = ?");
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
-            $mensaje = "🗑️ Registro eliminado correctamente.";
+            $mensaje = "🗑 Registro eliminado correctamente.";
             $tipo = "success";
         } else {
             $mensaje = "❌ Error al eliminar: " . $stmt->error;
@@ -93,7 +93,7 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aspectos Académicos</title>
+    <title>Gestión de Aspectos Académicos</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link href="css/sb-admin-2.css" rel="stylesheet">
@@ -102,131 +102,113 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
 
 <div id="wrapper">
     <!-- SIDEBAR -->
-    <!-- SIDEBAR -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon">
-            <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
-        </div>
-    </a>
-
-    <hr class="sidebar-divider my-0">
-
-    <li class="nav-item">
-        <a class="nav-link" href="index.html">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>TRASPASEMOS</span>
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <div class="sidebar-brand-icon">
+                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+            </div>
         </a>
-    </li>
 
-    <hr class="sidebar-divider">
+        <hr class="sidebar-divider my-0">
 
-    <li class="nav-item">
-        <a class="nav-link" href="Usuarios.php">
-            <i class="fas fa-fw fa-user"></i>
-            <span>Usuarios</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="index.html">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>TRASPASEMOS</span>
+            </a>
+        </li>
 
-    <hr class="sidebar-divider">
+        <hr class="sidebar-divider">
 
-    <li class="nav-item">
-        <a class="nav-link" href="TipoDocumento.html">
-            <i class="fas fa-fw fa-id-card"></i>
-            <span>Tipo Documento</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Usuarios.php">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Usuarios</span>
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="grado.php">
-            <i class="fas fa-fw fa-graduation-cap"></i>
-            <span>Grado</span>
-        </a>
-    </li>
+        <hr class="sidebar-divider">
 
-    <li class="nav-item">
-        <a class="nav-link" href="Sede.php">
-            <i class="fas fa-fw fa-building"></i>
-            <span>Sede</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="TipoDocumento.html">
+                <i class="fas fa-fw fa-id-card"></i>
+                <span>Tipo Documento</span>
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="Grupo.php">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Grupos</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="grado.php">
+                <i class="fas fa-fw fa-graduation-cap"></i>
+                <span>Grado</span>
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="aspecto_complementario.php">
-            <i class="fas fa-fw fa-puzzle-piece"></i>
-            <span>Aspectos Complementarios</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Sede.php">
+                <i class="fas fa-fw fa-building"></i>
+                <span>Sede</span>
+            </a>
+        </li>
 
-    <li class="nav-item active">
-        <a class="nav-link" href="aspecto_academico.php">
-            <i class="fas fa-fw fa-book"></i>
-            <span>Aspectos Académicos</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Grupo.php">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Grupos</span>
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="Tipo_usuario.php">
-            <i class="fas fa-fw fa-user-tag"></i>
-            <span>Tipos de Usuarios</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link" href="aspecto_complementario.php">
+                <i class="fas fa-fw fa-puzzle-piece"></i>
+                <span>Aspectos Complementarios</span>
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="Tipo_Estudiante.php">
-            <i class="fas fa-fw fa-user-graduate"></i>
-            <span>Tipos de Estudiantes</span>
-        </a>
-    </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="aspecto_academico.php">
+                <i class="fas fa-fw fa-book"></i>
+                <span>Aspectos Académicos</span>
+            </a>
+        </li>
 
-    <hr class="sidebar-divider d-none d-md-block">
-</ul>
+        <li class="nav-item">
+            <a class="nav-link" href="Tipo_usuario.php">
+                <i class="fas fa-fw fa-user-tag"></i>
+                <span>Tipos de Usuarios</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="Tipo_Estudiante.php">
+                <i class="fas fa-fw fa-user-graduate"></i>
+                <span>Tipos de Estudiantes</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider d-none d-md-block">
+    </ul>
 
     <!-- CONTENIDO -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            
-            <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                <!-- Sidebar Toggle (Topbar) -->
-                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                    <i class="fa fa-bars"></i>
-                </button>
-
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Usuario</span>
-                            <i class="fas fa-user-circle fa-2x"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- Contenido Principal -->
-            <div class="container-fluid">
+            <div class="container-fluid mt-4">
 
                 <?php if ($mensaje): ?>
-                    <div class="alert alert-<?= $tipo ?> alert-dismissible fade show">
+                    <div class="alert alert-<?= $tipo ?> alert-dismissible fade show" role="alert">
                         <?= $mensaje ?>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                 <?php endif; ?>
 
                 <!-- FORMULARIO -->
                 <div class="card shadow mb-4">
-                    <div class="card-header bg-<?= $editar ? 'warning' : 'success' ?> text-white">
-                        <h5 class="m-0 font-weight-bold text-center">
-                            <?= $editar ? '✏️ Editar Aspecto Académico' : '➕ Registrar Aspecto Académico' ?>
-                        </h5>
+                    <div class="card-header py-3" style="background-color: <?= $editar ? '#f6c23e' : '#1cc88a' ?>;">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-<?= $editar ? 'edit' : 'plus' ?>"></i>
+                            <?= $editar ? 'Editar Aspecto Académico' : 'Agregar Nuevo Aspecto Académico' ?>
+                        </h6>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="">
@@ -264,38 +246,36 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
                                 </div>
                             </div>
 
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-<?= $editar ? 'warning' : 'success' ?> btn-lg">
-                                    <i class="fas fa-<?= $editar ? 'save' : 'plus' ?>"></i>
-                                    <?= $editar ? 'Actualizar' : 'Guardar' ?>
-                                </button>
-                                <?php if ($editar): ?>
-                                    <a href="aspecto_academico.php" class="btn btn-secondary btn-lg">
-                                        <i class="fas fa-times"></i> Cancelar
-                                    </a>
-                                <?php endif; ?>
-                            </div>
+                            <button type="submit" class="btn btn-<?= $editar ? 'warning' : 'success' ?>">
+                                <i class="fas fa-<?= $editar ? 'save' : 'plus' ?>"></i>
+                                <?= $editar ? 'Actualizar' : 'Guardar' ?>
+                            </button>
+                            <?php if ($editar): ?>
+                                <a href="aspecto_academico.php" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            <?php endif; ?>
                         </form>
                     </div>
                 </div>
 
                 <!-- TABLA -->
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="m-0 font-weight-bold text-center">📋 Lista de Aspectos Académicos</h5>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3" style="background-color: #1fbeac;">
+                        <h6 class="m-0 font-weight-bold text-white text-center">Tabla - Aspectos Académicos Registrados</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover text-center">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Área</th>
-                                        <th>Ponderación</th>
-                                        <th>Descripción</th>
-                                        <th>Fecha</th>
-                                        <th>Acciones</th>
+                                        <th width="8%">ID</th>
+                                        <th width="20%">Nombre</th>
+                                        <th width="15%">Área</th>
+                                        <th width="10%">Ponderación</th>
+                                        <th width="27%">Descripción</th>
+                                        <th width="10%">Fecha</th>
+                                        <th width="10%" class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -308,63 +288,62 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
                                                 <td><?= htmlspecialchars($row['ponderacion']) ?>%</td>
                                                 <td><?= htmlspecialchars($row['descripcion']) ?></td>
                                                 <td><?= date("d/m/Y", strtotime($row['fecha_creacion'])) ?></td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a href="?editar=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
-                                                        <i class="fas fa-edit"></i>
+                                                        <i class="fas fa-edit"></i> Editar
                                                     </a>
                                                     <form method="POST" style="display:inline-block;" 
-                                                          onsubmit="return confirm('¿Está seguro de eliminar este registro?');">
+                                                          onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este registro?');">
                                                         <input type="hidden" name="accion" value="eliminar">
                                                         <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                         <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
-                                                            <i class="fas fa-trash"></i>
+                                                            <i class="fas fa-trash"></i> Eliminar
                                                         </button>
                                                     </form>
                                                 </td>
                                             </tr>
                                         <?php endwhile; ?>
                                     <?php else: ?>
-                                        <tr><td colspan="7" class="text-muted">No hay registros disponibles</td></tr>
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted">
+                                                <i class="fas fa-info-circle"></i> No hay aspectos académicos registrados
+                                            </td>
+                                        </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
+                        <a href="index.html" class="btn btn-secondary mt-3">
+                            <i class="fas fa-home"></i> Volver al Menú Principal
+                        </a>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <footer class="sticky-footer bg-white">
+        <!-- Footer -->
+        <footer class="sticky-footer bg-light">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>© TRASPASEMOS 2025</span>
+                    <span>Copyright &copy; TRASPASEMOS 2025</span>
                 </div>
             </div>
         </footer>
     </div>
 </div>
 
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    // Toggle del sidebar
-    $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
-        $("body").toggleClass("sidebar-toggled");
-        $(".sidebar").toggleClass("toggled");
-    });
-
-    // Prevenir que el sidebar se cierre al hacer scroll en dispositivos pequeños
-    $(window).resize(function() {
-        if ($(window).width() < 768) {
-            $('.sidebar .collapse').collapse('hide');
-        }
-    });
-</script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
 
 </body>
 </html>
 
-<?php $conn->close(); ?>
+<?php $conn->close(); ?>

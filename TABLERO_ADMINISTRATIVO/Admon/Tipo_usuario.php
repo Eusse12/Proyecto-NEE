@@ -170,14 +170,14 @@ $result = $conn->query($sql);
         </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item active">
         <a class="nav-link" href="Tipo_usuario.php">
             <i class="fas fa-fw fa-user-tag"></i>
             <span>Tipos de Usuarios</span>
         </a>
     </li>
 
-    <li class="nav-item active">
+    <li class="nav-item">
         <a class="nav-link" href="Tipo_Estudiante.php">
             <i class="fas fa-fw fa-user-graduate"></i>
             <span>Tipos de Estudiantes</span>
