@@ -101,92 +101,109 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
 <body id="page-top">
 
 <div id="wrapper">
-    <!-- SIDEBAR -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-            <div class="sidebar-brand-icon">
-                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
-            </div>
+    <!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- Logo -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon">
+            <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+        </div>
+    </a>
+
+    <hr class="sidebar-divider my-0">
+
+    <!-- Inicio -->
+    <li class="nav-item">
+        <a class="nav-link" href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
         </a>
+    </li>
 
-        <hr class="sidebar-divider my-0">
+    <hr class="sidebar-divider">
 
-        <li class="nav-item">
-            <a class="nav-link" href="index.html">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>TRASPASEMOS</span>
-            </a>
-        </li>
+    <!-- Usuarios -->
+    <li class="nav-item">
+        <a class="nav-link" href="Usuarios.php">
+            <i class="fas fa-users"></i>
+            <span>Usuarios</span>
+        </a>
+    </li>
 
-        <hr class="sidebar-divider">
+    <hr class="sidebar-divider">
 
-        <li class="nav-item">
-            <a class="nav-link" href="Usuarios.php">
-                <i class="fas fa-fw fa-user"></i>
-                <span>Usuarios</span>
-            </a>
-        </li>
+    <!-- Grado -->
+    <li class="nav-item">
+        <a class="nav-link" href="grado.php">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Grado</span>
+        </a>
+    </li>
 
-        <hr class="sidebar-divider">
+    <!-- Grupo -->
+    <li class="nav-item">
+        <a class="nav-link" href="Grupo.php">
+            <i class="fas fa-users-cog"></i>
+            <span>Grupos</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="TipoDocumento.html">
-                <i class="fas fa-fw fa-id-card"></i>
-                <span>Tipo Documento</span>
-            </a>
-        </li>
+    <!-- Sede -->
+    <li class="nav-item">
+        <a class="nav-link" href="Sede.php">
+            <i class="fas fa-school"></i>
+            <span>Sede</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="grado.php">
-                <i class="fas fa-fw fa-graduation-cap"></i>
-                <span>Grado</span>
-            </a>
-        </li>
+    <!-- Académico -->
+    <li class="nav-item active">
+        <a class="nav-link" href="aspecto_academico.php">
+            <i class="fas fa-book-open"></i>
+            <span>Aspectos Académicos</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="Sede.php">
-                <i class="fas fa-fw fa-building"></i>
-                <span>Sede</span>
-            </a>
-        </li>
+    <!-- Aspectos Complementarios -->
+    <li class="nav-item">
+        <a class="nav-link" href="aspecto_complementario.php">
+            <i class="fas fa-puzzle-piece"></i>
+            <span>Aspectos Complementarios</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="Grupo.php">
-                <i class="fas fa-fw fa-users"></i>
-                <span>Grupos</span>
-            </a>
-        </li>
+    <!-- Tipos de Estudiantes -->
+    <li class="nav-item ">
+        <a class="nav-link" href="tipo_estudiante.php">
+            <i class="fas fa-user-graduate"></i>
+            <span>Tipos de Estudiantes</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="aspecto_complementario.php">
-                <i class="fas fa-fw fa-puzzle-piece"></i>
-                <span>Aspectos Complementarios</span>
-            </a>
-        </li>
+    <hr class="sidebar-divider">
 
-        <li class="nav-item active">
-            <a class="nav-link" href="aspecto_academico.php">
-                <i class="fas fa-fw fa-book"></i>
-                <span>Aspectos Académicos</span>
-            </a>
-        </li>
+    <!-- Configuración -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
+           aria-expanded="true" aria-controls="collapseConfig">
+            <i class="fas fa-cogs"></i>
+            <span>Configuración</span>
+        </a>
+        <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Catálogos:</h6>
+                <a class="collapse-item" href="tipo_documento.php">
+                    <i class="fas fa-id-card"></i> Tipo de Documento
+                </a>
+                <a class="collapse-item" href="tipo_usuario.php">
+                    <i class="fas fa-user-shield"></i> Tipo de Usuario
+                </a>
+            </div>
+        </div>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="Tipo_usuario.php">
-                <i class="fas fa-fw fa-user-tag"></i>
-                <span>Tipos de Usuarios</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="Tipo_Estudiante.php">
-                <i class="fas fa-fw fa-user-graduate"></i>
-                <span>Tipos de Estudiantes</span>
-            </a>
-        </li>
-
-        <hr class="sidebar-divider d-none d-md-block">
-    </ul>
+    <hr class="sidebar-divider d-none d-md-block">
+</ul>
 
     <!-- CONTENIDO -->
     <div id="content-wrapper" class="d-flex flex-column">
@@ -289,18 +306,22 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
                                                 <td><?= htmlspecialchars($row['descripcion']) ?></td>
                                                 <td><?= date("d/m/Y", strtotime($row['fecha_creacion'])) ?></td>
                                                 <td class="text-center">
-                                                    <a href="?editar=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
-                                                        <i class="fas fa-edit"></i> Editar
-                                                    </a>
-                                                    <form method="POST" style="display:inline-block;" 
-                                                          onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este registro?');">
-                                                        <input type="hidden" name="accion" value="eliminar">
-                                                        <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
-                                                            <i class="fas fa-trash"></i> Eliminar
-                                                        </button>
-                                                    </form>
-                                                </td>
+                                            <a href="?editar=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                             </a>
+                                            <form method="POST" style="display:inline-block;" 
+                                             onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este registro?');">
+                                            <input type="hidden" name="accion" value="eliminar">
+                                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+        
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
+            
+                                            <i class="fas fa-trash"></i>
+        
+                                        </button>
+    
+                                    </form>
+</td>
                                             </tr>
                                         <?php endwhile; ?>
                                     <?php else: ?>
