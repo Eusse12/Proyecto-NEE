@@ -1,193 +1,98 @@
 <?php
-/**
- * Gestión de Tipos de Usuarios - Archivo Unificado
- * Maneja tanto la vista como las operaciones CRUD
- */
-
-// Configuración de errores (comentar en producción)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Configuración de la base de datos
+// =========================================
+// CONFIGURACIÓN DE CONEXIÓN
+// =========================================
 $host = "localhost";
 $user = "root";
 $pass = "";
-$database = "traspasemos";
+$dbname = "traspasemos";
 
-// Si es una petición AJAX, procesar y devolver JSON
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
-    header('Content-Type: application/json; charset=utf-8');
-    
-    // Conectar a la base de datos
-    $conn = new mysqli($host, $user, $pass, $database);
-    if ($conn->connect_error) {
-        echo json_encode(["success" => false, "message" => "Error de conexión: " . $conn->connect_error]);
-        exit;
-    }
-    $conn->set_charset("utf8mb4");
-    
-    // Función para limpiar datos
-    function limpiarDato($dato) {
-        return trim(htmlspecialchars($dato, ENT_QUOTES, 'UTF-8'));
-    }
-    
-    // Función para enviar respuestas JSON
-    function enviarRespuesta($success, $message, $data = null) {
-        $response = ['success' => $success, 'message' => $message];
-        if ($data !== null) $response['data'] = $data;
-        echo json_encode($response);
-    }
-    
-    $accion = limpiarDato($_POST['accion']);
-    
-    // Procesar según la acción
-    switch ($accion) {
-        case 'listar':
-            $sql = "SELECT IdTipoUsuario as id, Descripcion as descripcion FROM tipousuario ORDER BY IdTipoUsuario ASC";
-            $result = $conn->query($sql);
-            
-            $tipos = [];
-            if ($result && $result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    $tipos[] = $row;
-                }
-            }
-            enviarRespuesta(true, "Tipos de usuarios cargados correctamente.", $tipos);
-            break;
-        
-        case 'agregar':
-            $id = isset($_POST['tipoUsuarioId']) ? intval($_POST['tipoUsuarioId']) : 0;
-            $descripcion = isset($_POST['descripcionTipoUsuario']) ? limpiarDato($_POST['descripcionTipoUsuario']) : '';
-            
-            if ($id <= 0) {
-                enviarRespuesta(false, 'El ID debe ser un número mayor a 0');
-                break;
-            }
-            
-            if (empty($descripcion)) {
-                enviarRespuesta(false, 'La descripción es obligatoria');
-                break;
-            }
-            
-            if (strlen($descripcion) > 100) {
-                enviarRespuesta(false, 'La descripción no puede exceder los 100 caracteres');
-                break;
-            }
-            
-            // Verificar si el ID ya existe
-            $stmt_check = $conn->prepare("SELECT IdTipoUsuario FROM tipousuario WHERE IdTipoUsuario = ?");
-            $stmt_check->bind_param("i", $id);
-            $stmt_check->execute();
-            $stmt_check->store_result();
-            
-            if ($stmt_check->num_rows > 0) {
-                enviarRespuesta(false, 'Ya existe un tipo de usuario con ese ID');
-                $stmt_check->close();
-                break;
-            }
-            $stmt_check->close();
-            
-            // Insertar
-            $stmt = $conn->prepare("INSERT INTO tipousuario (IdTipoUsuario, Descripcion) VALUES (?, ?)");
-            $stmt->bind_param("is", $id, $descripcion);
-            
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) {
+    die("❌ Error de conexión: " . $conn->connect_error);
+}
+$conn->set_charset("utf8mb4");
+
+$mensaje = "";
+$tipo = "";
+
+// =========================================
+// PROCESAR FORMULARIO (INSERTAR / ELIMINAR)
+// =========================================
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $accion = $_POST["accion"] ?? "";
+    $id = intval($_POST["id"] ?? 0);
+
+    // Datos comunes
+    $nombre = trim($_POST["nombre_completo"] ?? "");
+    $fecha = $_POST["fecha_nacimiento"] ?? null;
+    $id_grupo = intval($_POST["id_grupo"] ?? 0);
+    $direccion = trim($_POST["direccion"] ?? "");
+    $barrio = trim($_POST["barrio"] ?? "");
+    $id_ciudad = intval($_POST["id_ciudad"] ?? 0);
+    $id_departamento = intval($_POST["id_departamento"] ?? 0);
+    $eps = trim($_POST["eps"] ?? "");
+    $id_acudiente = !empty($_POST['id_acudiente']) ? $_POST['id_acudiente'] : null;
+
+
+    // AGREGAR NUEVO
+    if ($accion === "agregar") {
+        $stmt = $conn->prepare("INSERT INTO datosestud 
+            (id_usuario, fecha_nacimiento, id_grupo, direccion, barrio, id_ciudad, id_departamento, eps, id_acudiente)
+            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if ($stmt) {
+            $stmt->bind_param("sisssisi", $fecha, $id_grupo, $direccion, $barrio, $id_ciudad, $id_departamento, $eps, $id_acudiente);
             if ($stmt->execute()) {
-                enviarRespuesta(true, 'Tipo de usuario agregado correctamente', ['id' => $id]);
+                $mensaje = "✅ Estudiante registrado correctamente.";
+                $tipo = "success";
             } else {
-                enviarRespuesta(false, 'Error al agregar: ' . $conn->error);
+                $mensaje = "❌ Error al guardar: " . $stmt->error;
+                $tipo = "danger";
             }
             $stmt->close();
-            break;
-        
-        case 'editar':
-            $id = isset($_POST['tipoUsuarioId']) ? intval($_POST['tipoUsuarioId']) : 0;
-            $descripcion = isset($_POST['descripcionTipoUsuario']) ? limpiarDato($_POST['descripcionTipoUsuario']) : '';
-            
-            if ($id <= 0) {
-                enviarRespuesta(false, 'ID no válido');
-                break;
-            }
-            
-            if (empty($descripcion)) {
-                enviarRespuesta(false, 'La descripción es obligatoria');
-                break;
-            }
-            
-            if (strlen($descripcion) > 100) {
-                enviarRespuesta(false, 'La descripción no puede exceder los 100 caracteres');
-                break;
-            }
-            
-            // Actualizar
-            $stmt = $conn->prepare("UPDATE tipousuario SET Descripcion = ? WHERE IdTipoUsuario = ?");
-            $stmt->bind_param("si", $descripcion, $id);
-            
-            if ($stmt->execute()) {
-                if ($stmt->affected_rows > 0) {
-                    enviarRespuesta(true, 'Tipo de usuario actualizado correctamente');
-                } else {
-                    enviarRespuesta(true, 'No se realizaron cambios (los datos son iguales)');
-                }
-            } else {
-                enviarRespuesta(false, 'Error al actualizar: ' . $conn->error);
-            }
-            $stmt->close();
-            break;
-        
-        case 'eliminar':
-            $id = isset($_POST['tipoUsuarioId']) ? intval($_POST['tipoUsuarioId']) : 0;
-            
-            if ($id <= 0) {
-                enviarRespuesta(false, 'ID no válido');
-                break;
-            }
-            
-            // Verificar si hay usuarios asociados
-            $stmt_check = $conn->prepare("SELECT COUNT(*) as total FROM usuarios WHERE id_tipo_usuario = ?");
-            $stmt_check->bind_param("i", $id);
-            $stmt_check->execute();
-            $result_check = $stmt_check->get_result();
-            $row_check = $result_check->fetch_assoc();
-            $stmt_check->close();
-            
-            if ($row_check['total'] > 0) {
-                enviarRespuesta(false, 'No se puede eliminar porque hay ' . $row_check['total'] . ' usuario(s) asociado(s) a este tipo');
-                break;
-            }
-            
-            // Eliminar
-            $stmt = $conn->prepare("DELETE FROM tipousuario WHERE IdTipoUsuario = ?");
+        }
+    }
+
+    // ELIMINAR
+    elseif ($accion === "eliminar" && $id > 0) {
+        $stmt = $conn->prepare("DELETE FROM datosestud WHERE id = ?");
+        if ($stmt) {
             $stmt->bind_param("i", $id);
-            
             if ($stmt->execute()) {
-                if ($stmt->affected_rows > 0) {
-                    enviarRespuesta(true, 'Tipo de usuario eliminado correctamente');
-                } else {
-                    enviarRespuesta(false, 'No se encontró el tipo de usuario');
-                }
+                $mensaje = "🗑️ Registro eliminado correctamente.";
+                $tipo = "success";
             } else {
-                enviarRespuesta(false, 'Error al eliminar: ' . $conn->error);
+                $mensaje = "❌ Error al eliminar: " . $stmt->error;
+                $tipo = "danger";
             }
             $stmt->close();
-            break;
-        
-        default:
-            enviarRespuesta(false, 'Acción no válida');
-            break;
+        }
     }
-    
-    $conn->close();
-    exit;
 }
 
-// Si no es AJAX, mostrar la interfaz HTML
+// =========================================
+// CONSULTA DE ESTUDIANTES
+// =========================================
+$sql = "SELECT d.*, 
+            g.descripcion AS grupo, 
+            a.nombre_completo AS acudiente,
+            c.nombre AS ciudad,
+            dept.nombre AS departamento
+        FROM datosestud d
+        LEFT JOIN grupo g ON d.id_grupo = g.id
+        LEFT JOIN acudiente a ON d.id_acudiente = a.id
+        LEFT JOIN ciudad c ON d.id_ciudad = c.id
+        LEFT JOIN departamento dept ON d.id_departamento = dept.id
+        ORDER BY d.id DESC";
+
+$result = $conn->query($sql);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tipos de Usuarios - TRASPASEMOS</title>
+    <title>Registro de Estudiantes</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link href="css/sb-admin-2.css" rel="stylesheet">
@@ -195,8 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 <body id="page-top">
 
 <div id="wrapper">
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- SIDEBAR -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
         <div class="sidebar-brand-icon">
             <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
@@ -265,14 +170,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         </a>
     </li>
 
-    <li class="nav-item active">
+    <li class="nav-item">
         <a class="nav-link" href="Tipo_usuario.php">
             <i class="fas fa-fw fa-user-tag"></i>
             <span>Tipos de Usuarios</span>
         </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item active">
         <a class="nav-link" href="Tipo_Estudiante.php">
             <i class="fas fa-fw fa-user-graduate"></i>
             <span>Tipos de Estudiantes</span>
@@ -282,83 +187,159 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     <hr class="sidebar-divider d-none d-md-block">
 </ul>
 
+
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <div class="container-fluid mt-4">
                 
-                <!-- Alertas dinámicas -->
-                <div id="alertContainer"></div>
-                
-                <!-- Formulario Agregar/Editar -->
+                <?php if ($mensaje): ?>
+                <div class="alert alert-<?= $tipo ?> alert-dismissible fade show" role="alert">
+                    <?= $mensaje ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <?php endif; ?>
+
+                <!-- Formulario Agregar -->
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3" id="cardHeaderForm" style="background-color: #1cc88a;">
+                    <div class="card-header py-3" style="background-color: #1cc88a;">
                         <h6 class="m-0 font-weight-bold text-white">
-                            <i class="fas fa-plus"></i>
-                            <span id="tituloForm">Agregar Nuevo Tipo de Usuario</span>
+                            <i class="fas fa-plus"></i> Agregar Nuevo Estudiante
                         </h6>
                     </div>
                     <div class="card-body">
-                        <form id="formTipoUsuario">
-                            <input type="hidden" id="accion" value="agregar">
-                            <input type="hidden" id="idOriginal" value="">
+                        <form method="POST">
+                            <input type="hidden" name="accion" value="agregar">
                             
                             <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Nombre completo <span class="text-danger">*</span></label>
+                                    <input type="text" name="nombre_completo" class="form-control" placeholder="Nombre completo del estudiante" required>
+                                </div>
                                 <div class="form-group col-md-3">
-                                    <label for="tipoUsuarioId">ID <span class="text-danger">*</span></label>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           id="tipoUsuarioId" 
-                                           name="tipoUsuarioId"
-                                           placeholder="Ej: 1" 
-                                           min="1" 
-                                           required>
+                                    <label>Fecha de nacimiento</label>
+                                    <input type="date" name="fecha_nacimiento" class="form-control">
                                 </div>
-                                <div class="form-group col-md-5">
-                                    <label for="descripcionTipoUsuario">Descripción <span class="text-danger">*</span></label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="descripcionTipoUsuario" 
-                                           name="descripcionTipoUsuario"
-                                           placeholder="Ej: Administrador, Docente, Coordinador" 
-                                           maxlength="100" 
-                                           required>
-                                </div>
-                                <div class="form-group col-md-4 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-success btn-block" id="btnSubmit">
-                                        <i class="fas fa-plus"></i>
-                                        <span id="textoBoton">Agregar</span>
-                                    </button>
-                                    <button type="button" class="btn btn-secondary ml-2" id="btnCancelar" style="display: none;">
-                                        <i class="fas fa-times"></i> Cancelar
-                                    </button>
+                                <div class="form-group col-md-3">
+                                    <label>Grupo</label>
+                                    <select name="id_grupo" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                        <?php
+                                        $grupos = $conn->query("SELECT id, descripcion FROM grupo");
+                                        while ($g = $grupos->fetch_assoc()) {
+                                            echo "<option value='{$g['id']}'>{$g['descripcion']}</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Dirección</label>
+                                    <input type="text" name="direccion" class="form-control" placeholder="Dirección de residencia">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Barrio</label>
+                                    <input type="text" name="barrio" class="form-control" placeholder="Barrio">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>EPS</label>
+                                    <input type="text" name="eps" class="form-control" placeholder="Nombre de la EPS">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Ciudad</label>
+                                    <select name="id_ciudad" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                        <?php
+                                        $ciudades = $conn->query("SELECT id, nombre FROM ciudad");
+                                        while ($c = $ciudades->fetch_assoc()) {
+                                            echo "<option value='{$c['id']}'>{$c['nombre']}</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Departamento</label>
+                                    <select name="id_departamento" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                        <?php
+                                        $deps = $conn->query("SELECT id, nombre FROM departamento");
+                                        while ($d = $deps->fetch_assoc()) {
+                                            echo "<option value='{$d['id']}'>{$d['nombre']}</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-success" type="submit">
+                                <i class="fas fa-save"></i> Agregar
+                            </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Tabla de Tipos de Usuarios -->
+                <!-- Tabla de estudiantes -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3" style="background-color: #1fbeac;">
-                        <h6 class="m-0 font-weight-bold text-white text-center">Tabla - Tipos de Usuarios Registrados</h6>
+                        <h6 class="m-0 font-weight-bold text-white text-center">Tabla - Estudiantes Registrados</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover" id="tablaTiposUsuarios" width="100%" cellspacing="0">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th width="10%">ID</th>
-                                        <th width="60%">Descripción</th>
-                                        <th width="30%" class="text-center">Acciones</th>
+                                        <th width="5%">ID</th>
+                                        <th width="15%">Dirección</th>
+                                        <th width="10%">Barrio</th>
+                                        <th width="10%">Ciudad</th>
+                                        <th width="10%">Departamento</th>
+                                        <th width="10%">Grupo</th>
+                                        <th width="10%">EPS</th>
+                                        <th width="15%">Acudiente</th>
+                                        <th width="15%" class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td colspan="3" class="text-center">
-                                            <i class="fas fa-spinner fa-spin"></i> Cargando datos...
-                                        </td>
-                                    </tr>
+                                    <?php if ($result->num_rows > 0): ?>
+                                        <?php while ($row = $result->fetch_assoc()): ?>
+                                        <tr>
+                                            <td><?= $row["id"] ?></td>
+                                            <td><?= htmlspecialchars($row["direccion"]) ?></td>
+                                            <td><?= htmlspecialchars($row["barrio"]) ?></td>
+                                            <td><?= htmlspecialchars($row["ciudad"]) ?></td>
+                                            <td><?= htmlspecialchars($row["departamento"]) ?></td>
+                                            <td><?= htmlspecialchars($row["grupo"]) ?></td>
+                                            <td><?= htmlspecialchars($row["eps"]) ?></td>
+                                            <td><?= htmlspecialchars($row["acudiente"]) ?></td>
+                                            <td class="text-center text-nowrap">
+                                                <a href="?editar=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                                <form method="POST" style="display: inline-block;" 
+                                                      onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este registro?');">
+                                                    <input type="hidden" name="accion" value="eliminar">
+                                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="9" class="text-center text-muted">
+                                                <i class="fas fa-info-circle"></i> No hay estudiantes registrados
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -389,266 +370,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="js/sb-admin-2.min.js"></script>
 
-<script>
-$(document).ready(function(){
-    // Cargar datos al iniciar
-    cargarTiposUsuarios();
-
-    /**
-     * Mostrar alerta
-     */
-    function mostrarAlerta(tipo, mensaje) {
-        const alertHTML = `
-            <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-                ${mensaje}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        `;
-        $('#alertContainer').html(alertHTML);
-        
-        // Auto-ocultar después de 5 segundos
-        setTimeout(() => {
-            $('.alert').alert('close');
-        }, 5000);
-        
-        // Scroll hacia arriba
-        $('html, body').animate({ scrollTop: 0 }, 300);
-    }
-
-    /**
-     * Cargar todos los tipos de usuarios
-     */
-    function cargarTiposUsuarios() {
-        $.ajax({
-            url: 'Tipo_usuario.php',
-            type: 'POST',
-            data: { accion: 'listar' },
-            dataType: 'json',
-            beforeSend: function() {
-                $('#tablaTiposUsuarios tbody').html(`
-                    <tr>
-                        <td colspan="3" class="text-center">
-                            <i class="fas fa-spinner fa-spin"></i> Cargando datos...
-                        </td>
-                    </tr>
-                `);
-            },
-            success: function(response){
-                if(response.success) {
-                    if(response.data && response.data.length > 0) {
-                        let html = '';
-                        response.data.forEach(function(tipo){
-                            html += `
-                                <tr>
-                                    <td>${escapeHtml(tipo.id)}</td>
-                                    <td>${escapeHtml(tipo.descripcion)}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-warning btn-sm btnEditar" 
-                                                data-id="${escapeHtml(tipo.id)}" 
-                                                data-descripcion="${escapeHtml(tipo.descripcion)}">
-                                            <i class="fas fa-edit"></i> Editar
-                                        </button>
-                                        <button class="btn btn-danger btn-sm btnEliminar" 
-                                                data-id="${escapeHtml(tipo.id)}">
-                                            <i class="fas fa-trash"></i> Eliminar
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                        $('#tablaTiposUsuarios tbody').html(html);
-                    } else {
-                        $('#tablaTiposUsuarios tbody').html(`
-                            <tr>
-                                <td colspan="3" class="text-center text-muted">
-                                    <i class="fas fa-info-circle"></i> No hay tipos de usuarios registrados
-                                </td>
-                            </tr>
-                        `);
-                    }
-                } else {
-                    mostrarAlerta('danger', '❌ ' + response.message);
-                }
-            },
-            error: function(xhr, status, error){
-                console.error('Error AJAX:', error);
-                console.error('Respuesta:', xhr.responseText);
-                mostrarAlerta('danger', '❌ Error al cargar los tipos de usuarios.');
-            }
-        });
-    }
-
-    /**
-     * Enviar formulario
-     */
-    $('#formTipoUsuario').submit(function(e){
-        e.preventDefault();
-        
-        const id = $('#tipoUsuarioId').val().trim();
-        const descripcion = $('#descripcionTipoUsuario').val().trim();
-        const accion = $('#accion').val();
-
-        // Validaciones
-        if(id === '' || parseInt(id) < 1){
-            mostrarAlerta('warning', '⚠ Por favor, ingresa un ID válido (mayor a 0).');
-            $('#tipoUsuarioId').focus();
-            return;
-        }
-
-        if(descripcion === ''){
-            mostrarAlerta('warning', '⚠ Por favor, ingresa una descripción.');
-            $('#descripcionTipoUsuario').focus();
-            return;
-        }
-
-        if(descripcion.length > 100){
-            mostrarAlerta('warning', '⚠ La descripción no puede exceder los 100 caracteres.');
-            $('#descripcionTipoUsuario').focus();
-            return;
-        }
-
-        // Deshabilitar botón
-        $('#btnSubmit').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Procesando...');
-
-        $.ajax({
-            url: 'Tipo_usuario.php',
-            type: 'POST',
-            data: { 
-                accion: accion,
-                tipoUsuarioId: id,
-                descripcionTipoUsuario: descripcion
-            },
-            dataType: 'json',
-            success: function(response){
-                if(response.success) {
-                    mostrarAlerta('success', '✅ ' + response.message);
-                    resetearFormulario();
-                    cargarTiposUsuarios();
-                } else {
-                    mostrarAlerta('danger', '❌ ' + response.message);
-                }
-            },
-            error: function(xhr, status, error){
-                console.error('Error AJAX:', error);
-                console.error('Respuesta:', xhr.responseText);
-                mostrarAlerta('danger', '❌ Error al procesar la solicitud.');
-            },
-            complete: function(){
-                $('#btnSubmit').prop('disabled', false);
-                actualizarBotonSubmit();
-            }
-        });
-    });
-
-    /**
-     * Editar tipo de usuario
-     */
-    $(document).on('click', '.btnEditar', function(){
-        const id = $(this).data('id');
-        const descripcion = $(this).data('descripcion');
-        
-        $('#tipoUsuarioId').val(id).prop('readonly', true);
-        $('#descripcionTipoUsuario').val(descripcion);
-        $('#idOriginal').val(id);
-        $('#accion').val('editar');
-        
-        $('#cardHeaderForm').css('background-color', '#f6c23e');
-        $('#tituloForm').html('<i class="fas fa-edit"></i> Editar Tipo de Usuario');
-        $('#btnSubmit').removeClass('btn-success').addClass('btn-warning');
-        $('#textoBoton').text('Actualizar');
-        $('#btnSubmit i').removeClass('fa-plus').addClass('fa-save');
-        $('#btnCancelar').show();
-        
-        $('html, body').animate({
-            scrollTop: $('#formTipoUsuario').offset().top - 100
-        }, 500);
-    });
-
-    /**
-     * Eliminar tipo de usuario
-     */
-    $(document).on('click', '.btnEliminar', function(){
-        const id = $(this).data('id');
-        
-        if(confirm('⚠️ ¿Estás seguro de que deseas eliminar este tipo de usuario?\n\nEsta acción no se puede deshacer.')) {
-            $.ajax({
-                url: 'Tipo_usuario.php',
-                type: 'POST',
-                data: { 
-                    accion: 'eliminar',
-                    tipoUsuarioId: id
-                },
-                dataType: 'json',
-                success: function(response){
-                    if(response.success) {
-                        mostrarAlerta('success', '🗑️ ' + response.message);
-                        cargarTiposUsuarios();
-                    } else {
-                        mostrarAlerta('danger', '❌ ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error){
-                    console.error('Error AJAX:', error);
-                    mostrarAlerta('danger', '❌ Error al eliminar el tipo de usuario.');
-                }
-            });
-        }
-    });
-
-    /**
-     * Cancelar edición
-     */
-    $('#btnCancelar').click(function(){
-        resetearFormulario();
-    });
-
-    /**
-     * Resetear formulario
-     */
-    function resetearFormulario() {
-        $('#formTipoUsuario')[0].reset();
-        $('#tipoUsuarioId').prop('readonly', false);
-        $('#idOriginal').val('');
-        $('#accion').val('agregar');
-        
-        $('#cardHeaderForm').css('background-color', '#1cc88a');
-        $('#tituloForm').html('<i class="fas fa-plus"></i> Agregar Nuevo Tipo de Usuario');
-        $('#btnSubmit').removeClass('btn-warning').addClass('btn-success');
-        $('#textoBoton').text('Agregar');
-        $('#btnSubmit i').removeClass('fa-save').addClass('fa-plus');
-        $('#btnCancelar').hide();
-    }
-
-    /**
-     * Actualizar texto del botón
-     */
-    function actualizarBotonSubmit() {
-        const accion = $('#accion').val();
-        if(accion === 'agregar') {
-            $('#btnSubmit').html('<i class="fas fa-plus"></i> <span id="textoBoton">Agregar</span>');
-        } else {
-            $('#btnSubmit').html('<i class="fas fa-save"></i> <span id="textoBoton">Actualizar</span>');
-        }
-    }
-
-    /**
-     * Escapar HTML
-     */
-    function escapeHtml(text) {
-        if(text === null || text === undefined) return '';
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
-    }
-});
-</script>
-
 </body>
 </html>
+<?php $conn->close(); ?>
