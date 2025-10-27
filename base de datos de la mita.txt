@@ -122,7 +122,7 @@ CREATE TABLE acudiente (
 -- ====================================================
 CREATE TABLE datosestud (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_completo VARCHAR(100) NOT NULL,
+    id_usuario INT NOT NULL,
     fecha_nacimiento DATE,
     id_grupo INT NULL,
     direccion VARCHAR(150),
@@ -130,9 +130,8 @@ CREATE TABLE datosestud (
     id_ciudad INT NULL,
     id_departamento INT NULL,
     eps VARCHAR(100),
-    discapacidad VARCHAR(150),
-    areas_dificultad VARCHAR(255),
     id_acudiente INT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_grupo) REFERENCES grupo(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE
     -- Si existen tablas ciudad y departamento, puedes agregar:
