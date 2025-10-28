@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (password_verify($clave, $usuario['clave'])) {
             $_SESSION['usuario'] = $usuario['nombre_completo'];
             // ✅ Redirigir al index
-            header("Location: index.html");
+            header("Location: index.php?usuario=1");
             exit;
         } else {
             $mensaje = "❌ Contraseña incorrecta.";
@@ -76,9 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
               <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
             </form>
 
-            <div class="text-center mt-3">
-              <a href="register.php">¿No tienes cuenta? Regístrate</a>
-            </div>
+            
           </div>
         </div>
       </div>
