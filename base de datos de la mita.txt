@@ -34,6 +34,117 @@ CREATE TABLE contacto (
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ===========================================================
+-- 🌎 TABLAS DE LOCALIZACIÓN (CIUDAD / DEPARTAMENTO)
+-- ===========================================================
+CREATE TABLE departamento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE ciudad (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    id_departamento INT,
+    FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- ===========================================================
+-- 🏫 TABLA GRADO
+-- ===========================================================
+CREATE TABLE grado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+-- Ejemplo de grados
+INSERT INTO grado (nombre) VALUES
+('Grado 6'), ('Grado 7'), ('Grado 8'), ('Grado 9'), ('Grado 10'), ('Grado 11');
+
+-- ===========================================================
+-- 🏢 TABLA SEDE (por si una institución tiene varias sedes)
+-- ===========================================================
+CREATE TABLE sede (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(150)
+);
+
+-- ===========================================================
+-- 🕒 TABLA JORNADA (mañana, tarde, noche)
+-- ===========================================================
+CREATE TABLE jornada (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+INSERT INTO jornada (nombre) VALUES ('Mañana'), ('Tarde'), ('Noche');
+
+-- ===========================================================
+-- 👩‍🏫 TABLA GRUPO
+-- ===========================================================
+CREATE TABLE grupo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(100) NOT NULL,
+    id_sede INT,
+    id_jornada INT,
+    director_grupo VARCHAR(100),
+    id_grado INT,
+    FOREIGN KEY (id_sede) REFERENCES sede(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_jornada) REFERENCES jornada(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_grado) REFERENCES grado(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- ===========================================================
+-- 👨‍👧 TABLA ACUDIENTE
+-- ===========================================================
+CREATE TABLE acudiente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    parentesco VARCHAR(50),
+    telefono VARCHAR(20),
+    correo VARCHAR(100)
+);
+
+-- ===========================================================
+-- 🧒 TABLA DATOS DEL ESTUDIANTE (CORREGIDA)
+-- ===========================================================
+DROP TABLE IF EXISTS datosestud;
+
+CREATE TABLE datosestud (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+   
+    nombre_completo VARCHAR(150) NOT NULL,
+    tipo_documento VARCHAR(50),
+    numero_documento VARCHAR(50) UNIQUE,
+    fecha_nacimiento DATE,
+    edad INT,
+
+    
+    direccion VARCHAR(150),
+    barrio VARCHAR(100),
+    id_ciudad INT NULL,
+    id_departamento INT NULL,
+    
+    
+    eps VARCHAR(100),
+
+  
+    id_grupo INT NULL,
+    id_acudiente INT NULL,
+
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id_grupo) REFERENCES grupo(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_ciudad) REFERENCES ciudad(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- ===========================================================
+-- 📄 TABLA REMISIÓN
+-- ===========================================================
 CREATE TABLE remision (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_remision DATE NOT NULL,
@@ -73,28 +184,9 @@ CREATE TABLE remision (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 -- ===========================================================
--- 🏫 TABLA GRADO
+-- 📚 TABLA ASPECTOS ACADÉMICOS
 -- ===========================================================
-CREATE TABLE grado (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL
-);
-
--- Ejemplo de grados
-INSERT INTO grado (nombre) VALUES
-('Grado 6'), ('Grado 7'), ('Grado 8'), ('Grado 9'), ('Grado 10'), ('Grado 11');
-
--- ===========================================================
--- 🏢 TABLA SEDE (por si una institución tiene varias sedes)
--- ===========================================================
-CREATE TABLE sede (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    direccion VARCHAR(150)
-);
-
 CREATE TABLE aspectos_academicos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_aspecto VARCHAR(150) NOT NULL,
@@ -104,8 +196,9 @@ CREATE TABLE aspectos_academicos (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- Tabla de aspectos complementarios
+-- ===========================================================
+-- 📋 TABLA ASPECTOS COMPLEMENTARIOS
+-- ===========================================================
 CREATE TABLE aspectos_complementarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -118,107 +211,8 @@ CREATE TABLE aspectos_complementarios (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
-
 -- ===========================================================
--- 🕒 TABLA JORNADA (mañana, tarde, noche)
--- ===========================================================
-CREATE TABLE jornada (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL
-);
-
-INSERT INTO jornada (nombre) VALUES ('Mañana'), ('Tarde'), ('Noche');
-
--- ===========================================================
--- 👩‍🏫 TABLA GRUPO
--- ===========================================================
-CREATE TABLE grupo (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    descripcion VARCHAR(100) NOT NULL,
-    id_sede INT,
-    id_jornada INT,
-    director_grupo VARCHAR(100),
-    id_grado INT,
-    FOREIGN KEY (id_sede) REFERENCES sede(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_jornada) REFERENCES jornada(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_grado) REFERENCES grado(id) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
--- ===========================================================
--- 👨‍👧 TABLA ACUDIENTE
--- ===========================================================
-CREATE TABLE acudiente (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_completo VARCHAR(100) NOT NULL,
-    parentesco VARCHAR(50),
-    telefono VARCHAR(20),
-    correo VARCHAR(100)
-);
-
--- ===========================================================
--- 🧒 TABLA DATOS DEL ESTUDIANTE (fusionada con 'estudiantes')
--- ===========================================================
-
-DROP TABLE IF EXISTS datosestud;
-
-CREATE TABLE datosestud (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-
-    -- 🔹 Datos personales
-    nombre_completo VARCHAR(150) NOT NULL,
-    tipo_documento VARCHAR(50),
-    numero_documento VARCHAR(50),
-    fecha_nacimiento DATE,
-    edad INT,
-
-    grado VARCHAR(50),
-    jornada VARCHAR(50),
-    sede VARCHAR(100),
-
-    direccion VARCHAR(150),
-    barrio VARCHAR(100),
-    id_ciudad INT NULL,
-    id_departamento INT NULL,
-    eps VARCHAR(100),
-
-    nombre_acudiente VARCHAR(150),
-    telefono_acudiente VARCHAR(50),
-    id_acudiente INT NULL,
-    id_grupo INT NULL,
-
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (id_grupo) REFERENCES grupo(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_ciudad) REFERENCES ciudad(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-
--- ===========================================================
--- ✅ FIN TABLA DATOS DEL ESTUDIANTE
--- ===========================================================
-
-
-
--- ===========================================================
--- 🌎 TABLAS DE LOCALIZACIÓN (CIUDAD / DEPARTAMENTO)
--- ===========================================================
-CREATE TABLE departamento (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE ciudad (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    id_departamento INT,
-    FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
--- ===========================================================
--- 🔗 RELACIONES BÁSICAS DE REFERENCIA
+-- 🔗 DATOS DE LOCALIZACIÓN DE EJEMPLO
 -- ===========================================================
 INSERT INTO departamento (nombre) VALUES ('Antioquia'), ('Cundinamarca'), ('Valle del Cauca');
 INSERT INTO ciudad (nombre, id_departamento) VALUES
@@ -227,25 +221,33 @@ INSERT INTO ciudad (nombre, id_departamento) VALUES
 ('Cali', 3);
 
 -- ===========================================================
--- ✅ VISTAS OPCIONALES (para consultas rápidas)
+-- ✅ VISTA DE ESTUDIANTES (CORREGIDA)
 -- ===========================================================
 CREATE OR REPLACE VIEW vista_estudiantes AS
 SELECT 
     e.id AS id_estudiante,
-    u.nombre_completo AS estudiante,
+    e.nombre_completo AS estudiante,
+    e.tipo_documento,
+    e.numero_documento,
+    e.fecha_nacimiento,
+    e.edad,
     g.descripcion AS grupo,
     gr.nombre AS grado,
-    e.fecha_nacimiento,
+    j.nombre AS jornada,
+    s.nombre AS sede,
     e.direccion,
     e.barrio,
     c.nombre AS ciudad,
     d.nombre AS departamento,
     e.eps,
-    a.nombre_completo AS acudiente
+    a.nombre_completo AS acudiente,
+    a.telefono AS telefono_acudiente,
+    a.parentesco
 FROM datosestud e
-LEFT JOIN usuarios u ON e.id_usuario = u.id
 LEFT JOIN grupo g ON e.id_grupo = g.id
 LEFT JOIN grado gr ON g.id_grado = gr.id
+LEFT JOIN jornada j ON g.id_jornada = j.id
+LEFT JOIN sede s ON g.id_sede = s.id
 LEFT JOIN ciudad c ON e.id_ciudad = c.id
 LEFT JOIN departamento d ON e.id_departamento = d.id
 LEFT JOIN acudiente a ON e.id_acudiente = a.id;
