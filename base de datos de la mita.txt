@@ -34,6 +34,46 @@ CREATE TABLE contacto (
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE remision (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_remision DATE NOT NULL,
+
+    nombre_estudiante VARCHAR(150) NOT NULL,
+    documento_id VARCHAR(30),
+    fecha_nacimiento DATE,
+    edad INT,
+    grado VARCHAR(50),
+    jornada VARCHAR(50),
+    sede VARCHAR(100),
+    direccion VARCHAR(150),
+    eps VARCHAR(100),
+    nombre_acudiente VARCHAR(150),
+    telefono_acudiente VARCHAR(30),
+    docente_remitente VARCHAR(150),
+
+    motivo_remision TEXT,
+
+    disp_percepcion BOOLEAN DEFAULT 0,
+    disp_atencion BOOLEAN DEFAULT 0,
+    disp_memoria BOOLEAN DEFAULT 0,
+    disp_lenguaje BOOLEAN DEFAULT 0,
+    disp_ritmo BOOLEAN DEFAULT 0,
+
+    incump_normas BOOLEAN DEFAULT 0,
+    impulsivo BOOLEAN DEFAULT 0,
+    agresividad BOOLEAN DEFAULT 0,
+    retraimiento BOOLEAN DEFAULT 0,
+    llanto BOOLEAN DEFAULT 0,
+
+    otro_comportamiento TEXT,
+    comportamientos_problema TEXT,
+    estrategias_pedagogicas TEXT,
+    observaciones_adicionales TEXT,
+
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- ===========================================================
 -- 🏫 TABLA GRADO
 -- ===========================================================
