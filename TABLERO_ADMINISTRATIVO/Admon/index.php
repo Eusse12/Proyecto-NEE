@@ -283,10 +283,12 @@ document.addEventListener("DOMContentLoaded", function() {
       if (data.logueado) {
         userSpan.textContent = data.nombre;
       } else {
-        userSpan.textContent = "Invitado";
+        userSpan.textContent = "Invitado"; 
+    img.src = "img/perfil.png";
       }
     })
     .catch(err => console.error("Error al obtener usuario:", err));
+    
 });
 </script>
 

@@ -400,3 +400,14 @@ LEFT JOIN acudiente a ON e.id_acudiente = a.id;
 -- ===========================================================
 -- 🎉 FIN DE LA BASE DE DATOS
 -- ===========================================================
+
+====================================
+-- Tabla NEE
+====================================
+CREATE TABLE NEE (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_estudiante INT NOT NULL,
+    necesidad_especial VARCHAR(255) NOT NULL,
+    tratamiento TEXT,
+    FOREIGN KEY (id_estudiante) REFERENCES datosestud(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
