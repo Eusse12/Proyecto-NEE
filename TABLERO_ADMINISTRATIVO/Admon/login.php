@@ -27,8 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $usuario = $result->fetch_assoc();
         if (password_verify($clave, $usuario['clave'])) {
             $_SESSION['usuario'] = $usuario['nombre_completo'];
+            $_SESSION['foto'] = $usuario['foto_perfil'];
             // ✅ Redirigir al index
-            header("Location: index.php?usuario=1");
+            header("Location: index.php");
             exit;
         } else {
             $mensaje = "❌ Contraseña incorrecta.";
@@ -37,6 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mensaje = "⚠️ No existe una cuenta con ese correo.";
     }
 }
+
+
 ?>
 
 <!DOCTYPE html>
