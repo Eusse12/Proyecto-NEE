@@ -375,4 +375,4 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
 </body>
 </html>
 
-<?php $conn->close(); ?>
+<?php $conn->close();?>
