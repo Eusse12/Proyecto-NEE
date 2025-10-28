@@ -215,7 +215,7 @@ $result = $conn->query($sql);
               </div>
 
               <button type="submit" class="btn btn-success">
-                <i class="fas fa-save"></i> Agregar
+                <i class="fas fa-plus"></i> Guardar
               </button>
             </form>
           </div>
