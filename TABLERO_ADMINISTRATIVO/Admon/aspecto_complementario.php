@@ -24,7 +24,7 @@ $result = $conn->query($sql);
 <body id="page-top">
 
 <div id="wrapper">
-     <!-- Sidebar -->
+      <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -104,13 +104,21 @@ $result = $conn->query($sql);
         </li>
 
         <!-- Acudiente -->
-<li class="nav-item">
-    <a class="nav-link" href="acudiente.php">
-        <i class="fas fa-user-tie"></i>
-        <span>Acudiente</span>
-    </a>
-</li>
+        <li class="nav-item">
+            <a class="nav-link" href="acudiente.php">
+                <i class="fas fa-user-tie"></i>
+                <span>Acudiente</span>
+            </a>
+        </li>
 
+        <!-- seguimiento -->
+
+        <li class="nav-item ">
+            <a class="nav-link" href="seguimiento.php">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Seguimiento</span>
+            </a>
+        </li>
 
         <hr class="sidebar-divider">
 

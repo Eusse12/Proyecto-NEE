@@ -181,13 +181,21 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
         </li>
 
         <!-- Acudiente -->
-<li class="nav-item">
-    <a class="nav-link" href="acudiente.php">
-        <i class="fas fa-user-tie"></i>
-        <span>Acudiente</span>
-    </a>
-</li>
+        <li class="nav-item">
+            <a class="nav-link" href="acudiente.php">
+                <i class="fas fa-user-tie"></i>
+                <span>Acudiente</span>
+            </a>
+        </li>
 
+        <!-- seguimiento -->
+
+        <li class="nav-item">
+            <a class="nav-link" href="seguimiento.php">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Seguimiento</span>
+            </a>
+        </li>
 
         <hr class="sidebar-divider">
 
