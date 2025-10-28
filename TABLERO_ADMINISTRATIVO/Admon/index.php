@@ -26,7 +26,7 @@
           <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
             <div class="sidebar-brand-icon">
                 <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
             </div>
@@ -36,7 +36,7 @@
 
         <!-- Inicio -->
         <li class="nav-item active">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="index.php">
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
@@ -159,13 +159,13 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Nombre de Usuario</span>
+                                <span class="nombre-usuario">Nombre de Usuario</span>
                                 <img class="img-profile rounded-circle" src="img/Foto.png" alt="Usuario">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="info_usuario.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Mi Perfil
                                 </a>
@@ -260,6 +260,27 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="js/usuario.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  fetch("perfil_usuario.php")
+    .then(res => res.json())
+    .then(data => {
+      const userSpan = document.querySelector(".nombre-usuario"); // Cambia este selector si tu HTML usa otro
+
+      if (data.logueado) {
+        userSpan.textContent = data.nombre;
+      } else {
+        userSpan.textContent = "Invitado";
+      }
+    })
+    .catch(err => console.error("Error al obtener usuario:", err));
+});
+</script>
 
 </body>
 

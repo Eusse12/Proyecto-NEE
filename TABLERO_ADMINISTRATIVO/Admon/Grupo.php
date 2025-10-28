@@ -116,7 +116,7 @@ if (!$grupos) {
       <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
             <div class="sidebar-brand-icon">
                 <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
             </div>
@@ -126,7 +126,7 @@ if (!$grupos) {
 
         <!-- Inicio -->
         <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="index.php">
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
@@ -378,7 +378,7 @@ if (!$grupos) {
                                 </tbody>
                             </table>
                         </div>
-                        <a href="index.html" class="btn btn-secondary mt-3">
+                        <a href="index.php" class="btn btn-secondary mt-3">
                             <i class="fas fa-home"></i> Volver al Menú Principal
                         </a>
                     </div>

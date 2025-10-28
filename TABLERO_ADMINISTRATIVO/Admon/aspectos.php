@@ -115,7 +115,7 @@
 
         <div class="text-center mt-4">
           <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Guardar Aspectos</button>
-          <a href="index.html" class="btn btn-secondary btn-lg"><i class="fas fa-home"></i> Volver</a>
+          <a href="index.php" class="btn btn-secondary btn-lg"><i class="fas fa-home"></i> Volver</a>
         </div>
 
       </form>
