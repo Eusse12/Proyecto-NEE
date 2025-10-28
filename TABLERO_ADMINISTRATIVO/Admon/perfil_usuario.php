@@ -6,7 +6,7 @@ if (isset($_SESSION['usuario'])) {
     echo json_encode([
         "logueado" => true,
         "nombre" => $_SESSION['usuario'],
-        "foto" => "img/Foto.png" // O la ruta real desde la base de datos
+        "foto" => isset($_SESSION['foto']) ? $_SESSION['foto'] : "img/Foto.png"
     ]);
 } else {
     echo json_encode([
