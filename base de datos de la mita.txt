@@ -113,29 +113,19 @@ DROP TABLE IF EXISTS datosestud;
 
 CREATE TABLE datosestud (
     id INT AUTO_INCREMENT PRIMARY KEY,
-
-   
     nombre_completo VARCHAR(150) NOT NULL,
     tipo_documento VARCHAR(50),
     numero_documento VARCHAR(50) UNIQUE,
     fecha_nacimiento DATE,
     edad INT,
-
-    
     direccion VARCHAR(150),
     barrio VARCHAR(100),
     id_ciudad INT NULL,
     id_departamento INT NULL,
-    
-    
     eps VARCHAR(100),
-
-  
     id_grupo INT NULL,
     id_acudiente INT NULL,
-
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
     FOREIGN KEY (id_grupo) REFERENCES grupo(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_ciudad) REFERENCES ciudad(id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -148,7 +138,6 @@ CREATE TABLE datosestud (
 CREATE TABLE remision (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_remision DATE NOT NULL,
-
     nombre_estudiante VARCHAR(150) NOT NULL,
     documento_id VARCHAR(30),
     fecha_nacimiento DATE,
@@ -161,26 +150,21 @@ CREATE TABLE remision (
     nombre_acudiente VARCHAR(150),
     telefono_acudiente VARCHAR(30),
     docente_remitente VARCHAR(150),
-
     motivo_remision TEXT,
-
     disp_percepcion BOOLEAN DEFAULT 0,
     disp_atencion BOOLEAN DEFAULT 0,
     disp_memoria BOOLEAN DEFAULT 0,
     disp_lenguaje BOOLEAN DEFAULT 0,
     disp_ritmo BOOLEAN DEFAULT 0,
-
     incump_normas BOOLEAN DEFAULT 0,
     impulsivo BOOLEAN DEFAULT 0,
     agresividad BOOLEAN DEFAULT 0,
     retraimiento BOOLEAN DEFAULT 0,
     llanto BOOLEAN DEFAULT 0,
-
     otro_comportamiento TEXT,
     comportamientos_problema TEXT,
     estrategias_pedagogicas TEXT,
     observaciones_adicionales TEXT,
-
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -212,53 +196,8 @@ CREATE TABLE aspectos_complementarios (
 );
 
 -- ===========================================================
--- 🔗 DATOS DE LOCALIZACIÓN DE EJEMPLO
+-- 🔗 INSERTAR DEPARTAMENTOS DE COLOMBIA
 -- ===========================================================
-INSERT INTO departamento (nombre) VALUES ('Antioquia'), ('Cundinamarca'), ('Valle del Cauca');
-INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Medellín', 1),
-('Bogotá', 2),
-('Cali', 3);
-
--- ===========================================================
--- ✅ VISTA DE ESTUDIANTES (CORREGIDA)
--- ===========================================================
-CREATE OR REPLACE VIEW vista_estudiantes AS
-SELECT 
-    e.id AS id_estudiante,
-    e.nombre_completo AS estudiante,
-    e.tipo_documento,
-    e.numero_documento,
-    e.fecha_nacimiento,
-    e.edad,
-    g.descripcion AS grupo,
-    gr.nombre AS grado,
-    j.nombre AS jornada,
-    s.nombre AS sede,
-    e.direccion,
-    e.barrio,
-    c.nombre AS ciudad,
-    d.nombre AS departamento,
-    e.eps,
-    a.nombre_completo AS acudiente,
-    a.telefono AS telefono_acudiente,
-    a.parentesco
-FROM datosestud e
-LEFT JOIN grupo g ON e.id_grupo = g.id
-LEFT JOIN grado gr ON g.id_grado = gr.id
-LEFT JOIN jornada j ON g.id_jornada = j.id
-LEFT JOIN sede s ON g.id_sede = s.id
-LEFT JOIN ciudad c ON e.id_ciudad = c.id
-LEFT JOIN departamento d ON e.id_departamento = d.id
-LEFT JOIN acudiente a ON e.id_acudiente = a.id;
-
--- ===========================================================
--- 🎉 FIN DE LA BASE DE DATOS
--- ===========================================================
-
-
-
-tablas departamentos y  ciudades
 INSERT INTO departamento (nombre) VALUES
 ('Amazonas'),
 ('Antioquia'),
@@ -293,103 +232,171 @@ INSERT INTO departamento (nombre) VALUES
 ('Vaupés'),
 ('Vichada');
 
-ciudades :
--- AMAZONAS (id = 4)
-INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Leticia', 4), ('Puerto Nariño', 4), ('La Chorrera', 4), ('Tarapacá', 4), ('El Encanto', 4);
+-- ===========================================================
+-- 🏙️ INSERTAR CIUDADES POR DEPARTAMENTO
+-- ===========================================================
 
--- ANTIOQUIA (id = 5)
+-- AMAZONAS (id = 1)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Medellín', 5), ('Bello', 5), ('Itagüí', 5), ('Envigado', 5), ('Apartadó', 5);
+('Leticia', 1), ('Puerto Nariño', 1), ('La Chorrera', 1), ('Tarapacá', 1), ('El Encanto', 1);
 
--- ARAUCA (id = 6)
+-- ANTIOQUIA (id = 2)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Arauca', 6), ('Arauquita', 6), ('Tame', 6), ('Saravena', 6), ('Fortul', 6);
+('Medellín', 2), ('Bello', 2), ('Itagüí', 2), ('Envigado', 2), ('Apartadó', 2),
+('Turbo', 2), ('Rionegro', 2), ('Sabaneta', 2), ('Caldas', 2), ('La Estrella', 2);
 
--- ATLÁNTICO (id = 7)
+-- ARAUCA (id = 3)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Barranquilla', 7), ('Soledad', 7), ('Malambo', 7), ('Puerto Colombia', 7), ('Sabanalarga', 7);
+('Arauca', 3), ('Arauquita', 3), ('Tame', 3), ('Saravena', 3), ('Fortul', 3);
 
--- BOLÍVAR (id = 8)
+-- ATLÁNTICO (id = 4)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Cartagena', 8), ('Magangué', 8), ('Turbaco', 8), ('Arjona', 8), ('Mompox', 8);
+('Barranquilla', 4), ('Soledad', 4), ('Malambo', 4), ('Puerto Colombia', 4), ('Sabanalarga', 4);
 
--- BOYACÁ (id = 9)
+-- BOLÍVAR (id = 5)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Tunja', 9), ('Duitama', 9), ('Sogamoso', 9), ('Chiquinquirá', 9), ('Paipa', 9);
+('Cartagena', 5), ('Magangué', 5), ('Turbaco', 5), ('Arjona', 5), ('Mompox', 5);
 
--- CALDAS (id = 10)
+-- BOYACÁ (id = 6)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Manizales', 10), ('Villamaría', 10), ('La Dorada', 10), ('Chinchiná', 10), ('Riosucio', 10);
+('Tunja', 6), ('Duitama', 6), ('Sogamoso', 6), ('Chiquinquirá', 6), ('Paipa', 6);
 
--- CAQUETÁ (id = 11)
+-- CALDAS (id = 7)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Florencia', 11), ('Belén de los Andaquíes', 11), ('Curillo', 11), ('La Montañita', 11), ('Morelia', 11);
+('Manizales', 7), ('Villamaría', 7), ('La Dorada', 7), ('Chinchiná', 7), ('Riosucio', 7);
 
--- CASANARE (id = 12)
+-- CAQUETÁ (id = 8)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Yopal', 12), ('Aguazul', 12), ('Villanueva', 12), ('Monterrey', 12), ('Tauramena', 12);
+('Florencia', 8), ('Belén de los Andaquíes', 8), ('Curillo', 8), ('La Montañita', 8), ('Morelia', 8);
 
--- CAUCA (id = 13)
+-- CASANARE (id = 9)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Popayán', 13), ('Santander de Quilichao', 13), ('Puerto Tejada', 13), ('Piendamó', 13), ('El Tambo', 13);
+('Yopal', 9), ('Aguazul', 9), ('Villanueva', 9), ('Monterrey', 9), ('Tauramena', 9);
 
--- CESAR (id = 14)
+-- CAUCA (id = 10)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Valledupar', 14), ('Aguachica', 14), ('Bosconia', 14), ('Curumaní', 14), ('La Jagua de Ibirico', 14);
+('Popayán', 10), ('Santander de Quilichao', 10), ('Puerto Tejada', 10), ('Piendamó', 10), ('El Tambo', 10);
 
--- CHOCÓ (id = 15)
+-- CESAR (id = 11)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Quibdó', 15), ('Istmina', 15), ('Condoto', 15), ('Tadó', 15), ('Acandí', 15);
+('Valledupar', 11), ('Aguachica', 11), ('Bosconia', 11), ('Curumaní', 11), ('La Jagua de Ibirico', 11);
 
--- CÓRDOBA (id = 16)
+-- CHOCÓ (id = 12)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Montería', 16), ('Lorica', 16), ('Sahagún', 16), ('Planeta Rica', 16), ('Tierralta', 16);
+('Quibdó', 12), ('Istmina', 12), ('Condoto', 12), ('Tadó', 12), ('Acandí', 12);
 
--- CUNDINAMARCA (id = 17)
+-- CÓRDOBA (id = 13)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Soacha', 17), ('Girardot', 17), ('Zipaquirá', 17), ('Facatativá', 17), ('Chía', 17);
+('Montería', 13), ('Lorica', 13), ('Sahagún', 13), ('Planeta Rica', 13), ('Tierralta', 13);
 
--- GUAINÍA (id = 18)
+-- CUNDINAMARCA (id = 14)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Inírida', 18), ('Barranco Minas', 18), ('Cacahual', 18), ('Mapiripana', 18), ('Morichal', 18);
+('Bogotá', 14), ('Soacha', 14), ('Girardot', 14), ('Zipaquirá', 14), ('Facatativá', 14), ('Chía', 14);
 
--- GUAJIRA (id = 19)
+-- GUAINÍA (id = 15)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Riohacha', 19), ('Maicao', 19), ('Uribia', 19), ('Fonseca', 19), ('San Juan del Cesar', 19);
+('Inírida', 15), ('Barranco Minas', 15), ('Cacahual', 15), ('Mapiripana', 15), ('Morichal', 15);
 
--- GUAVIARE (id = 20)
+-- GUAVIARE (id = 16)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('San José del Guaviare', 20), ('El Retorno', 20), ('Calamar', 20), ('Miraflores', 20), ('Charras', 20);
+('San José del Guaviare', 16), ('El Retorno', 16), ('Calamar', 16), ('Miraflores', 16);
 
--- HUILA (id = 21)
+-- HUILA (id = 17)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Neiva', 21), ('Pitalito', 21), ('Garzón', 21), ('La Plata', 21), ('Campoalegre', 21);
+('Neiva', 17), ('Pitalito', 17), ('Garzón', 17), ('La Plata', 17), ('Campoalegre', 17);
 
--- LA GUAJIRA (id = 22)
+-- LA GUAJIRA (id = 18)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Riohacha', 22), ('Maicao', 22), ('Uribia', 22), ('Fonseca', 22), ('San Juan del Cesar', 22);
+('Riohacha', 18), ('Maicao', 18), ('Uribia', 18), ('Fonseca', 18), ('San Juan del Cesar', 18);
 
--- MAGDALENA (id = 23)
+-- MAGDALENA (id = 19)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Santa Marta', 23), ('Ciénaga', 23), ('Fundación', 23), ('El Banco', 23), ('Aracataca', 23);
+('Santa Marta', 19), ('Ciénaga', 19), ('Fundación', 19), ('El Banco', 19), ('Aracataca', 19);
 
--- META (id = 24)
+-- META (id = 20)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Villavicencio', 24), ('Granada', 24), ('Acacías', 24), ('Puerto López', 24), ('San Martín', 24);
+('Villavicencio', 20), ('Granada', 20), ('Acacías', 20), ('Puerto López', 20), ('San Martín', 20);
 
--- NARIÑO (id = 25)
+-- NARIÑO (id = 21)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Pasto', 25), ('Ipiales', 25), ('Tumaco', 25), ('Túquerres', 25), ('La Unión', 25);
+('Pasto', 21), ('Ipiales', 21), ('Tumaco', 21), ('Túquerres', 21), ('La Unión', 21);
 
--- NORTE DE SANTANDER (id = 26)
+-- NORTE DE SANTANDER (id = 22)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Cúcuta', 26), ('Ocaña', 26), ('Pamplona', 26), ('Villa del Rosario', 26), ('Los Patios', 26);
+('Cúcuta', 22), ('Ocaña', 22), ('Pamplona', 22), ('Villa del Rosario', 22), ('Los Patios', 22);
 
--- PUTUMAYO (id = 27)
+-- PUTUMAYO (id = 23)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Mocoa', 27), ('Puerto Asís', 27), ('Orito', 27), ('Sibundoy', 27), ('Villagarzón', 27);
+('Mocoa', 23), ('Puerto Asís', 23), ('Orito', 23), ('Sibundoy', 23), ('Villagarzón', 23);
 
--- RISARALDA (id = 28)
+-- QUINDÍO (id = 24)
 INSERT INTO ciudad (nombre, id_departamento) VALUES
-('Pereira', 28), ('Dosquebradas', 28), ('Santa Rosa de Cabal', 28), ('La Virginia', 28), ('Marsella', 28);
+('Armenia', 24), ('Calarcá', 24), ('La Tebaida', 24), ('Montenegro', 24), ('Quimbaya', 24);
+
+-- RISARALDA (id = 25)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Pereira', 25), ('Dosquebradas', 25), ('Santa Rosa de Cabal', 25), ('La Virginia', 25), ('Marsella', 25);
+
+-- SAN ANDRÉS Y PROVIDENCIA (id = 26)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('San Andrés', 26), ('Providencia', 26);
+
+-- SANTANDER (id = 27)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Bucaramanga', 27), ('Floridablanca', 27), ('Girón', 27), ('Piedecuesta', 27), ('Barrancabermeja', 27);
+
+-- SUCRE (id = 28)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Sincelejo', 28), ('Corozal', 28), ('Sampués', 28), ('San Marcos', 28), ('Tolú', 28);
+
+-- TOLIMA (id = 29)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Ibagué', 29), ('Espinal', 29), ('Melgar', 29), ('Honda', 29), ('Líbano', 29);
+
+-- VALLE DEL CAUCA (id = 30)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Cali', 30), ('Palmira', 30), ('Buenaventura', 30), ('Tuluá', 30), ('Cartago', 30), ('Jamundí', 30);
+
+-- VAUPÉS (id = 31)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Mitú', 31), ('Caruru', 31), ('Taraira', 31);
+
+-- VICHADA (id = 32)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Puerto Carreño', 32), ('La Primavera', 32), ('Santa Rosalía', 32), ('Cumaribo', 32);
+
+-- ===========================================================
+-- ✅ VISTA DE ESTUDIANTES
+-- ===========================================================
+CREATE OR REPLACE VIEW vista_estudiantes AS
+SELECT 
+    e.id AS id_estudiante,
+    e.nombre_completo AS estudiante,
+    e.tipo_documento,
+    e.numero_documento,
+    e.fecha_nacimiento,
+    e.edad,
+    g.descripcion AS grupo,
+    gr.nombre AS grado,
+    j.nombre AS jornada,
+    s.nombre AS sede,
+    e.direccion,
+    e.barrio,
+    c.nombre AS ciudad,
+    d.nombre AS departamento,
+    e.eps,
+    a.nombre_completo AS acudiente,
+    a.telefono AS telefono_acudiente,
+    a.parentesco
+FROM datosestud e
+LEFT JOIN grupo g ON e.id_grupo = g.id
+LEFT JOIN grado gr ON g.id_grado = gr.id
+LEFT JOIN jornada j ON g.id_jornada = j.id
+LEFT JOIN sede s ON g.id_sede = s.id
+LEFT JOIN ciudad c ON e.id_ciudad = c.id
+LEFT JOIN departamento d ON e.id_departamento = d.id
+LEFT JOIN acudiente a ON e.id_acudiente = a.id;
+
+-- ===========================================================
+-- 🎉 FIN DE LA BASE DE DATOS
+-- ===========================================================
