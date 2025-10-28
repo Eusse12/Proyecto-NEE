@@ -235,7 +235,7 @@ $result = $conn->query("SELECT * FROM acudiente ORDER BY id ASC");
                         </h6>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="tipo_estudiante.php">
+                        <form method="POST" action="acudiente.php">
                             <input type="hidden" name="accion" value="<?= $editarAcudiente ? 'editar' : 'agregar' ?>">
                             <?php if ($editarAcudiente): ?>
                             <input type="hidden" name="id" value="<?= $editarAcudiente['id'] ?>">
@@ -317,7 +317,7 @@ $result = $conn->query("SELECT * FROM acudiente ORDER BY id ASC");
                                                 <a href="?editar=<?= $a['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form method="POST" action="tipo_estudiante.php" style="display: inline-block;" 
+                                                <form method="POST" action="acudiente.php" style="display: inline-block;" 
                                                       onsubmit="return confirm('⚠ ¿Estás seguro de eliminar este acudiente?');">
                                                     <input type="hidden" name="accion" value="eliminar">
                                                     <input type="hidden" name="id" value="<?= $a['id'] ?>">
