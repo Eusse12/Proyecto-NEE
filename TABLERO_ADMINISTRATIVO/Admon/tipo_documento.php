@@ -126,7 +126,9 @@ $usuarios = $conn->query($queryUsuarios);
 <body id="page-top">
 
 <div id="wrapper">
+           <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon">
                 <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
@@ -135,6 +137,7 @@ $usuarios = $conn->query($queryUsuarios);
 
         <hr class="sidebar-divider my-0">
 
+        <!-- Inicio -->
         <li class="nav-item">
             <a class="nav-link" href="index.html">
                 <i class="fas fa-home"></i>
@@ -144,7 +147,8 @@ $usuarios = $conn->query($queryUsuarios);
 
         <hr class="sidebar-divider">
 
-        <li class="nav-item active">
+        <!-- Usuarios -->
+        <li class="nav-item">
             <a class="nav-link" href="Usuarios.php">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
@@ -153,6 +157,7 @@ $usuarios = $conn->query($queryUsuarios);
 
         <hr class="sidebar-divider">
 
+        <!-- Grado -->
         <li class="nav-item">
             <a class="nav-link" href="grado.php">
                 <i class="fas fa-graduation-cap"></i>
@@ -160,6 +165,7 @@ $usuarios = $conn->query($queryUsuarios);
             </a>
         </li>
 
+        <!-- Grupo -->
         <li class="nav-item">
             <a class="nav-link" href="Grupo.php">
                 <i class="fas fa-users-cog"></i>
@@ -167,6 +173,7 @@ $usuarios = $conn->query($queryUsuarios);
             </a>
         </li>
 
+        <!-- Sede -->
         <li class="nav-item">
             <a class="nav-link" href="Sede.php">
                 <i class="fas fa-school"></i>
@@ -174,6 +181,15 @@ $usuarios = $conn->query($queryUsuarios);
             </a>
         </li>
 
+        <!-- Remisión -->
+        <li class="nav-item ">
+            <a class="nav-link" href="remision.php">
+                <i class="fas fa-file-medical"></i>
+                <span>Remisiones</span>
+            </a>
+        </li>
+
+        <!-- Académico -->
         <li class="nav-item">
             <a class="nav-link" href="aspecto_academico.php">
                 <i class="fas fa-book-open"></i>
@@ -181,6 +197,7 @@ $usuarios = $conn->query($queryUsuarios);
             </a>
         </li>
 
+        <!-- Aspectos Complementarios -->
         <li class="nav-item">
             <a class="nav-link" href="aspecto_complementario.php">
                 <i class="fas fa-puzzle-piece"></i>
@@ -188,7 +205,8 @@ $usuarios = $conn->query($queryUsuarios);
             </a>
         </li>
 
-        <li class="nav-item ">
+        <!-- Tipos de Estudiantes -->
+        <li class="nav-item">
             <a class="nav-link" href="tipo_estudiante.php">
                 <i class="fas fa-user-graduate"></i>
                 <span>Tipos de Estudiantes</span>
@@ -197,6 +215,7 @@ $usuarios = $conn->query($queryUsuarios);
 
         <hr class="sidebar-divider">
 
+        <!-- Configuración -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
                aria-expanded="true" aria-controls="collapseConfig">
@@ -218,7 +237,6 @@ $usuarios = $conn->query($queryUsuarios);
 
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
-
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <div class="container-fluid mt-4">

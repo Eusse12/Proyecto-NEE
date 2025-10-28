@@ -113,109 +113,117 @@ if (!$grupos) {
 <body id="page-top">
 
 <div id="wrapper">
-    <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-    <!-- Logo -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon">
-            <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
-        </div>
-    </a>
-
-    <hr class="sidebar-divider my-0">
-
-    <!-- Inicio -->
-    <li class="nav-item">
-        <a class="nav-link" href="index.html">
-            <i class="fas fa-home"></i>
-            <span>Inicio</span>
-        </a>
-    </li>
-
-    <hr class="sidebar-divider">
-
-    <!-- Usuarios -->
-    <li class="nav-item">
-        <a class="nav-link" href="Usuarios.php">
-            <i class="fas fa-users"></i>
-            <span>Usuarios</span>
-        </a>
-    </li>
-
-    <hr class="sidebar-divider">
-
-    <!-- Grado -->
-    <li class="nav-item">
-        <a class="nav-link" href="grado.php">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Grado</span>
-        </a>
-    </li>
-
-    <!-- Grupo -->
-    <li class="nav-item active">
-        <a class="nav-link" href="Grupo.php">
-            <i class="fas fa-users-cog"></i>
-            <span>Grupos</span>
-        </a>
-    </li>
-
-    <!-- Sede -->
-    <li class="nav-item">
-        <a class="nav-link" href="Sede.php">
-            <i class="fas fa-school"></i>
-            <span>Sede</span>
-        </a>
-    </li>
-
-    <!-- Académico -->
-    <li class="nav-item">
-        <a class="nav-link" href="aspecto_academico.php">
-            <i class="fas fa-book-open"></i>
-            <span>Aspectos Académicos</span>
-        </a>
-    </li>
-
-    <!-- Aspectos Complementarios -->
-    <li class="nav-item">
-        <a class="nav-link" href="aspecto_complementario.php">
-            <i class="fas fa-puzzle-piece"></i>
-            <span>Aspectos Complementarios</span>
-        </a>
-    </li>
-
-    <!-- Tipos de Estudiantes -->
-    <li class="nav-item ">
-        <a class="nav-link" href="tipo_estudiante.php">
-            <i class="fas fa-user-graduate"></i>
-            <span>Tipos de Estudiantes</span>
-        </a>
-    </li>
-
-    <hr class="sidebar-divider">
-
-    <!-- Configuración -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
-           aria-expanded="true" aria-controls="collapseConfig">
-            <i class="fas fa-cogs"></i>
-            <span>Configuración</span>
-        </a>
-        <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Catálogos:</h6>
-                <a class="collapse-item" href="tipo_documento.php">
-                    <i class="fas fa-id-card"></i> Tipo de Documento
-                </a>
-                <a class="collapse-item" href="tipo_usuario.php">
-                    <i class="fas fa-user-shield"></i> Tipo de Usuario
-                </a>
+      <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Logo -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <div class="sidebar-brand-icon">
+                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
             </div>
-        </div>
-    </li>
+        </a>
 
-    <hr class="sidebar-divider d-none d-md-block">
-</ul>
+        <hr class="sidebar-divider my-0">
+
+        <!-- Inicio -->
+        <li class="nav-item">
+            <a class="nav-link" href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider">
+
+        <!-- Usuarios -->
+        <li class="nav-item">
+            <a class="nav-link" href="Usuarios.php">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider">
+
+        <!-- Grado -->
+        <li class="nav-item">
+            <a class="nav-link" href="grado.php">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Grado</span>
+            </a>
+        </li>
+
+        <!-- Grupo -->
+        <li class="nav-item active">
+            <a class="nav-link" href="Grupo.php">
+                <i class="fas fa-users-cog"></i>
+                <span>Grupos</span>
+            </a>
+        </li>
+
+        <!-- Sede -->
+        <li class="nav-item">
+            <a class="nav-link" href="Sede.php">
+                <i class="fas fa-school"></i>
+                <span>Sede</span>
+            </a>
+        </li>
+
+        <!-- Remisión -->
+        <li class="nav-item">
+            <a class="nav-link" href="remision.php">
+                <i class="fas fa-file-medical"></i>
+                <span>Remisiones</span>
+            </a>
+        </li>
+
+        <!-- Académico -->
+        <li class="nav-item">
+            <a class="nav-link" href="aspecto_academico.php">
+                <i class="fas fa-book-open"></i>
+                <span>Aspectos Académicos</span>
+            </a>
+        </li>
+
+        <!-- Aspectos Complementarios -->
+        <li class="nav-item">
+            <a class="nav-link" href="aspecto_complementario.php">
+                <i class="fas fa-puzzle-piece"></i>
+                <span>Aspectos Complementarios</span>
+            </a>
+        </li>
+
+        <!-- Tipos de Estudiantes -->
+        <li class="nav-item">
+            <a class="nav-link" href="tipo_estudiante.php">
+                <i class="fas fa-user-graduate"></i>
+                <span>Tipos de Estudiantes</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider">
+
+        <!-- Configuración -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
+               aria-expanded="true" aria-controls="collapseConfig">
+                <i class="fas fa-cogs"></i>
+                <span>Configuración</span>
+            </a>
+            <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Catálogos:</h6>
+                    <a class="collapse-item" href="tipo_documento.php">
+                        <i class="fas fa-id-card"></i> Tipo de Documento
+                    </a>
+                    <a class="collapse-item" href="tipo_usuario.php">
+                        <i class="fas fa-user-shield"></i> Tipo de Usuario
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider d-none d-md-block">
+    </ul>
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
