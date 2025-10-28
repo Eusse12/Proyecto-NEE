@@ -160,24 +160,50 @@ CREATE TABLE acudiente (
 -- 🧒 TABLA DATOS DEL ESTUDIANTE
 -- ===========================================================
 -- ====================================================
+-- ===========================================================
+-- 🧒 TABLA DATOS DEL ESTUDIANTE (fusionada con 'estudiantes')
+-- ===========================================================
+
+DROP TABLE IF EXISTS datosestud;
+
 CREATE TABLE datosestud (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
+
+    -- 🔹 Datos personales
+    nombre_completo VARCHAR(150) NOT NULL,
+    tipo_documento VARCHAR(50),
+    numero_documento VARCHAR(50),
     fecha_nacimiento DATE,
-    id_grupo INT NULL,
+    edad INT,
+
+    grado VARCHAR(50),
+    jornada VARCHAR(50),
+    sede VARCHAR(100),
+
     direccion VARCHAR(150),
     barrio VARCHAR(100),
     id_ciudad INT NULL,
     id_departamento INT NULL,
     eps VARCHAR(100),
+
+    nombre_acudiente VARCHAR(150),
+    telefono_acudiente VARCHAR(50),
     id_acudiente INT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_grupo INT NULL,
+
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
     FOREIGN KEY (id_grupo) REFERENCES grupo(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE
-    -- Si existen tablas ciudad y departamento, puedes agregar:
-    -- FOREIGN KEY (id_ciudad) REFERENCES ciudad(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    -- FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_ciudad) REFERENCES ciudad(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+
+-- ===========================================================
+-- ✅ FIN TABLA DATOS DEL ESTUDIANTE
+-- ===========================================================
+
 
 
 -- ===========================================================
