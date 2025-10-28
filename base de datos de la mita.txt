@@ -255,3 +255,141 @@ LEFT JOIN acudiente a ON e.id_acudiente = a.id;
 -- ===========================================================
 -- 🎉 FIN DE LA BASE DE DATOS
 -- ===========================================================
+
+
+
+tablas departamentos y  ciudades
+INSERT INTO departamento (nombre) VALUES
+('Amazonas'),
+('Antioquia'),
+('Arauca'),
+('Atlántico'),
+('Bolívar'),
+('Boyacá'),
+('Caldas'),
+('Caquetá'),
+('Casanare'),
+('Cauca'),
+('Cesar'),
+('Chocó'),
+('Córdoba'),
+('Cundinamarca'),
+('Guainía'),
+('Guaviare'),
+('Huila'),
+('La Guajira'),
+('Magdalena'),
+('Meta'),
+('Nariño'),
+('Norte de Santander'),
+('Putumayo'),
+('Quindío'),
+('Risaralda'),
+('San Andrés y Providencia'),
+('Santander'),
+('Sucre'),
+('Tolima'),
+('Valle del Cauca'),
+('Vaupés'),
+('Vichada');
+
+ciudades :
+-- AMAZONAS (id = 4)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Leticia', 4), ('Puerto Nariño', 4), ('La Chorrera', 4), ('Tarapacá', 4), ('El Encanto', 4);
+
+-- ANTIOQUIA (id = 5)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Medellín', 5), ('Bello', 5), ('Itagüí', 5), ('Envigado', 5), ('Apartadó', 5);
+
+-- ARAUCA (id = 6)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Arauca', 6), ('Arauquita', 6), ('Tame', 6), ('Saravena', 6), ('Fortul', 6);
+
+-- ATLÁNTICO (id = 7)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Barranquilla', 7), ('Soledad', 7), ('Malambo', 7), ('Puerto Colombia', 7), ('Sabanalarga', 7);
+
+-- BOLÍVAR (id = 8)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Cartagena', 8), ('Magangué', 8), ('Turbaco', 8), ('Arjona', 8), ('Mompox', 8);
+
+-- BOYACÁ (id = 9)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Tunja', 9), ('Duitama', 9), ('Sogamoso', 9), ('Chiquinquirá', 9), ('Paipa', 9);
+
+-- CALDAS (id = 10)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Manizales', 10), ('Villamaría', 10), ('La Dorada', 10), ('Chinchiná', 10), ('Riosucio', 10);
+
+-- CAQUETÁ (id = 11)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Florencia', 11), ('Belén de los Andaquíes', 11), ('Curillo', 11), ('La Montañita', 11), ('Morelia', 11);
+
+-- CASANARE (id = 12)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Yopal', 12), ('Aguazul', 12), ('Villanueva', 12), ('Monterrey', 12), ('Tauramena', 12);
+
+-- CAUCA (id = 13)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Popayán', 13), ('Santander de Quilichao', 13), ('Puerto Tejada', 13), ('Piendamó', 13), ('El Tambo', 13);
+
+-- CESAR (id = 14)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Valledupar', 14), ('Aguachica', 14), ('Bosconia', 14), ('Curumaní', 14), ('La Jagua de Ibirico', 14);
+
+-- CHOCÓ (id = 15)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Quibdó', 15), ('Istmina', 15), ('Condoto', 15), ('Tadó', 15), ('Acandí', 15);
+
+-- CÓRDOBA (id = 16)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Montería', 16), ('Lorica', 16), ('Sahagún', 16), ('Planeta Rica', 16), ('Tierralta', 16);
+
+-- CUNDINAMARCA (id = 17)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Soacha', 17), ('Girardot', 17), ('Zipaquirá', 17), ('Facatativá', 17), ('Chía', 17);
+
+-- GUAINÍA (id = 18)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Inírida', 18), ('Barranco Minas', 18), ('Cacahual', 18), ('Mapiripana', 18), ('Morichal', 18);
+
+-- GUAJIRA (id = 19)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Riohacha', 19), ('Maicao', 19), ('Uribia', 19), ('Fonseca', 19), ('San Juan del Cesar', 19);
+
+-- GUAVIARE (id = 20)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('San José del Guaviare', 20), ('El Retorno', 20), ('Calamar', 20), ('Miraflores', 20), ('Charras', 20);
+
+-- HUILA (id = 21)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Neiva', 21), ('Pitalito', 21), ('Garzón', 21), ('La Plata', 21), ('Campoalegre', 21);
+
+-- LA GUAJIRA (id = 22)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Riohacha', 22), ('Maicao', 22), ('Uribia', 22), ('Fonseca', 22), ('San Juan del Cesar', 22);
+
+-- MAGDALENA (id = 23)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Santa Marta', 23), ('Ciénaga', 23), ('Fundación', 23), ('El Banco', 23), ('Aracataca', 23);
+
+-- META (id = 24)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Villavicencio', 24), ('Granada', 24), ('Acacías', 24), ('Puerto López', 24), ('San Martín', 24);
+
+-- NARIÑO (id = 25)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Pasto', 25), ('Ipiales', 25), ('Tumaco', 25), ('Túquerres', 25), ('La Unión', 25);
+
+-- NORTE DE SANTANDER (id = 26)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Cúcuta', 26), ('Ocaña', 26), ('Pamplona', 26), ('Villa del Rosario', 26), ('Los Patios', 26);
+
+-- PUTUMAYO (id = 27)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Mocoa', 27), ('Puerto Asís', 27), ('Orito', 27), ('Sibundoy', 27), ('Villagarzón', 27);
+
+-- RISARALDA (id = 28)
+INSERT INTO ciudad (nombre, id_departamento) VALUES
+('Pereira', 28), ('Dosquebradas', 28), ('Santa Rosa de Cabal', 28), ('La Virginia', 28), ('Marsella', 28);
