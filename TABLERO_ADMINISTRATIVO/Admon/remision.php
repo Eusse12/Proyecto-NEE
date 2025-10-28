@@ -280,7 +280,7 @@ function obtenerValor($campo, $remision_editar, $post_data = null) {
 <body id="page-top">
 
 <div id="wrapper">
-    <!-- Sidebar -->
+          <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -359,14 +359,22 @@ function obtenerValor($campo, $remision_editar, $post_data = null) {
             </a>
         </li>
 
-       <!-- Acudiente -->
-<li class="nav-item">
-    <a class="nav-link" href="acudiente.php">
-        <i class="fas fa-user-tie"></i>
-        <span>Acudiente</span>
-    </a>
-</li>
+        <!-- Acudiente -->
+        <li class="nav-item">
+            <a class="nav-link" href="acudiente.php">
+                <i class="fas fa-user-tie"></i>
+                <span>Acudiente</span>
+            </a>
+        </li>
 
+        <!-- seguimiento -->
+
+        <li class="nav-item">
+            <a class="nav-link" href="seguimiento.php">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Seguimiento</span>
+            </a>
+        </li>
 
         <hr class="sidebar-divider">
 
@@ -392,7 +400,6 @@ function obtenerValor($campo, $remision_editar, $post_data = null) {
 
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
-
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
