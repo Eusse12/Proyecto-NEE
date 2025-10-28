@@ -18,7 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $tipo_documento = trim($_POST["tipo_documento"] ?? '');
     $numero_documento = trim($_POST["numero_documento"] ?? '');
     $fecha_nacimiento = $_POST["fecha_nacimiento"] ?? null;
-    $edad = intval($_POST["edad"] ?? 0);
+    
+    // Calcular edad automáticamente desde la fecha de nacimiento
+    $edad = 0;
+    if (!empty($fecha_nacimiento)) {
+        $fechaNac = new DateTime($fecha_nacimiento);
+        $hoy = new DateTime();
+        $edad = $hoy->diff($fechaNac)->y;
+    }
+    
     $direccion = trim($_POST["direccion"] ?? '');
     $barrio = trim($_POST["barrio"] ?? '');
     $id_ciudad = intval($_POST["id_ciudad"] ?? 0);
@@ -193,13 +201,12 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
         </li>
 
         <!-- Acudiente -->
-<li class="nav-item">
-    <a class="nav-link" href="acudiente.php">
-        <i class="fas fa-user-tie"></i>
-        <span>Acudiente</span>
-    </a>
-</li>
-
+        <li class="nav-item">
+            <a class="nav-link" href="acudiente.php">
+                <i class="fas fa-user-tie"></i>
+                <span>Acudiente</span>
+            </a>
+        </li>
 
         <hr class="sidebar-divider">
 
@@ -282,14 +289,14 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Fecha de Nacimiento</label>
-                                    <input type="date" name="fecha_nacimiento" class="form-control" 
+                                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" 
                                            value="<?= $editarEstudiante ? $editarEstudiante['fecha_nacimiento'] : '' ?>">
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label>Edad</label>
-                                    <input type="number" name="edad" class="form-control" 
-                                           placeholder="Ej: 15"
-                                           value="<?= $editarEstudiante ? $editarEstudiante['edad'] : '' ?>">
+                                    <input type="number" id="edad" name="edad" class="form-control" 
+                                           placeholder="Auto"
+                                           value="<?= $editarEstudiante ? $editarEstudiante['edad'] : '' ?>" readonly>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>EPS</label>
@@ -468,6 +475,36 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="js/sb-admin-2.min.js"></script>
+
+<script>
+// Calcular edad automáticamente al cambiar la fecha de nacimiento
+document.getElementById('fecha_nacimiento').addEventListener('change', function() {
+    const fechaNac = new Date(this.value);
+    const hoy = new Date();
+    
+    if (this.value) {
+        let edad = hoy.getFullYear() - fechaNac.getFullYear();
+        const mes = hoy.getMonth() - fechaNac.getMonth();
+        
+        // Ajustar si aún no ha cumplido años este año
+        if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+            edad--;
+        }
+        
+        document.getElementById('edad').value = edad;
+    } else {
+        document.getElementById('edad').value = '';
+    }
+});
+
+// Calcular edad al cargar la página si hay fecha de nacimiento
+window.addEventListener('DOMContentLoaded', function() {
+    const fechaNacInput = document.getElementById('fecha_nacimiento');
+    if (fechaNacInput.value) {
+        fechaNacInput.dispatchEvent(new Event('change'));
+    }
+});
+</script>
 
 </body>
 </html>
