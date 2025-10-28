@@ -121,7 +121,7 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
 <body id="page-top">
 
 <div id="wrapper">
-      <!-- Sidebar -->
+<!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -208,8 +208,15 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
             </a>
         </li>
 
-        <!-- seguimiento -->
+        <!-- NEE -->
+        <li class="nav-item">
+            <a class="nav-link" href="nee.php">
+                <i class="fas fa-brain"></i>
+                <span>NEE</span>
+            </a>
+        </li>
 
+        <!-- Seguimiento -->
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -241,6 +248,7 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
 
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
+
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">

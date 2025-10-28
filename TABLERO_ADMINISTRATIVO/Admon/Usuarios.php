@@ -155,8 +155,15 @@ $result = $conn->query($sql);
             </a>
         </li>
 
-        <!-- seguimiento -->
+        <!-- NEE -->
+        <li class="nav-item">
+            <a class="nav-link" href="nee.php">
+                <i class="fas fa-brain"></i>
+                <span>NEE</span>
+            </a>
+        </li>
 
+        <!-- Seguimiento -->
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -188,6 +195,7 @@ $result = $conn->query($sql);
 
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
+
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">

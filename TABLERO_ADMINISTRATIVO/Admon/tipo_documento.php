@@ -27,7 +27,7 @@ $estudiantes = $conn->query($query);
 <body id="page-top">
 
 <div id="wrapper">
-      <!-- Sidebar -->
+     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -114,8 +114,15 @@ $estudiantes = $conn->query($query);
             </a>
         </li>
 
-        <!-- seguimiento -->
+        <!-- NEE -->
+        <li class="nav-item">
+            <a class="nav-link" href="nee.php">
+                <i class="fas fa-brain"></i>
+                <span>NEE</span>
+            </a>
+        </li>
 
+        <!-- Seguimiento -->
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
