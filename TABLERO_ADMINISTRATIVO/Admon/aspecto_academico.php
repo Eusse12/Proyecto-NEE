@@ -180,13 +180,14 @@ $result = $conn->query("SELECT * FROM aspectos_academicos ORDER BY id DESC");
             </a>
         </li>
 
-        <!-- Tipos de Estudiantes -->
-        <li class="nav-item">
-            <a class="nav-link" href="tipo_estudiante.php">
-                <i class="fas fa-user-graduate"></i>
-                <span>Tipos de Estudiantes</span>
-            </a>
-        </li>
+        <!-- Acudiente -->
+<li class="nav-item">
+    <a class="nav-link" href="acudiente.php">
+        <i class="fas fa-user-tie"></i>
+        <span>Acudiente</span>
+    </a>
+</li>
+
 
         <hr class="sidebar-divider">
 

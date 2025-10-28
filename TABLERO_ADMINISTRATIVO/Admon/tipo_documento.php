@@ -18,29 +18,16 @@ $estudiantes = $conn->query($query);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Estudiantes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fc; }
-        .sidebar {
-            width: 250px;
-            min-height: 100vh;
-            background: linear-gradient(180deg, #1cc88a 10%, #13855c 100%);
-            color: white;
-            position: fixed;
-        }
-        .sidebar a { color: white; display: block; padding: 12px 20px; text-decoration: none; }
-        .sidebar a:hover { background-color: rgba(255,255,255,0.2); }
-        .sidebar .sidebar-heading { font-size: 0.9rem; text-transform: uppercase; margin: 10px 15px; opacity: 0.8; }
-        #content-wrapper { margin-left: 250px; padding: 20px; }
-        footer { background: #f8f9fc; padding: 15px; text-align: center; margin-top: 20px; }
-    </style>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="css/sb-admin-2.css" rel="stylesheet">
 </head>
-<body>
+<body id="page-top">
 
-<!-- SIDEBAR -->
-       <!-- Sidebar -->
+<div id="wrapper">
+    <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -96,7 +83,7 @@ $estudiantes = $conn->query($query);
         </li>
 
         <!-- Remisión -->
-        <li class="nav-item ">
+        <li class="nav-item">
             <a class="nav-link" href="remision.php">
                 <i class="fas fa-file-medical"></i>
                 <span>Remisiones</span>
@@ -119,13 +106,14 @@ $estudiantes = $conn->query($query);
             </a>
         </li>
 
-        <!-- Tipos de Estudiantes -->
-        <li class="nav-item">
-            <a class="nav-link" href="tipo_estudiante.php">
-                <i class="fas fa-user-graduate"></i>
-                <span>Tipos de Estudiantes</span>
-            </a>
-        </li>
+        <!-- Acudiente -->
+<li class="nav-item">
+    <a class="nav-link" href="acudiente.php">
+        <i class="fas fa-user-tie"></i>
+        <span>Acudiente</span>
+    </a>
+</li>
+
 
         <hr class="sidebar-divider">
 
@@ -152,56 +140,81 @@ $estudiantes = $conn->query($query);
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
 
-<!-- CONTENIDO -->
-<div id="content-wrapper">
-    <div class="container-fluid">
-        <h2 class="mb-4 text-primary"><i class="fas fa-eye"></i> Ver Datos de Estudiantes</h2>
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid mt-4">
 
-        <div class="card shadow mb-4">
-            <div class="card-header bg-success text-white">
-                <i class="fas fa-list"></i> Seleccione un Estudiante
-            </div>
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-8">
-                        <label>Estudiante</label>
-                        <select id="id_estudiante" class="form-control">
-                            <option value="">-- Seleccione --</option>
-                            <?php while($est = $estudiantes->fetch_assoc()): ?>
-                                <option 
-                                    value="<?= $est['id'] ?>" 
-                                    data-documento="<?= htmlspecialchars($est['tipo_documento']) ?>" 
-                                    data-identificacion="<?= htmlspecialchars($est['numero_documento']) ?>" 
-                                    data-nombre="<?= htmlspecialchars($est['nombre_completo']) ?>">
-                                    <?= htmlspecialchars($est['nombre_completo']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
+                <!-- Formulario Consulta -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3" style="background-color: #1cc88a;">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-eye"></i> Consultar Datos de Estudiante
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Seleccione un Estudiante <span class="text-danger">*</span></label>
+                                <select id="id_estudiante" class="form-control">
+                                    <option value="">-- Seleccione un estudiante --</option>
+                                    <?php while($est = $estudiantes->fetch_assoc()): ?>
+                                        <option 
+                                            value="<?= $est['id'] ?>" 
+                                            data-documento="<?= htmlspecialchars($est['tipo_documento']) ?>" 
+                                            data-identificacion="<?= htmlspecialchars($est['numero_documento']) ?>" 
+                                            data-nombre="<?= htmlspecialchars($est['nombre_completo']) ?>">
+                                            <?= htmlspecialchars($est['nombre_completo']) ?>
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Tipo de Documento</label>
+                                <input type="text" id="tipo_documento" class="form-control" readonly>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Número de Documento</label>
+                                <input type="text" id="numero_documento" class="form-control" readonly>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="nombre_estudiante" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <a href="index.html" class="btn btn-secondary mt-3">
+                            <i class="fas fa-home"></i> Volver al Menú Principal
+                        </a>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label>Tipo de Documento</label>
-                        <input type="text" id="tipo_documento" class="form-control" readonly>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Número de Documento</label>
-                        <input type="text" id="numero_documento" class="form-control" readonly>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Nombre Completo</label>
-                        <input type="text" id="nombre_estudiante" class="form-control" readonly>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <footer>
-            <span>© TRASPASEMOS 2025 - Panel Administrativo</span>
+        <!-- Footer -->
+        <footer class="sticky-footer bg-light">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; TRASPASEMOS 2025</span>
+                </div>
+            </div>
         </footer>
     </div>
 </div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
 
 <script>
 document.getElementById('id_estudiante').addEventListener('change', function() {
