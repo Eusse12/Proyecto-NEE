@@ -450,10 +450,11 @@ function obtenerValor($campo, $remision_editar, $post_data = null) {
                                     <input type="date" name="fecha_nacimiento" class="form-control" 
                                            value="<?= htmlspecialchars(obtenerValor('fecha_nacimiento', $remision_editar, $_POST)) ?>">
                                 </div>
-                                <div class="form-group col-md-1">
+                                <div class="form-group col-md-2">
                                     <label>Edad</label>
-                                    <input type="number" name="edad" class="form-control" min="0" 
-                                           value="<?= htmlspecialchars(obtenerValor('edad', $remision_editar, $_POST)) ?>">
+                                    <input type="number" id="edad" name="edad" class="form-control" 
+                                           placeholder="Auto"
+                                           value="<?= $editarEstudiante ? $editarEstudiante['edad'] : '' ?>" readonly>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label>Grado</label>
