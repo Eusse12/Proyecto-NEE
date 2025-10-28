@@ -23,10 +23,10 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-      <!-- Sidebar -->
+       <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon">
                 <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
             </div>
@@ -36,7 +36,7 @@
 
         <!-- Inicio -->
         <li class="nav-item active">
-            <a class="nav-link" href="index.php">
+            <a class="nav-link" href="index.html">
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
