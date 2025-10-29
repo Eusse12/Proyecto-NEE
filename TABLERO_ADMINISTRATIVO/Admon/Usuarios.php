@@ -27,7 +27,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
     $id = intval($_POST['usuarioId'] ?? 0);
 
-    if ($accion === 'eliminar') {
+    // AGREGAR NUEVO USUARIO
+    if ($accion === 'agregar') {
+        // Validar que todos los campos requeridos existan
+        $campos_requeridos = ['tipo_usuario', 'tipo_documento', 'identificacion', 'nombre_completo', 'correo', 'password'];
+        $campos_faltantes = [];
+        
+        foreach ($campos_requeridos as $campo) {
+            if (!isset($_POST[$campo]) || empty(trim($_POST[$campo]))) {
+                $campos_faltantes[] = $campo;
+            }
+        }
+        
+        if (!empty($campos_faltantes)) {
+            $mensaje = "❌ Error: Faltan campos requeridos: " . implode(', ', $campos_faltantes);
+            $tipoMensaje = "danger";
+        } else {
+            // Capturar y sanitizar datos del formulario
+            $tipo_usuario = trim($_POST['tipo_usuario']);
+            $tipo_documento = trim($_POST['tipo_documento']);
+            $identificacion = trim($_POST['identificacion']);
+            $nombre_completo = trim($_POST['nombre_completo']);
+            $correo = trim($_POST['correo']);
+            $celular = trim($_POST['celular'] ?? '');
+            $clave = $_POST['password'];
+            
+            // Validaciones adicionales
+            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                $mensaje = "❌ Error: El correo electrónico no es válido";
+                $tipoMensaje = "danger";
+            } elseif (strlen($clave) < 6) {
+                $mensaje = "❌ Error: La contraseña debe tener al menos 6 caracteres";
+                $tipoMensaje = "danger";
+            } else {
+                // Verificar si el correo ya existe
+                $stmt_check = $conn->prepare("SELECT id FROM usuarios WHERE correo = ?");
+                $stmt_check->bind_param("s", $correo);
+                $stmt_check->execute();
+                $result_check = $stmt_check->get_result();
+                
+                if ($result_check->num_rows > 0) {
+                    $mensaje = "❌ Error: El correo electrónico ya está registrado";
+                    $tipoMensaje = "danger";
+                    $stmt_check->close();
+                } else {
+                    $stmt_check->close();
+                    
+                    // Verificar si la identificación ya existe
+                    $stmt_check_id = $conn->prepare("SELECT id FROM usuarios WHERE identificacion = ?");
+                    $stmt_check_id->bind_param("s", $identificacion);
+                    $stmt_check_id->execute();
+                    $result_check_id = $stmt_check_id->get_result();
+                    
+                    if ($result_check_id->num_rows > 0) {
+                        $mensaje = "❌ Error: El número de identificación ya está registrado";
+                        $tipoMensaje = "danger";
+                        $stmt_check_id->close();
+                    } else {
+                        $stmt_check_id->close();
+                        
+                        // Encriptar la contraseña antes de guardarla
+                        $clave_encriptada = password_hash($clave, PASSWORD_DEFAULT);
+                        
+                        // Usar prepared statements para prevenir SQL Injection
+                        $stmt = $conn->prepare("INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                        
+                        if ($stmt === false) {
+                            $mensaje = "❌ Error al preparar la consulta: " . $conn->error;
+                            $tipoMensaje = "danger";
+                        } else {
+                            $stmt->bind_param("sssssss", $tipo_usuario, $tipo_documento, $identificacion, $nombre_completo, $correo, $celular, $clave_encriptada);
+                            
+                            if ($stmt->execute()) {
+                                $usuario_id = $stmt->insert_id;
+                                $mensaje = "✅ Usuario agregado correctamente (ID: $usuario_id)";
+                                $tipoMensaje = "success";
+                            } else {
+                                $mensaje = "❌ Error al agregar el usuario: " . $stmt->error;
+                                $tipoMensaje = "danger";
+                            }
+                            
+                            $stmt->close();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // ELIMINAR USUARIO
+    elseif ($accion === 'eliminar') {
         $stmt = $conn->prepare("DELETE FROM usuarios WHERE id=?");
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
@@ -157,7 +246,6 @@ $result = $conn->query($sql);
         </li>
 
         <!-- seguimiento -->
-
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -193,7 +281,6 @@ $result = $conn->query($sql);
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <!-- Topbar -->
             <!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -241,8 +328,6 @@ $result = $conn->query($sql);
         </li>
     </ul>
 </nav>
-<!-- End of Topbar -->
-
 
             <!-- Page Content -->
             <div class="container-fluid">
@@ -373,7 +458,8 @@ $result = $conn->query($sql);
 <!-- Modal Agregar Usuario -->
 <div class="modal fade" id="modalAgregarUsuario" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form action="guardar_usuario.php" method="POST" class="modal-content">
+        <form method="POST" class="modal-content">
+            <input type="hidden" name="accion" value="agregar">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title"><i class="fas fa-user-plus"></i> Agregar Nuevo Usuario</h5>
                 <button class="close text-white" type="button" data-dismiss="modal">
@@ -454,6 +540,7 @@ $result = $conn->query($sql);
         </form>
     </div>
 </div>
+
 <!-- Modal Editar Usuario -->
 <div class="modal fade" id="modalEditarUsuario" tabindex="-1">
   <div class="modal-dialog modal-lg">

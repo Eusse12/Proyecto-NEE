@@ -1,3 +1,53 @@
+<?php
+session_start();
+
+// Procesar login si se envió el formulario
+$loginMessage = '';
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_POST['clave'])) {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "traspasemos";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+    if ($conn->connect_error) {
+        $loginMessage = "<div class='alert alert-danger w-100 text-center'>⚠️ Error en la conexión a la base de datos</div>";
+    } else {
+        $correo = $_POST['correo'] ?? '';
+        $clave  = $_POST['clave'] ?? '';
+
+        $sql = "SELECT * FROM usuarios WHERE correo = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $correo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result && $result->num_rows === 1) {
+            $usuario = $result->fetch_assoc();
+            if (password_verify($clave, $usuario['clave'])) {
+                $_SESSION['usuario'] = $usuario['nombre_completo'];
+                $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
+
+                $loginMessage = "<div class='alert alert-success w-100 text-center'>
+                                ✅ Bienvenido, {$usuario['nombre_completo']}
+                              </div>";
+
+                if ($usuario['tipo_usuario'] === 'Administrador') {
+                    $loginMessage .= "<div class='text-center mt-2'>
+                                    <a href='/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.html' class='btn btn-success'>Ir al Dashboard</a>
+                                  </div>";
+                }
+            } else {
+                $loginMessage = "<div class='alert alert-danger w-100 text-center'>❌ Contraseña incorrecta</div>";
+            }
+        } else {
+            $loginMessage = "<div class='alert alert-danger w-100 text-center'>❌ El usuario no existe</div>";
+        }
+        $stmt->close();
+        $conn->close();
+    }
+}
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,46 +71,27 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-                              <div class="alert-success alert-dsmissible fade show" role="alert" id ="alertaExito" style
-                          ="display:none;">
-                          <strong>¡Éxito!</strong> Inicio de sesión correcto.
-                          <button type ="button" class="btn-colse" data-bs-dismiss="alert" arias-label="close"></button>
-                          </div>     
-                          <div id="error-container"></div>
-                          <body>
-                            <div id="error-container"></div>
+    <style>
+        .nav-link{
+            transition: all 0.s ease;
+        }
+        .nav-linl:hover{
+            transform: translateY(-3px);
+            color: #1fbeac !important;;
+            text-shadow: 0 2px 8px rgba("255,255,255,0,3");
+        }
+        .btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
-                            <script>
-                              const params = new URLSearchParams(window.location.search);
-                              if (params.get("error") === "1") {
-                                document.getElementById("error-container").innerHTML = `
-                                  <table class="error-tabla">
-                                    <tr><td><strong>❌ Usuario o contraseña incorrectos</strong></td></tr>
-                                  </table>
-                                `;
-                              }
-                            </script>
-<style>
-  .nav-link{
-    transition: all 0.s ease;
-  }
-  .nav-linl:hover{
-    transform: translateY(-3px);
-    color: #1fbeac !important;;
-    text-shadow: 0 2px 8px rgba("255,255,255,0,3");
-  }
-.btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Para el logo del navbar */
-.navbar-brand:hover {
-    transform: scale(1.0);
-    transition: all 0.3s ease;
-}
-</style>    
+        /* Para el logo del navbar */
+        .navbar-brand:hover {
+            transform: scale(1.0);
+            transition: all 0.3s ease;
+        }
+    </style>    
 
     <title>Traspasemos - Necesidades Educativas Especiales</title>
     <link rel="icon" type="image/png" href="img/Logo.png">                                  
@@ -71,7 +102,7 @@
     <header>
         <nav class="navbar navbar-expand-lg bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.html#">
+                <a class="navbar-brand" href="index.php">
                     <img src="img/Logo.png" alt="Logo" style="height: 150px;">
                 </a>
                 <button 
@@ -87,11 +118,11 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="index.html#Nosotros">Nosotros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="index.html#Servicios">Servicios</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Necesidades.html">Necesidades Educativas Especiales</a></li>
-                        <li class="nav-item"><a class="nav-link" href="index.html#Contacto">Contáctenos</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.php#Nosotros">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.php#Servicios">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Necesidades.php">Necesidades Educativas Especiales</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.php#Contacto">Contáctenos</a></li>
                     </ul>
 
                     <form class="d-flex" role="search">
@@ -111,28 +142,31 @@
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ingresar</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="emailInput" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
+                    <form method="POST" action="Necesidades.php">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Ingresar</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
-                        <div class="mb-3">
-                            <label for="passwordInput" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="passwordInput" placeholder="Contraseña">
-                        </div>
-                        
-                    </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary">Ingresar</button>
-                    </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="emailInput" class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" name="correo" id="emailInput" placeholder="name@example.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordInput" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" name="clave" id="passwordInput" placeholder="Contraseña" required>
+                            </div>
+                            <div id="loginMessage">
+                                <?php echo $loginMessage; ?>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -250,7 +284,7 @@
 
             <!-- Logo -->
             <div class="col-md-3 col-sm-12 mb-4">
-              <a href="index.html#">
+              <a href="index.php#">
                 <img src="img/Logo.png" alt="Logo Traspasemos" style="height: 200px;">
               </a>
             </div>
@@ -299,6 +333,14 @@
           <p class="text-center mb-0">&copy; 2025 Traspasemos. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <?php if (!empty($loginMessage)): ?>
+    <script>
+        // Mostrar el modal automáticamente si hay un mensaje de login
+        var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+        modal.show();
+    </script>
+    <?php endif; ?>
     
 </body>
 </html>
