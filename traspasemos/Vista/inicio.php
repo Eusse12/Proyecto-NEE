@@ -1,6 +1,28 @@
 <?php
 session_start();
 
+// Procesar logout si se solicita
+if (isset($_GET['logout'])) {
+    // Destruir todas las variables de sesión
+    $_SESSION = array();
+    
+    // Si se desea destruir la sesión completamente, borre también la cookie de sesión
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+    
+    // Finalmente, destruir la sesión
+    session_destroy();
+    
+    // Redirigir a la página de inicio
+    header("Location: inicio.php");
+    exit();
+}
+
 // Procesar login si se envió el formulario
 $loginMessage = '';
 $mostrarModal = false;
@@ -107,6 +129,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
             height: 250px;
             object-fit: cover;    
         }
+        .user-profile-img {
+            width: 35px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin-right: 8px;
+        }
+        .dropdown-menu {
+            min-width: 200px;
+        }
     </style>
     
     <title>Traspasemos - Inicio</title>
@@ -142,24 +175,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                         <?php if (isset($_SESSION['usuario'])): ?>
                             <!-- Usuario logueado -->
                             <div class="dropdown">
-                                <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['usuario']); ?>
+                                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' ? htmlspecialchars($_SESSION['foto']) : 'img/default.png'; ?>" 
+                                         alt="Foto de perfil" 
+                                         class="user-profile-img">
+                                    <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
+                                    <li>
+                                        <div class="px-3 py-2">
+                                            <small class="text-muted d-block">Conectado como:</small>
+                                            <strong><?php echo htmlspecialchars($_SESSION['tipo_usuario']); ?></strong>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <?php if ($_SESSION['tipo_usuario'] === 'Administrador'): ?>
-                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php">
+                                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                                        </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Docente'): ?>
-                                        <li><a class="dropdown-item" href="TABLERO_DOCENTE/index.php"><i class="fas fa-chalkboard-teacher"></i> Mi Panel</a></li>
+                                        <li><a class="dropdown-item" href="TABLERO_DOCENTE/index.php">
+                                            <i class="fas fa-chalkboard-teacher me-2"></i> Mi Panel
+                                        </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Estudiante'): ?>
-                                        <li><a class="dropdown-item" href="TABLERO_ESTUDIANTE/index.php"><i class="fas fa-graduation-cap"></i> Mi Panel</a></li>
+                                        <li><a class="dropdown-item" href="TABLERO_ESTUDIANTE/index.php">
+                                            <i class="fas fa-graduation-cap me-2"></i> Mi Panel
+                                        </a></li>
                                     <?php endif; ?>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                                    <li><a class="dropdown-item text-danger" href="inicio.php?logout=true">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                    </a></li>
                                 </ul>
                             </div>
                         <?php else: ?>
                             <!-- Usuario no logueado -->
-                            <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">INGRESAR</button>
+                            <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <i class="fas fa-sign-in-alt me-1"></i> INGRESAR
+                            </button>
                         <?php endif; ?>
                     </form>
                 </div>

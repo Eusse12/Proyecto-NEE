@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="correo" class="form-label">Correo electrónico</label>
                 <input type="email" name="correo" id="correo" class="form-control" placeholder="ejemplo@correo.com" required>
               </div>
-
+            
               <div class="mb-3">
                 <label for="clave" class="form-label">Contraseña</label>
                 <input type="password" name="clave" id="clave" class="form-control" placeholder="********" required>
