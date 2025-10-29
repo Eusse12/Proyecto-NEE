@@ -1,4 +1,13 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../../inicio.php");
+    exit;
+}
+
+$nombre = $_SESSION['usuario'];
+$foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
+
 // Conexión a la base de datos
 $conn = new mysqli("localhost", "root", "", "traspasemos");
 if ($conn->connect_error) {
@@ -244,6 +253,50 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
+            <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Botón menú responsive -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Sección derecha del topbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Usuario con imagen -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                <!-- Foto y nombre -->
+                                <div class="d-flex align-items-center">
+                                    <img class="img-profile rounded-circle mr-2"
+                                         src="<?php echo htmlspecialchars($foto); ?>"
+                                         alt="Foto de perfil"
+                                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                        <?php echo htmlspecialchars($nombre); ?>
+                                    </span>
+                                </div>
+                            </a>
+
+                            <!-- Menú desplegable -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="perfil.php">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Mi Perfil
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Cerrar Sesión
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
             <div class="container-fluid mt-4">
                 
                 <?php if ($mensaje): ?>

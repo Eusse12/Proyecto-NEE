@@ -5,111 +5,210 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+// Cargar datos del usuario desde la base de datos si no están en sesión
+$host = "localhost";
+$user = "root";
+$pass = "";
+$dbname = "traspasemos";
+
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
+}
+
+$conn->set_charset("utf8mb4");
+
+// Obtener usuario_id desde la sesión o desde la BD
+$usuario_id = null;
+
+if (isset($_SESSION['usuario_id'])) {
+    $usuario_id = $_SESSION['usuario_id'];
+} else {
+    // Si no existe usuario_id, buscarlo por nombre de usuario
+    $nombre_usuario = $_SESSION['usuario'];
+    $sql = "SELECT id FROM usuarios WHERE nombre_completo = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $nombre_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $usuario_id = $row['id'];
+        $_SESSION['usuario_id'] = $usuario_id; // Guardar para futuras peticiones
+    }
+    $stmt->close();
+}
+
+// Si no se pudo obtener el usuario_id, redirigir al login
+if (!$usuario_id) {
+    session_destroy();
+    header("Location: ../../inicio.php");
+    exit;
+}
+$sql = "SELECT * FROM usuarios WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$usuario_data = $result->fetch_assoc();
+$stmt->close();
+
+// Actualizar las variables de sesión con los datos de la BD
+if ($usuario_data) {
+    $_SESSION['usuario'] = $usuario_data['nombre_completo'];
+    $_SESSION['correo'] = $usuario_data['correo'];
+    $_SESSION['identificacion'] = $usuario_data['identificacion'];
+    $_SESSION['tipo_usuario'] = $usuario_data['tipo_usuario'];
+    if (isset($usuario_data['foto']) && !empty($usuario_data['foto'])) {
+        $_SESSION['foto'] = $usuario_data['foto'];
+    }
+}
+
 // Procesar actualización de perfil
 $mensaje = '';
 $tipo_mensaje = '';
 $redirigir = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $dbname = "traspasemos";
-
-    $conn = new mysqli($host, $user, $pass, $dbname);
+    $nombre_completo = trim($_POST['nombre_completo']);
+    $correo = trim($_POST['correo']);
+    $identificacion = trim($_POST['identificacion']);
     
-    if ($conn->connect_error) {
-        $mensaje = "Error en la conexión a la base de datos";
-        $tipo_mensaje = "danger";
-    } else {
-        $conn->set_charset("utf8mb4");
+    // Manejar la subida de foto
+    $foto_nueva = null;
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $directorio = "imagenes_perfil/";
         
-        $usuario_id = $_SESSION['usuario_id'];
-        $nombre_completo = trim($_POST['nombre_completo']);
-        $correo = trim($_POST['correo']);
-        $identificacion = trim($_POST['identificacion']);
+        // Crear el directorio si no existe
+        if (!file_exists($directorio)) {
+            mkdir($directorio, 0777, true);
+        }
         
-        // Manejar la subida de foto
-        $foto_nueva = null;
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $directorio = "imagenes_perfil/";
-            
-            // Crear el directorio si no existe
-            if (!file_exists($directorio)) {
-                mkdir($directorio, 0777, true);
-            }
-            
-            $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-            $nombre_archivo = "perfil_" . $usuario_id . "_" . time() . "." . $extension;
-            $ruta_completa = $directorio . $nombre_archivo;
-            
-            // Validar que sea una imagen
-            $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif'];
-            if (in_array(strtolower($extension), $extensiones_permitidas)) {
+        $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $nombre_archivo = "perfil_" . $usuario_id . "_" . time() . "." . $extension;
+        $ruta_completa = $directorio . $nombre_archivo;
+        
+        // Validar que sea una imagen
+        $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array(strtolower($extension), $extensiones_permitidas)) {
+            // Validar tamaño de archivo (máximo 5MB)
+            if ($_FILES['foto']['size'] <= 5242880) {
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta_completa)) {
                     $foto_nueva = $ruta_completa;
+                    $mensaje = "Foto subida correctamente. ";
+                } else {
+                    $mensaje = "Error al mover el archivo. Verifica permisos de la carpeta. ";
+                    $tipo_mensaje = "warning";
                 }
+            } else {
+                $mensaje = "La imagen es muy grande (máx 5MB). ";
+                $tipo_mensaje = "warning";
             }
-        }
-        
-        // Actualizar datos del usuario
-        if ($foto_nueva) {
-            $sql = "UPDATE usuarios SET nombre_completo = ?, correo = ?, identificacion = ?, foto = ? WHERE id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssi", $nombre_completo, $correo, $identificacion, $foto_nueva, $usuario_id);
         } else {
-            $sql = "UPDATE usuarios SET nombre_completo = ?, correo = ?, identificacion = ? WHERE id = ?";
-            $stmt = $conn->prepare($sql);
+            $mensaje = "Formato de imagen no permitido. ";
+            $tipo_mensaje = "warning";
+        }
+    }
+    
+    // Verificar si la columna 'foto_perfil' existe en la tabla
+    $result_check = $conn->query("SHOW COLUMNS FROM usuarios LIKE 'foto_perfil'");
+    $tiene_columna_foto = ($result_check->num_rows > 0);
+    
+    // Actualizar datos del usuario
+    if ($foto_nueva && $tiene_columna_foto) {
+        $sql = "UPDATE usuarios SET nombre_completo = ?, correo = ?, identificacion = ?, foto_perfil = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            $mensaje = "Error al preparar la consulta: " . $conn->error;
+            $tipo_mensaje = "danger";
+        } else {
+            $stmt->bind_param("ssssi", $nombre_completo, $correo, $identificacion, $foto_nueva, $usuario_id);
+        }
+    } else {
+        $sql = "UPDATE usuarios SET nombre_completo = ?, correo = ?, identificacion = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            $mensaje = "Error al preparar la consulta: " . $conn->error;
+            $tipo_mensaje = "danger";
+        } else {
             $stmt->bind_param("sssi", $nombre_completo, $correo, $identificacion, $usuario_id);
         }
-        
+    }
+    
+    if (isset($stmt) && $stmt !== false) {
         if ($stmt->execute()) {
             // Actualizar la sesión
             $_SESSION['usuario'] = $nombre_completo;
             $_SESSION['correo'] = $correo;
             $_SESSION['identificacion'] = $identificacion;
-            if ($foto_nueva) {
+            if ($foto_nueva && $tiene_columna_foto) {
                 $_SESSION['foto'] = $foto_nueva;
             }
             
-            $mensaje = "Perfil actualizado exitosamente";
+            $mensaje .= "Perfil actualizado exitosamente";
             $tipo_mensaje = "success";
-            $redirigir = true; // ✅ Activar redirección
+            $redirigir = true;
+            
+            // Debug: Verificar que se guardó
+            if ($foto_nueva) {
+                $mensaje .= " | Foto guardada en: " . $foto_nueva;
+            }
         } else {
-            $mensaje = "Error al actualizar el perfil";
+            $mensaje = "Error al actualizar el perfil: " . $stmt->error;
             $tipo_mensaje = "danger";
         }
         
         $stmt->close();
+    }
+    
+    // Si se solicitó cambio de contraseña
+    if (!empty($_POST['clave_actual']) && !empty($_POST['clave_nueva'])) {
+        $clave_actual = $_POST['clave_actual'];
+        $clave_nueva = $_POST['clave_nueva'];
+        $clave_confirmar = $_POST['clave_confirmar'];
         
-        // Si se solicitó cambio de contraseña
-        if (!empty($_POST['clave_actual']) && !empty($_POST['clave_nueva'])) {
-            $clave_actual = $_POST['clave_actual'];
-            $clave_nueva = $_POST['clave_nueva'];
-            $clave_confirmar = $_POST['clave_confirmar'];
-            
-            // Verificar contraseña actual
-            $sql = "SELECT clave FROM usuarios WHERE id = ?";
-            $stmt = $conn->prepare($sql);
+        // Verificar contraseña actual
+        $sql = "SELECT clave FROM usuarios WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        
+        if ($stmt === false) {
+            $mensaje .= " | Error al verificar contraseña: " . $conn->error;
+            $tipo_mensaje = "danger";
+        } else {
             $stmt->bind_param("i", $usuario_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $usuario = $result->fetch_assoc();
             
-            if (password_verify($clave_actual, $usuario['clave'])) {
+            // Verificar si la clave está hasheada o es MD5
+            $clave_valida = false;
+            if ($usuario && password_verify($clave_actual, $usuario['clave'])) {
+                $clave_valida = true;
+            } elseif ($usuario && md5($clave_actual) === $usuario['clave']) {
+                $clave_valida = true;
+            }
+            
+            if ($clave_valida) {
                 if ($clave_nueva === $clave_confirmar) {
                     $clave_hash = password_hash($clave_nueva, PASSWORD_DEFAULT);
                     $sql = "UPDATE usuarios SET clave = ? WHERE id = ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("si", $clave_hash, $usuario_id);
+                    $stmt2 = $conn->prepare($sql);
                     
-                    if ($stmt->execute()) {
-                        $mensaje .= " | Contraseña actualizada exitosamente";
-                        $tipo_mensaje = "success";
-                        $redirigir = true; // ✅ Activar redirección
-                    } else {
-                        $mensaje .= " | Error al actualizar la contraseña";
+                    if ($stmt2 === false) {
+                        $mensaje .= " | Error al actualizar contraseña: " . $conn->error;
                         $tipo_mensaje = "warning";
+                    } else {
+                        $stmt2->bind_param("si", $clave_hash, $usuario_id);
+                        
+                        if ($stmt2->execute()) {
+                            $mensaje .= " | Contraseña actualizada exitosamente";
+                            $tipo_mensaje = "success";
+                            $redirigir = true;
+                        } else {
+                            $mensaje .= " | Error al actualizar la contraseña";
+                            $tipo_mensaje = "warning";
+                        }
+                        $stmt2->close();
                     }
                 } else {
                     $mensaje .= " | Las contraseñas nuevas no coinciden";
@@ -122,21 +221,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             
             $stmt->close();
         }
-        
-        $conn->close();
-        
-        // ✅ Redirigir al index después de 2 segundos si todo salió bien
-        if ($redirigir && $tipo_mensaje === 'success') {
-            header("refresh:2;url=index.php");
-        }
+    }
+    
+    // Recargar datos del usuario
+    $sql = "SELECT * FROM usuarios WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        $mensaje .= " | Error al recargar datos: " . $conn->error;
+        $tipo_mensaje = "warning";
+    } else {
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $usuario_data = $result->fetch_assoc();
+        $stmt->close();
+    }
+    
+    if ($redirigir && $tipo_mensaje === 'success') {
+        header("refresh:2;url=index.php");
     }
 }
 
-$nombre = $_SESSION['usuario'];
-$correo = $_SESSION['correo'];
-$identificacion = $_SESSION['identificacion'];
-$tipo_usuario = $_SESSION['tipo_usuario'];
-$foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
+// Variables para el formulario
+$nombre = $usuario_data['nombre_completo'] ?? 'Usuario';
+$correo = $usuario_data['correo'] ?? '';
+$identificacion = $usuario_data['identificacion'] ?? '';
+$tipo_usuario = $usuario_data['tipo_usuario'] ?? 'Usuario';
+
+// Verificar si la columna foto_perfil existe y tiene valor
+if (isset($usuario_data['foto_perfil']) && !empty($usuario_data['foto_perfil']) && file_exists($usuario_data['foto_perfil'])) {
+    $foto = $usuario_data['foto_perfil'];
+} else {
+    $foto = 'img/default.png';
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>

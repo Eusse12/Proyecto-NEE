@@ -1,11 +1,12 @@
 <?php
 session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../../inicio.php");
+    exit;
+}
 
-// Verificar autenticación
-// if (!isset($_SESSION['admin_id'])) {
-//     header("Location: login.php");
-//     exit();
-// }
+$nombre = $_SESSION['usuario'];
+$foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
 
 // Configuración de base de datos
 $host = "localhost";
