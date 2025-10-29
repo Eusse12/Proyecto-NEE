@@ -1,5 +1,10 @@
 <?php
-include("conexion.php");
+// Conexión a la base de datos
+$conn = new mysqli("localhost", "root", "", "traspasemos");
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
+}
+$conn->set_charset("utf8mb4");
 
 $mensaje = "";
 $tipoMensaje = "";
@@ -51,16 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($accion === 'eliminar') {
-        $stmt = $conn->prepare("DELETE FROM grupo WHERE id=?");
-        $stmt->bind_param("i", $id);
-        if ($stmt->execute()) {
-            $mensaje = "🗑️ Grupo eliminado correctamente.";
-            $tipoMensaje = "success";
-        } else {
-            $mensaje = "❌ Error al eliminar: " . $stmt->error;
-            $tipoMensaje = "danger";
+        if ($id > 0) {
+            $stmt = $conn->prepare("DELETE FROM grupo WHERE id=?");
+            $stmt->bind_param("i", $id);
+            if ($stmt->execute()) {
+                $mensaje = "🗑️ Grupo eliminado correctamente.";
+                $tipoMensaje = "success";
+            } else {
+                $mensaje = "❌ Error al eliminar: " . $stmt->error;
+                $tipoMensaje = "danger";
+            }
+            $stmt->close();
         }
-        $stmt->close();
     }
 }
 
@@ -79,16 +86,16 @@ if (isset($_GET['editar'])) {
 }
 
 // Obtener listas para selects
-$sedes = $conn->query("SELECT id, nombre FROM sede ORDER BY id ASC");
+$sedes = $conn->query("SELECT id, nombre FROM sede ORDER BY nombre ASC");
 $jornadas = $conn->query("SELECT id, nombre FROM jornada ORDER BY id ASC");
 $grados = $conn->query("SELECT id, nombre FROM grado ORDER BY id ASC");
 
-// Consultar grupos
+// Consultar grupos con información relacionada
 $sql = "SELECT g.id, g.descripcion, 
-               s.nombre AS sede, 
-               j.nombre AS jornada, 
+               IFNULL(s.nombre, 'Sin sede') AS sede, 
+               IFNULL(j.nombre, 'Sin jornada') AS jornada, 
                g.director_grupo, 
-               gr.nombre AS grado
+               IFNULL(gr.nombre, 'Sin grado') AS grado
         FROM grupo g
         LEFT JOIN sede s ON g.id_sede = s.id
         LEFT JOIN jornada j ON g.id_jornada = j.id
@@ -113,7 +120,7 @@ if (!$grupos) {
 <body id="page-top">
 
 <div id="wrapper">
-      <!-- Sidebar -->
+    <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -200,8 +207,15 @@ if (!$grupos) {
             </a>
         </li>
 
-        <!-- seguimiento -->
+        <!-- NEE -->
+        <li class="nav-item">
+            <a class="nav-link" href="nee.php">
+                <i class="fas fa-brain"></i>
+                <span>NEE</span>
+            </a>
+        </li>
 
+        <!-- Seguimiento -->
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -233,6 +247,7 @@ if (!$grupos) {
 
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
+
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
@@ -272,29 +287,39 @@ if (!$grupos) {
                                 <div class="form-group col-md-2">
                                     <label>Sede <span class="text-danger">*</span></label>
                                     <select name="id_sede" class="form-control" required>
-                                        <option value="">Seleccionar...</option>
+                                        <option value="">-- Seleccione --</option>
                                         <?php 
-                                        $sedes->data_seek(0);
-                                        while ($s = $sedes->fetch_assoc()): 
+                                        if ($sedes && $sedes->num_rows > 0) {
+                                            $sedes->data_seek(0);
+                                            while ($s = $sedes->fetch_assoc()): 
                                         ?>
                                             <option value="<?= $s['id'] ?>" <?= ($editarGrupo && $editarGrupo['id_sede'] == $s['id']) ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($s['nombre']) ?>
                                             </option>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                        } else {
+                                            echo '<option value="">No hay sedes disponibles</option>';
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label>Jornada <span class="text-danger">*</span></label>
                                     <select name="id_jornada" class="form-control" required>
-                                        <option value="">Seleccionar...</option>
+                                        <option value="">-- Seleccione --</option>
                                         <?php 
-                                        $jornadas->data_seek(0);
-                                        while ($j = $jornadas->fetch_assoc()): 
+                                        if ($jornadas && $jornadas->num_rows > 0) {
+                                            $jornadas->data_seek(0);
+                                            while ($j = $jornadas->fetch_assoc()): 
                                         ?>
                                             <option value="<?= $j['id'] ?>" <?= ($editarGrupo && $editarGrupo['id_jornada'] == $j['id']) ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($j['nombre']) ?>
                                             </option>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-3">
@@ -306,15 +331,19 @@ if (!$grupos) {
                                 <div class="form-group col-md-2">
                                     <label>Grado <span class="text-danger">*</span></label>
                                     <select name="id_grado" class="form-control" required>
-                                        <option value="">Seleccionar...</option>
+                                        <option value="">-- Seleccione --</option>
                                         <?php 
-                                        $grados->data_seek(0);
-                                        while ($g = $grados->fetch_assoc()): 
+                                        if ($grados && $grados->num_rows > 0) {
+                                            $grados->data_seek(0);
+                                            while ($g = $grados->fetch_assoc()): 
                                         ?>
                                             <option value="<?= $g['id'] ?>" <?= ($editarGrupo && $editarGrupo['id_grado'] == $g['id']) ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($g['nombre']) ?>
                                             </option>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                             </div>
@@ -351,7 +380,7 @@ if (!$grupos) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if ($grupos->num_rows > 0): ?>
+                                    <?php if ($grupos && $grupos->num_rows > 0): ?>
                                         <?php while ($grupo = $grupos->fetch_assoc()): ?>
                                         <tr>
                                             <td><?= $grupo['id'] ?></td>
