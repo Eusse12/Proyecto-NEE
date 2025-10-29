@@ -5,7 +5,7 @@ if ($conn->connect_error) {
 }
 $conn->set_charset("utf8mb4");
 
-// Consultar estudiantes y su información relacionada
+// Consultar estudiantes con información relacionada
 $query = "
 SELECT 
     e.id AS id_estudiante,
@@ -174,7 +174,6 @@ $estudiantes = $conn->query($query);
         </li>
 
         <!-- seguimiento -->
-
         <li class="nav-item active">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -224,7 +223,7 @@ $estudiantes = $conn->query($query);
                     <?php if ($estudiantes && $estudiantes->num_rows > 0): ?>
                         <?php while ($row = $estudiantes->fetch_assoc()): ?>
                             <?php
-                            // Consultar remisiones asociadas
+                            // Consultar remisiones asociadas por nombre exacto
                             $rem = $conn->prepare("
                                 SELECT fecha_remision, motivo_remision, docente_remitente,
                                     CASE 
@@ -235,6 +234,7 @@ $estudiantes = $conn->query($query);
                                 WHERE nombre_estudiante = ?
                                 ORDER BY fecha_remision DESC
                             ");
+                                                    
                             $rem->bind_param("s", $row['nombre_completo']);
                             $rem->execute();
                             $resRem = $rem->get_result();
@@ -246,7 +246,7 @@ $estudiantes = $conn->query($query);
                                 <div class="card-header" id="heading<?= $row['id_estudiante'] ?>" data-toggle="collapse" 
                                      data-target="#collapse<?= $row['id_estudiante'] ?>" aria-expanded="false">
                                     <i class="fas fa-user"></i> <?= htmlspecialchars($row['nombre_completo']) ?> — 
-                                    <?= $row['tipo_documento'] ?> <?= $row['numero_documento'] ?>
+                                    <?= htmlspecialchars($row['tipo_documento'] ?? '') ?> <?= htmlspecialchars($row['numero_documento'] ?? '') ?>
                                     <i class="fas fa-chevron-down float-right"></i>
                                 </div>
 
