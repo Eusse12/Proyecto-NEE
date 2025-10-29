@@ -18,6 +18,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Redirigir al inicio de sesión
-header("Location: ../../inicio.php");
+header("Location: /traspasemos_git/Proyecto-NEE/traspasemos/Vista/inicio.php");
 exit;
 ?>

@@ -64,13 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
 
                 // Redirigir según tipo de usuario
                 if ($usuario['tipo_usuario'] === 'Administrador') {
-                    header("Location: TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Docente') {
-                    header("Location: TABLERO_DOCENTE/index.php");
+                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Estudiante') {
-                    header("Location: TABLERO_ESTUDIANTE/index.php");
+                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } else {
                     // Tipo de usuario desconocido, mostrar mensaje
