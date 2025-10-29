@@ -368,6 +368,10 @@ INSERT INTO ciudad (nombre, id_departamento) VALUES
 -- ===========================================================
 -- ✅ VISTA DE ESTUDIANTES
 -- ===========================================================
+
+ALTER TABLE usuarios ADD COLUMN foto_perfil VARCHAR(255) NULL AFTER correo;
+
+
 CREATE OR REPLACE VIEW vista_estudiantes AS
 SELECT 
     e.id AS id_estudiante,
