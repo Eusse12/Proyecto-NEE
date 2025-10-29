@@ -15,8 +15,24 @@ CREATE TABLE usuarios (
     nombre_completo VARCHAR(100) NOT NULL,
     correo VARCHAR(100) NOT NULL UNIQUE,
     celular VARCHAR(20),
-    clave VARCHAR(255) NOT NULL
+    clave VARCHAR(255) NOT NULL,
+    foto_perfil VARCHAR(255) NULL  -- Campo para la foto
 );
+```
+
+### **4. Funcionalidades implementadas:**
+- ✅ **Actualizar información personal** (nombre, correo, identificación)
+- ✅ **Subir foto de perfil** (guardada en `imagenes_perfil/`)
+- ✅ **Cambiar contraseña** (con validaciones)
+- ✅ **Previsualización de imagen** antes de guardar
+- ✅ **Validación de contraseñas coincidentes**
+- ✅ **Mensajes de retroalimentación** (éxito/error)
+
+### **5. Instrucciones de uso:**
+
+1. **Crear la carpeta para imágenes:**
+```
+   TABLERO_ADMINISTRATIVO/Admon/imagenes_perfil/
 
 -- Insertar usuario administrador de ejemplo
 INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
