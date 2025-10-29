@@ -26,7 +26,7 @@ if ($conn->query($sql) === TRUE) {
     echo "
     <script>
       alert('✅ Tu mensaje ha sido enviado correctamente. ¡Gracias por contactarnos!');
-      window.location.href = 'index.html';
+      window.location.href = 'inicio.php';
     </script>";
 } else {
     echo "

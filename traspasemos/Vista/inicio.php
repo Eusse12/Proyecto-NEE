@@ -3,6 +3,8 @@ session_start();
 
 // Procesar login si se envió el formulario
 $loginMessage = '';
+$mostrarModal = false;
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_POST['clave'])) {
     $host = "localhost";
     $user = "root";
@@ -10,10 +12,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
     $dbname = "traspasemos";
 
     $conn = new mysqli($host, $user, $pass, $dbname);
+    
     if ($conn->connect_error) {
         $loginMessage = "<div class='alert alert-danger w-100 text-center'>⚠️ Error en la conexión a la base de datos</div>";
+        $mostrarModal = true;
     } else {
-        $correo = $_POST['correo'] ?? '';
+        $conn->set_charset("utf8mb4");
+        
+        $correo = trim($_POST['correo'] ?? '');
         $clave  = $_POST['clave'] ?? '';
 
         $sql = "SELECT * FROM usuarios WHERE correo = ?";
@@ -24,25 +30,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
 
         if ($result && $result->num_rows === 1) {
             $usuario = $result->fetch_assoc();
+            
             if (password_verify($clave, $usuario['clave'])) {
+                // Guardar toda la información del usuario en la sesión
+                $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario'] = $usuario['nombre_completo'];
                 $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
+                $_SESSION['correo'] = $usuario['correo'];
+                $_SESSION['identificacion'] = $usuario['identificacion'];
+                $_SESSION['foto'] = isset($usuario['foto']) && !empty($usuario['foto']) ? $usuario['foto'] : 'img/default.png';
 
-                $loginMessage = "<div class='alert alert-success w-100 text-center'>
-                                ✅ Bienvenido, {$usuario['nombre_completo']}
-                              </div>";
-
+                // Redirigir según tipo de usuario
                 if ($usuario['tipo_usuario'] === 'Administrador') {
-                    $loginMessage .= "<div class='text-center mt-2'>
-                                    <a href='/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.html' class='btn btn-success'>Ir al Dashboard</a>
-                                  </div>";
+                    header("Location: TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    exit();
+                } elseif ($usuario['tipo_usuario'] === 'Docente') {
+                    header("Location: TABLERO_DOCENTE/index.php");
+                    exit();
+                } elseif ($usuario['tipo_usuario'] === 'Estudiante') {
+                    header("Location: TABLERO_ESTUDIANTE/index.php");
+                    exit();
+                } else {
+                    // Tipo de usuario desconocido, mostrar mensaje
+                    $loginMessage = "<div class='alert alert-warning w-100 text-center'>⚠️ Tipo de usuario no configurado</div>";
+                    $mostrarModal = true;
                 }
             } else {
                 $loginMessage = "<div class='alert alert-danger w-100 text-center'>❌ Contraseña incorrecta</div>";
+                $mostrarModal = true;
             }
         } else {
             $loginMessage = "<div class='alert alert-danger w-100 text-center'>❌ El usuario no existe</div>";
+            $mostrarModal = true;
         }
+        
         $stmt->close();
         $conn->close();
     }
@@ -87,35 +108,59 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
             object-fit: cover;    
         }
     </style>
+    
+    <title>Traspasemos - Inicio</title>
+    <link rel="icon" type="image/png" href="img/Logo.png">
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.php#"><img src="img/Logo.png" alt="" style="height: 150px;"></a>
+                <a class="navbar-brand" href="inicio.php"><img src="img/Logo.png" alt="" style="height: 150px;"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.php">Inicio</a>
+                            <a class="nav-link active" aria-current="page" href="inicio.php">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.php#Nosotros">Nosotros</a>
+                            <a class="nav-link" href="inicio.php#Nosotros">Nosotros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.php#Servicios">Servicios</a>
+                            <a class="nav-link" href="inicio.php#Servicios">Servicios</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Necesidades.php">Necesidades Educativas Especiales</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.php#Contacto">Contáctenos</a>
+                            <a class="nav-link" href="inicio.php#Contacto">Contáctenos</a>
                         </li>
                     </ul>
                     <form class="d-flex" role="search">
-                        <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">INGRESAR</button>
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <!-- Usuario logueado -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['usuario']); ?>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <?php if ($_SESSION['tipo_usuario'] === 'Administrador'): ?>
+                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                    <?php elseif ($_SESSION['tipo_usuario'] === 'Docente'): ?>
+                                        <li><a class="dropdown-item" href="TABLERO_DOCENTE/index.php"><i class="fas fa-chalkboard-teacher"></i> Mi Panel</a></li>
+                                    <?php elseif ($_SESSION['tipo_usuario'] === 'Estudiante'): ?>
+                                        <li><a class="dropdown-item" href="TABLERO_ESTUDIANTE/index.php"><i class="fas fa-graduation-cap"></i> Mi Panel</a></li>
+                                    <?php endif; ?>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <!-- Usuario no logueado -->
+                            <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">INGRESAR</button>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>
@@ -125,7 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form method="POST" action="index.php">
+                    <form method="POST" action="inicio.php">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="exampleModalLabel">Ingresar</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -133,11 +178,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" name="correo" required placeholder="name@example.com">
+                                <input type="email" class="form-control" name="correo" required placeholder="name@example.com" autocomplete="email">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" name="clave" required placeholder="Contraseña">
+                                <input type="password" class="form-control" name="clave" required placeholder="Contraseña" autocomplete="current-password">
                             </div>
                             <div id="loginMessage">
                                 <?php echo $loginMessage; ?>
@@ -332,7 +377,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
         <div class="container">
             <div class="row text-center text-md-start">
                 <div class="col-md-3 col-sm-12 mb-4">
-                    <a href="index.php#">
+                    <a href="inicio.php">
                         <img src="img/Logo.png" alt="Logo Traspasemos" style="height: 200px;">
                     </a>
                 </div>
@@ -378,11 +423,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
     <script src="js/bootstrap.bundle.js"></script>
     <script src="js/bootstrap.min.js"></script>
 
-    <?php if (!empty($loginMessage)): ?>
+    <?php if ($mostrarModal): ?>
     <script>
         // Mostrar el modal automáticamente si hay un mensaje de login
-        var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-        modal.show();
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            modal.show();
+        });
     </script>
     <?php endif; ?>
 </body>

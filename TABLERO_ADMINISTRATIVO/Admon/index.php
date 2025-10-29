@@ -9,19 +9,10 @@ $nombre = $_SESSION['usuario'];
 $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default.png'; // Imagen por defecto
 ?>
 
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <div class="user-info text-center mt-3">
-  <img src="imagenes_perfil/<?php echo htmlspecialchars($foto); ?>" 
-       alt="Foto de perfil" 
-       class="rounded-circle" 
-       style="width:60px; height:60px; object-fit:cover;">
-  <p class="mt-2 mb-0 fw-bold"><?php echo htmlspecialchars($nombre); ?></p>
-</div>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -43,118 +34,117 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default.png'; // Imagen 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-          <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <!-- Logo -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-            <div class="sidebar-brand-icon">
-                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
-            </div>
-        </a>
-
-        <hr class="sidebar-divider my-0">
-
-        <!-- Inicio -->
-        <li class="nav-item active">
-            <a class="nav-link" href="index.php">
-                <i class="fas fa-home"></i>
-                <span>Inicio</span>
-            </a>
-        </li>
-
-        <hr class="sidebar-divider">
-
-        <!-- Usuarios -->
-        <li class="nav-item">
-            <a class="nav-link" href="Usuarios.php">
-                <i class="fas fa-users"></i>
-                <span>Usuarios</span>
-            </a>
-        </li>
-
-        <hr class="sidebar-divider">
-
-        <!-- Grado -->
-        <li class="nav-item">
-            <a class="nav-link" href="grado.php">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Grado</span>
-            </a>
-        </li>
-
-        <!-- Grupo -->
-        <li class="nav-item">
-            <a class="nav-link" href="Grupo.php">
-                <i class="fas fa-users-cog"></i>
-                <span>Grupos</span>
-            </a>
-        </li>
-
-        <!-- Sede -->
-        <li class="nav-item">
-            <a class="nav-link" href="Sede.php">
-                <i class="fas fa-school"></i>
-                <span>Sede</span>
-            </a>
-        </li>
-
-        <!-- Remisión -->
-        <li class="nav-item">
-            <a class="nav-link" href="remision.php">
-                <i class="fas fa-file-medical"></i>
-                <span>Remisiones</span>
-            </a>
-        </li>
-
-        <!-- Académico -->
-        <li class="nav-item">
-            <a class="nav-link" href="aspecto_academico.php">
-                <i class="fas fa-book-open"></i>
-                <span>Aspectos Académicos</span>
-            </a>
-        </li>
-
-        <!-- Aspectos Complementarios -->
-        <li class="nav-item">
-            <a class="nav-link" href="aspecto_complementario.php">
-                <i class="fas fa-puzzle-piece"></i>
-                <span>Aspectos Complementarios</span>
-            </a>
-        </li>
-
-        <!-- Acudiente -->
-<li class="nav-item">
-    <a class="nav-link" href="acudiente.php">
-        <i class="fas fa-user-tie"></i>
-        <span>Acudiente</span>
-    </a>
-</li>
-
-
-        <hr class="sidebar-divider">
-
-        <!-- Configuración -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
-               aria-expanded="true" aria-controls="collapseConfig">
-                <i class="fas fa-cogs"></i>
-                <span>Configuración</span>
-            </a>
-            <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Catálogos:</h6>
-                    <a class="collapse-item" href="tipo_documento.php">
-                        <i class="fas fa-id-card"></i> Tipo de Documento
-                    </a>
-                    <a class="collapse-item" href="tipo_usuario.php">
-                        <i class="fas fa-user-shield"></i> Tipo de Usuario
-                    </a>
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Logo -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+                <div class="sidebar-brand-icon">
+                    <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
                 </div>
-            </div>
-        </li>
+            </a>
 
-        <hr class="sidebar-divider d-none d-md-block">
-    </ul>
+            <hr class="sidebar-divider my-0">
+
+            <!-- Inicio -->
+            <li class="nav-item active">
+                <a class="nav-link" href="index.php">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <!-- Usuarios -->
+            <li class="nav-item">
+                <a class="nav-link" href="Usuarios.php">
+                    <i class="fas fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <!-- Grado -->
+            <li class="nav-item">
+                <a class="nav-link" href="grado.php">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Grado</span>
+                </a>
+            </li>
+
+            <!-- Grupo -->
+            <li class="nav-item">
+                <a class="nav-link" href="Grupo.php">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Grupos</span>
+                </a>
+            </li>
+
+            <!-- Sede -->
+            <li class="nav-item">
+                <a class="nav-link" href="Sede.php">
+                    <i class="fas fa-school"></i>
+                    <span>Sede</span>
+                </a>
+            </li>
+
+            <!-- Remisión -->
+            <li class="nav-item">
+                <a class="nav-link" href="remision.php">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Remisiones</span>
+                </a>
+            </li>
+
+            <!-- Académico -->
+            <li class="nav-item">
+                <a class="nav-link" href="aspecto_academico.php">
+                    <i class="fas fa-book-open"></i>
+                    <span>Aspectos Académicos</span>
+                </a>
+            </li>
+
+            <!-- Aspectos Complementarios -->
+            <li class="nav-item">
+                <a class="nav-link" href="aspecto_complementario.php">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>Aspectos Complementarios</span>
+                </a>
+            </li>
+
+            <!-- Acudiente -->
+            <li class="nav-item">
+                <a class="nav-link" href="acudiente.php">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Acudiente</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <!-- Configuración -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
+                   aria-expanded="true" aria-controls="collapseConfig">
+                    <i class="fas fa-cogs"></i>
+                    <span>Configuración</span>
+                </a>
+                <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Catálogos:</h6>
+                        <a class="collapse-item" href="tipo_documento.php">
+                            <i class="fas fa-id-card"></i> Tipo de Documento
+                        </a>
+                        <a class="collapse-item" href="tipo_usuario.php">
+                            <i class="fas fa-user-shield"></i> Tipo de Usuario
+                        </a>
+                    </div>
+                </div>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+        </ul>
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -163,55 +153,52 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default.png'; // Imagen 
             <div id="content">
 
                 <!-- Topbar -->
-  <!-- Topbar -->
-<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-    <!-- Botón menú responsive -->
-    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-        <i class="fa fa-bars"></i>
-    </button>
+                    <!-- Botón menú responsive -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
 
-    <!-- Sección derecha del topbar -->
-    <ul class="navbar-nav ml-auto">
-        <!-- Usuario con imagen -->
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <!-- Sección derecha del topbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Usuario con imagen -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-                <!-- Foto y nombre -->
-                <div class="d-flex align-items-center">
-                    <img class="img-profile rounded-circle mr-2"
-                         src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' 
-                                  ? htmlspecialchars($_SESSION['foto']) 
-                                  : 'img/default.png'; ?>"
-                         alt="Foto de perfil"
-                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                        <?php echo isset($_SESSION['usuario']) 
-                                ? htmlspecialchars($_SESSION['usuario']) 
-                                : 'Usuario'; ?>
-                    </span>
-                </div>
-            </a>
+                                <!-- Foto y nombre -->
+                                <div class="d-flex align-items-center">
+                                    <img class="img-profile rounded-circle mr-2"
+                                         src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' 
+                                                  ? htmlspecialchars($_SESSION['foto']) 
+                                                  : 'img/default.png'; ?>"
+                                         alt="Foto de perfil"
+                                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                        <?php echo isset($_SESSION['usuario']) 
+                                                ? htmlspecialchars($_SESSION['usuario']) 
+                                                : 'Usuario'; ?>
+                                    </span>
+                                </div>
+                            </a>
 
-            <!-- Menú desplegable -->
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                 aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="perfil.php">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Mi Perfil
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="logout.php">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Cerrar Sesión
-                </a>
-            </div>
-        </li>
-    </ul>
-</nav>
-<!-- End of Topbar -->
-
+                            <!-- Menú desplegable -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="perfil.php">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Mi Perfil
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="logout.php">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Cerrar Sesión
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -270,7 +257,7 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default.png'; // Imagen 
                 <div class="modal-body">Seleccione Salir si realmente desea terminar sesión</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-                    <a class="btn btn-primary" href="login.php">Salir</a>
+                    <a class="btn btn-primary" href="logout.php">Salir</a>
                 </div>
             </div>
         </div>
@@ -293,26 +280,6 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default.png'; // Imagen 
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
     <script src="js/usuario.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  fetch("perfil_usuario.php")
-    .then(res => res.json())
-    .then(data => {
-      const userSpan = document.querySelector(".nombre-usuario"); // Cambia este selector si tu HTML usa otro
-
-      if (data.logueado) {
-        userSpan.textContent = data.nombre;
-      } else {
-        userSpan.textContent = "Invitado";
-      }
-    })
-    .catch(err => console.error("Error al obtener usuario:", err));
-});
-</script>
 
 </body>
 
