@@ -1,7 +1,27 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$nombre = $_SESSION['usuario'];
+$foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'default.png'; // Imagen por defecto
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <div class="user-info text-center mt-3">
+  <img src="imagenes_perfil/<?php echo htmlspecialchars($foto); ?>" 
+       alt="Foto de perfil" 
+       class="rounded-circle" 
+       style="width:60px; height:60px; object-fit:cover;">
+  <p class="mt-2 mb-0 fw-bold"><?php echo htmlspecialchars($nombre); ?></p>
+</div>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,7 +43,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-<!-- Sidebar -->
+          <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -103,28 +123,13 @@
         </li>
 
         <!-- Acudiente -->
-        <li class="nav-item">
-            <a class="nav-link" href="acudiente.php">
-                <i class="fas fa-user-tie"></i>
-                <span>Acudiente</span>
-            </a>
-        </li>
+<li class="nav-item">
+    <a class="nav-link" href="acudiente.php">
+        <i class="fas fa-user-tie"></i>
+        <span>Acudiente</span>
+    </a>
+</li>
 
-        <!-- NEE -->
-        <li class="nav-item">
-            <a class="nav-link" href="nee.php">
-                <i class="fas fa-brain"></i>
-                <span>NEE</span>
-            </a>
-        </li>
-
-        <!-- Seguimiento -->
-        <li class="nav-item">
-            <a class="nav-link" href="seguimiento.php">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Seguimiento</span>
-            </a>
-        </li>
 
         <hr class="sidebar-divider">
 
@@ -151,7 +156,6 @@
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
 
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
@@ -159,43 +163,55 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+  <!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+    <!-- Botón menú responsive -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
 
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
+    <!-- Sección derecha del topbar -->
+    <ul class="navbar-nav ml-auto">
+        <!-- Usuario con imagen -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-                        <div class="topbar-divider d-none d-sm-block"></div>
+                <!-- Foto y nombre -->
+                <div class="d-flex align-items-center">
+                    <img class="img-profile rounded-circle mr-2"
+                         src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' 
+                                  ? htmlspecialchars($_SESSION['foto']) 
+                                  : 'img/default.png'; ?>"
+                         alt="Foto de perfil"
+                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                        <?php echo isset($_SESSION['usuario']) 
+                                ? htmlspecialchars($_SESSION['usuario']) 
+                                : 'Usuario'; ?>
+                    </span>
+                </div>
+            </a>
 
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="nombre-usuario">Nombre de Usuario</span>
-                                <img class="img-profile rounded-circle" src="img/Foto.png" alt="Usuario">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="info_usuario.php">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Mi Perfil
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Cerrar Sesión
-                                </a>
-                            </div>
-                        </li>
+            <!-- Menú desplegable -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="perfil.php">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Mi Perfil
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="logout.php">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+        </li>
+    </ul>
+</nav>
+<!-- End of Topbar -->
 
-                    </ul>
-
-                </nav>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -291,12 +307,10 @@ document.addEventListener("DOMContentLoaded", function() {
       if (data.logueado) {
         userSpan.textContent = data.nombre;
       } else {
-        userSpan.textContent = "Invitado"; 
-    img.src = "img/perfil.png";
+        userSpan.textContent = "Invitado";
       }
     })
     .catch(err => console.error("Error al obtener usuario:", err));
-    
 });
 </script>
 

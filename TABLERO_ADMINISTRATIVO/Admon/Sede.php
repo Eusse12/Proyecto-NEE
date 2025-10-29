@@ -96,7 +96,7 @@ $sedes = $conn->query("SELECT id, nombre, direccion FROM sede ORDER BY id ASC");
 <body id="page-top">
 
 <div id="wrapper">
-<!-- Sidebar -->
+        <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Logo -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -183,15 +183,8 @@ $sedes = $conn->query("SELECT id, nombre, direccion FROM sede ORDER BY id ASC");
             </a>
         </li>
 
-        <!-- NEE -->
-        <li class="nav-item">
-            <a class="nav-link" href="nee.php">
-                <i class="fas fa-brain"></i>
-                <span>NEE</span>
-            </a>
-        </li>
+        <!-- seguimiento -->
 
-        <!-- Seguimiento -->
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -223,7 +216,6 @@ $sedes = $conn->query("SELECT id, nombre, direccion FROM sede ORDER BY id ASC");
 
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
-
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">

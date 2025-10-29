@@ -16,7 +16,7 @@ CREATE TABLE usuarios (
     correo VARCHAR(100) NOT NULL UNIQUE,
     celular VARCHAR(20),
     clave VARCHAR(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- Insertar usuario administrador de ejemplo
 INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
@@ -32,7 +32,7 @@ CREATE TABLE contacto (
     telefono VARCHAR(20),
     mensaje TEXT NOT NULL,
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 🌎 TABLAS DE LOCALIZACIÓN (CIUDAD / DEPARTAMENTO)
@@ -40,14 +40,14 @@ CREATE TABLE contacto (
 CREATE TABLE departamento (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 CREATE TABLE ciudad (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     id_departamento INT,
     FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 🏫 TABLA GRADO
@@ -55,7 +55,7 @@ CREATE TABLE ciudad (
 CREATE TABLE grado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- Ejemplo de grados
 INSERT INTO grado (nombre) VALUES
@@ -68,7 +68,7 @@ CREATE TABLE sede (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(150)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 🕒 TABLA JORNADA (mañana, tarde, noche)
@@ -76,7 +76,7 @@ CREATE TABLE sede (
 CREATE TABLE jornada (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 INSERT INTO jornada (nombre) VALUES ('Mañana'), ('Tarde'), ('Noche');
 
@@ -93,7 +93,7 @@ CREATE TABLE grupo (
     FOREIGN KEY (id_sede) REFERENCES sede(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_jornada) REFERENCES jornada(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_grado) REFERENCES grado(id) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 👨‍👧 TABLA ACUDIENTE
@@ -104,11 +104,13 @@ CREATE TABLE acudiente (
     parentesco VARCHAR(50),
     telefono VARCHAR(20),
     correo VARCHAR(100)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
--- 🧒 TABLA DATOS DEL ESTUDIANTE
+-- 🧒 TABLA DATOS DEL ESTUDIANTE (CORREGIDA)
 -- ===========================================================
+DROP TABLE IF EXISTS datosestud;
+
 CREATE TABLE datosestud (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_completo VARCHAR(150) NOT NULL,
@@ -128,23 +130,7 @@ CREATE TABLE datosestud (
     FOREIGN KEY (id_acudiente) REFERENCES acudiente(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_ciudad) REFERENCES ciudad(id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_departamento) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ===========================================================
--- 🧠 TABLA NEE (Necesidades Educativas Especiales)
--- ===========================================================
-CREATE TABLE NEE (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_estudiante INT NOT NULL,
-    necesidad_especial VARCHAR(255) NOT NULL,
-    descripcion TEXT,
-    tratamiento TEXT,
-    fecha_diagnostico DATE,
-    profesional_diagnostico VARCHAR(150),
-    estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_estudiante) REFERENCES datosestud(id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 📄 TABLA REMISIÓN
@@ -180,7 +166,7 @@ CREATE TABLE remision (
     estrategias_pedagogicas TEXT,
     observaciones_adicionales TEXT,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 📚 TABLA ASPECTOS ACADÉMICOS
@@ -192,7 +178,7 @@ CREATE TABLE aspectos_academicos (
     area VARCHAR(100) NOT NULL,
     ponderacion DECIMAL(5,2) NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 📋 TABLA ASPECTOS COMPLEMENTARIOS
@@ -207,7 +193,7 @@ CREATE TABLE aspectos_complementarios (
     descripcion TEXT,
     observaciones TEXT,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- ===========================================================
 -- 🔗 INSERTAR DEPARTAMENTOS DE COLOMBIA
@@ -380,7 +366,7 @@ INSERT INTO ciudad (nombre, id_departamento) VALUES
 ('Puerto Carreño', 32), ('La Primavera', 32), ('Santa Rosalía', 32), ('Cumaribo', 32);
 
 -- ===========================================================
--- ✅ VISTA DE ESTUDIANTES CON NEE
+-- ✅ VISTA DE ESTUDIANTES
 -- ===========================================================
 CREATE OR REPLACE VIEW vista_estudiantes AS
 SELECT 
@@ -401,8 +387,7 @@ SELECT
     e.eps,
     a.nombre_completo AS acudiente,
     a.telefono AS telefono_acudiente,
-    a.parentesco,
-    GROUP_CONCAT(nee.necesidad_especial SEPARATOR ', ') AS necesidades_especiales
+    a.parentesco
 FROM datosestud e
 LEFT JOIN grupo g ON e.id_grupo = g.id
 LEFT JOIN grado gr ON g.id_grado = gr.id
@@ -410,9 +395,7 @@ LEFT JOIN jornada j ON g.id_jornada = j.id
 LEFT JOIN sede s ON g.id_sede = s.id
 LEFT JOIN ciudad c ON e.id_ciudad = c.id
 LEFT JOIN departamento d ON e.id_departamento = d.id
-LEFT JOIN acudiente a ON e.id_acudiente = a.id
-LEFT JOIN NEE nee ON e.id = nee.id_estudiante AND nee.estado = 'Activo'
-GROUP BY e.id;
+LEFT JOIN acudiente a ON e.id_acudiente = a.id;
 
 -- ===========================================================
 -- 🎉 FIN DE LA BASE DE DATOS

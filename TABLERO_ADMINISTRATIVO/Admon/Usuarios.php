@@ -53,6 +53,7 @@ if (isset($_SESSION['mensaje'])) {
 $sql = "SELECT * FROM usuarios ORDER BY id DESC";
 $result = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -155,15 +156,8 @@ $result = $conn->query($sql);
             </a>
         </li>
 
-        <!-- NEE -->
-        <li class="nav-item">
-            <a class="nav-link" href="nee.php">
-                <i class="fas fa-brain"></i>
-                <span>NEE</span>
-            </a>
-        </li>
+        <!-- seguimiento -->
 
-        <!-- Seguimiento -->
         <li class="nav-item">
             <a class="nav-link" href="seguimiento.php">
                 <i class="fas fa-clipboard-check"></i>
@@ -196,34 +190,59 @@ $result = $conn->query($sql);
         <hr class="sidebar-divider d-none d-md-block">
     </ul>
 
-
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                    <i class="fa fa-bars"></i>
-                </button>
+            <!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                <?= isset($_SESSION['admin_name']) ? htmlspecialchars($_SESSION['admin_name']) : 'Usuario' ?>
-                            </span>
-                            <img class="img-profile rounded-circle" src="img/undraw_profile.svg" alt="Profile">
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Cerrar Sesión
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
+    <!-- Botón menú responsive -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Sección derecha del topbar -->
+    <ul class="navbar-nav ml-auto">
+        <!-- Usuario con imagen -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                <!-- Foto y nombre -->
+                <div class="d-flex align-items-center">
+                    <img class="img-profile rounded-circle mr-2"
+                         src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' 
+                                  ? htmlspecialchars($_SESSION['foto']) 
+                                  : 'img/default.png'; ?>"
+                         alt="Foto de perfil"
+                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                        <?php echo isset($_SESSION['usuario']) 
+                                ? htmlspecialchars($_SESSION['usuario']) 
+                                : 'Usuario'; ?>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Menú desplegable -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="perfil.php">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Mi Perfil
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="logout.php">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+        </li>
+    </ul>
+</nav>
+<!-- End of Topbar -->
+
 
             <!-- Page Content -->
             <div class="container-fluid">
@@ -541,4 +560,5 @@ $(document).ready(function() {
 
 </body>
 </html>
+
 <?php $conn->close(); ?>
