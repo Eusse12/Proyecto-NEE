@@ -5,8 +5,27 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+// 🔹 Cargar foto si no está en sesión
+if (!isset($_SESSION['foto'])) {
+    $conn = new mysqli("localhost", "root", "", "traspasemos");
+    if (!$conn->connect_error) {
+        $conn->set_charset("utf8mb4");
+        $sql = "SELECT foto FROM usuarios WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $_SESSION['usuario_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result && $result->num_rows === 1) {
+            $usuario = $result->fetch_assoc();
+            $_SESSION['foto'] = $usuario['foto'] ?? 'img/default.png';
+        }
+        $stmt->close();
+        $conn->close();
+    }
+}
+
 $nombre = $_SESSION['usuario'];
-$foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
+$foto = $_SESSION['foto'];
 ?>
 
 <!DOCTYPE html>

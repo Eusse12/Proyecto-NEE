@@ -61,9 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                 $_SESSION['correo'] = $usuario['correo'];
                 $_SESSION['identificacion'] = $usuario['identificacion'];
                 
-                if (isset($usuario['foto_perfil']) && !empty($usuario['foto_perfil']) && file_exists('TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'])) {
-                    $_SESSION['foto'] = 'TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'];
-                } elseif (isset($usuario['foto']) && !empty($usuario['foto'])) {
+                // Cargar foto de perfil
+                if (isset($usuario['foto']) && !empty($usuario['foto'])) {
                     $_SESSION['foto'] = $usuario['foto'];
                 } else {
                     $_SESSION['foto'] = 'img/default.png';

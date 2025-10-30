@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
     $conn = new mysqli($host, $user, $pass, $dbname);
     
     if ($conn->connect_error) {
-        $loginMessage = "<div class='alert alert-danger w-100 text-center'>⚠️ Error en la conexión a la base de datos</div>";
+        $loginMessage = "<div class='alert alert-danger w-100 text-center'>⚠ Error en la conexión a la base de datos</div>";
         $mostrarModal = true;
     } else {
         $conn->set_charset("utf8mb4");
@@ -60,9 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                 $_SESSION['correo'] = $usuario['correo'];
                 $_SESSION['identificacion'] = $usuario['identificacion'];
                 
-                if (isset($usuario['foto_perfil']) && !empty($usuario['foto_perfil']) && file_exists('TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'])) {
-                    $_SESSION['foto'] = 'TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'];
-                } elseif (isset($usuario['foto']) && !empty($usuario['foto'])) {
+                // Cargar foto de perfil
+                if (isset($usuario['foto']) && !empty($usuario['foto'])) {
                     $_SESSION['foto'] = $usuario['foto'];
                 } else {
                     $_SESSION['foto'] = 'img/default.png';
@@ -78,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                     header("Location: TABLERO_ESTUDIANTE/index.php");
                     exit();
                 } else {
-                    $loginMessage = "<div class='alert alert-warning w-100 text-center'>⚠️ Tipo de usuario no configurado</div>";
+                    $loginMessage = "<div class='alert alert-warning w-100 text-center'>⚠ Tipo de usuario no configurado</div>";
                     $mostrarModal = true;
                 }
             } else {
