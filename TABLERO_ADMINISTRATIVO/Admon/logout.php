@@ -16,15 +16,7 @@ if (ini_get("session.use_cookies")) {
 // Finalmente, destruir la sesión
 session_destroy();
 
-// Obtener la ruta base del proyecto dinámicamente
-$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$host = $_SERVER['HTTP_HOST'];
-
-// Construir la URL completa hacia inicio.php
-// Desde TABLERO_ADMINISTRATIVO/Admon/ necesitamos subir 2 niveles
-$base_url = $protocol . "://" . $host . dirname(dirname(dirname($_SERVER['PHP_SELF']))) . "/inicio.php";
-
-// Redirigir
-header("Location: " . $base_url);
+// Redirigir a la página de inicio con la ruta correcta
+header("Location: /traspasemos-git/Proyecto-NEE/traspasemos/Vista/inicio.php");
 exit();
 ?>
