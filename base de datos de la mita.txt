@@ -1,11 +1,11 @@
 -- ===========================================================
--- 📚 BASE DE DATOS: traspasemos
+-- 📚 BASE DE DATOS: traspasemos (VERSIÓN CORREGIDA)
 -- ===========================================================
 CREATE DATABASE IF NOT EXISTS traspasemos CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE traspasemos;
 
 -- ===========================================================
--- 🧍‍♂️ TABLA USUARIOS
+-- 🧍‍♂️ TABLA USUARIOS (CORREGIDA)
 -- ===========================================================
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -14,29 +14,16 @@ CREATE TABLE usuarios (
     identificacion VARCHAR(20) NOT NULL UNIQUE,
     nombre_completo VARCHAR(100) NOT NULL,
     correo VARCHAR(100) NOT NULL UNIQUE,
+    foto VARCHAR(255) NULL,  -- ✅ Cambiado de foto_perfil a foto
     celular VARCHAR(20),
-    clave VARCHAR(255) NOT NULL,
-    foto_perfil VARCHAR(255) NULL  -- Campo para la foto
+    clave VARCHAR(255) NOT NULL
 );
-```
 
-### **4. Funcionalidades implementadas:**
-- ✅ **Actualizar información personal** (nombre, correo, identificación)
-- ✅ **Subir foto de perfil** (guardada en `imagenes_perfil/`)
-- ✅ **Cambiar contraseña** (con validaciones)
-- ✅ **Previsualización de imagen** antes de guardar
-- ✅ **Validación de contraseñas coincidentes**
-- ✅ **Mensajes de retroalimentación** (éxito/error)
-
-### **5. Instrucciones de uso:**
-
-1. **Crear la carpeta para imágenes:**
-```
-   TABLERO_ADMINISTRATIVO/Admon/imagenes_perfil/
-
--- Insertar usuario administrador de ejemplo
-INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave)
-VALUES ('Administrador', 'Cédula', '33816156', 'Dianeth Yamile León Valencia', 'dianethyamilel@gmail.com', '3135417303', MD5('admin123'));
+-- ✅ Insertar usuario administrador con contraseña hasheada correctamente
+-- Contraseña: admin123
+INSERT INTO usuarios (tipo_usuario, tipo_documento, identificacion, nombre_completo, correo, celular, clave, foto)
+VALUES ('Administrador', 'Cédula', '33816156', 'Dianeth Yamile León Valencia', 'dianethyamilel@gmail.com', '3135417303', 
+'$2y$10$e0MYzXyjpJS7Pd0RVvHwHeFZOdJGl4VsWPGhMtQ0Lbp.Xh0WGjuNe', 'img/default.png');
 
 -- ===========================================================
 -- 📩 TABLA CONTACTO (Formulario del sitio principal)
@@ -123,10 +110,8 @@ CREATE TABLE acudiente (
 );
 
 -- ===========================================================
--- 🧒 TABLA DATOS DEL ESTUDIANTE (CORREGIDA)
+-- 🧒 TABLA DATOS DEL ESTUDIANTE
 -- ===========================================================
-DROP TABLE IF EXISTS datosestud;
-
 CREATE TABLE datosestud (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_completo VARCHAR(150) NOT NULL,
@@ -384,10 +369,6 @@ INSERT INTO ciudad (nombre, id_departamento) VALUES
 -- ===========================================================
 -- ✅ VISTA DE ESTUDIANTES
 -- ===========================================================
-
-ALTER TABLE usuarios ADD COLUMN foto_perfil VARCHAR(255) NULL AFTER correo;
-
-
 CREATE OR REPLACE VIEW vista_estudiantes AS
 SELECT 
     e.id AS id_estudiante,
@@ -419,4 +400,11 @@ LEFT JOIN acudiente a ON e.id_acudiente = a.id;
 
 -- ===========================================================
 -- 🎉 FIN DE LA BASE DE DATOS
+-- ===========================================================
+
+-- ===========================================================
+-- 📝 CREDENCIALES DE ACCESO
+-- ===========================================================
+-- Usuario: dianethyamilel@gmail.com
+-- Contraseña: admin123
 -- ===========================================================
