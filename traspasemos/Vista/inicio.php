@@ -53,24 +53,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
         if ($result && $result->num_rows === 1) {
             $usuario = $result->fetch_assoc();
             
+            // Verificar contraseña (MD5 o password_hash)
+            $password_valida = false;
             if (password_verify($clave, $usuario['clave'])) {
+                $password_valida = true;
+            } elseif (md5($clave) === $usuario['clave']) {
+                $password_valida = true;
+            }
+            
+            if ($password_valida) {
                 // Guardar toda la información del usuario en la sesión
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario'] = $usuario['nombre_completo'];
                 $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
                 $_SESSION['correo'] = $usuario['correo'];
                 $_SESSION['identificacion'] = $usuario['identificacion'];
-                $_SESSION['foto'] = isset($usuario['foto']) && !empty($usuario['foto']) ? $usuario['foto'] : 'img/default.png';
+                
+                // Cargar foto de perfil correctamente
+                if (isset($usuario['foto_perfil']) && !empty($usuario['foto_perfil']) && file_exists('TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'])) {
+                    $_SESSION['foto'] = 'TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'];
+                } elseif (isset($usuario['foto']) && !empty($usuario['foto'])) {
+                    $_SESSION['foto'] = $usuario['foto'];
+                } else {
+                    $_SESSION['foto'] = 'img/default.png';
+                }
 
                 // Redirigir según tipo de usuario
                 if ($usuario['tipo_usuario'] === 'Administrador') {
-                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    header("Location: TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Docente') {
-                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    header("Location: TABLERO_DOCENTE/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Estudiante') {
-                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    header("Location: TABLERO_ESTUDIANTE/index.php");
                     exit();
                 } else {
                     // Tipo de usuario desconocido, mostrar mensaje

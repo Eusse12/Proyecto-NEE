@@ -1,262 +1,166 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../../inicio.php");
+    // Redirigir dinámicamente a inicio.php
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    $base_url = $protocol . "://" . $host . dirname(dirname(dirname($_SERVER['PHP_SELF']))) . "/inicio.php";
+    header("Location: " . $base_url);
     exit;
-}
-
-// Cargar datos del usuario desde la base de datos si no están en sesión
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "traspasemos";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
-}
-
-$conn->set_charset("utf8mb4");
-
-// Obtener usuario_id desde la sesión o desde la BD
-$usuario_id = null;
-
-if (isset($_SESSION['usuario_id'])) {
-    $usuario_id = $_SESSION['usuario_id'];
-} else {
-    // Si no existe usuario_id, buscarlo por nombre de usuario
-    $nombre_usuario = $_SESSION['usuario'];
-    $sql = "SELECT id FROM usuarios WHERE nombre_completo = ? LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $nombre_usuario);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
-        $usuario_id = $row['id'];
-        $_SESSION['usuario_id'] = $usuario_id; // Guardar para futuras peticiones
-    }
-    $stmt->close();
-}
-
-// Si no se pudo obtener el usuario_id, redirigir al login
-if (!$usuario_id) {
-    session_destroy();
-    header("Location: ../../inicio.php");
-    exit;
-}
-$sql = "SELECT * FROM usuarios WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $usuario_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$usuario_data = $result->fetch_assoc();
-$stmt->close();
-
-// Actualizar las variables de sesión con los datos de la BD
-if ($usuario_data) {
-    $_SESSION['usuario'] = $usuario_data['nombre_completo'];
-    $_SESSION['correo'] = $usuario_data['correo'];
-    $_SESSION['identificacion'] = $usuario_data['identificacion'];
-    $_SESSION['tipo_usuario'] = $usuario_data['tipo_usuario'];
-    if (isset($usuario_data['foto']) && !empty($usuario_data['foto'])) {
-        $_SESSION['foto'] = $usuario_data['foto'];
-    }
 }
 
 // Procesar actualización de perfil
 $mensaje = '';
-$tipo_mensaje = '';
-$redirigir = false;
+$tipoMensaje = '';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $nombre_completo = trim($_POST['nombre_completo']);
-    $correo = trim($_POST['correo']);
-    $identificacion = trim($_POST['identificacion']);
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['actualizar_perfil'])) {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "traspasemos";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
     
-    // Manejar la subida de foto
-    $foto_nueva = null;
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $directorio = "imagenes_perfil/";
+    if ($conn->connect_error) {
+        $mensaje = "Error en la conexión a la base de datos";
+        $tipoMensaje = "danger";
+    } else {
+        $conn->set_charset("utf8mb4");
         
-        // Crear el directorio si no existe
-        if (!file_exists($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
+        $usuario_id = $_SESSION['usuario_id'];
+        $nombre_completo = trim($_POST['nombre_completo'] ?? '');
+        $correo = trim($_POST['correo'] ?? '');
+        $identificacion = trim($_POST['identificacion'] ?? '');
         
-        $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $nombre_archivo = "perfil_" . $usuario_id . "_" . time() . "." . $extension;
-        $ruta_completa = $directorio . $nombre_archivo;
+        // Procesar foto de perfil si se subió
+        $foto_ruta = $_SESSION['foto'];
         
-        // Validar que sea una imagen
-        $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif'];
-        if (in_array(strtolower($extension), $extensiones_permitidas)) {
-            // Validar tamaño de archivo (máximo 5MB)
-            if ($_FILES['foto']['size'] <= 5242880) {
-                if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta_completa)) {
-                    $foto_nueva = $ruta_completa;
-                    $mensaje = "Foto subida correctamente. ";
-                } else {
-                    $mensaje = "Error al mover el archivo. Verifica permisos de la carpeta. ";
-                    $tipo_mensaje = "warning";
-                }
-            } else {
-                $mensaje = "La imagen es muy grande (máx 5MB). ";
-                $tipo_mensaje = "warning";
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $directorio_destino = "imagenes_perfil/";
+            
+            // Crear directorio si no existe
+            if (!file_exists($directorio_destino)) {
+                mkdir($directorio_destino, 0777, true);
             }
-        } else {
-            $mensaje = "Formato de imagen no permitido. ";
-            $tipo_mensaje = "warning";
+            
+            $extension = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif'];
+            
+            if (in_array($extension, $extensiones_permitidas)) {
+                $nombre_archivo = "perfil_" . $usuario_id . "_" . time() . "." . $extension;
+                $ruta_completa = $directorio_destino . $nombre_archivo;
+                
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta_completa)) {
+                    // Eliminar foto anterior si existe y no es la default
+                    if ($foto_ruta != 'img/default.png' && file_exists($foto_ruta)) {
+                        unlink($foto_ruta);
+                    }
+                    $foto_ruta = $ruta_completa;
+                }
+            }
         }
-    }
-    
-    // Verificar si la columna 'foto_perfil' existe en la tabla
-    $result_check = $conn->query("SHOW COLUMNS FROM usuarios LIKE 'foto_perfil'");
-    $tiene_columna_foto = ($result_check->num_rows > 0);
-    
-    // Actualizar datos del usuario
-    if ($foto_nueva && $tiene_columna_foto) {
+        
+        // Actualizar datos en la base de datos - usando 'foto_perfil' según la estructura de la BD
         $sql = "UPDATE usuarios SET nombre_completo = ?, correo = ?, identificacion = ?, foto_perfil = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        if ($stmt === false) {
-            $mensaje = "Error al preparar la consulta: " . $conn->error;
-            $tipo_mensaje = "danger";
-        } else {
-            $stmt->bind_param("ssssi", $nombre_completo, $correo, $identificacion, $foto_nueva, $usuario_id);
-        }
-    } else {
-        $sql = "UPDATE usuarios SET nombre_completo = ?, correo = ?, identificacion = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        if ($stmt === false) {
-            $mensaje = "Error al preparar la consulta: " . $conn->error;
-            $tipo_mensaje = "danger";
-        } else {
-            $stmt->bind_param("sssi", $nombre_completo, $correo, $identificacion, $usuario_id);
-        }
-    }
-    
-    if (isset($stmt) && $stmt !== false) {
+        $stmt->bind_param("ssssi", $nombre_completo, $correo, $identificacion, $foto_ruta, $usuario_id);
+        
         if ($stmt->execute()) {
-            // Actualizar la sesión
+            // Actualizar variables de sesión
             $_SESSION['usuario'] = $nombre_completo;
             $_SESSION['correo'] = $correo;
             $_SESSION['identificacion'] = $identificacion;
-            if ($foto_nueva && $tiene_columna_foto) {
-                $_SESSION['foto'] = $foto_nueva;
-            }
+            $_SESSION['foto'] = $foto_ruta;
             
-            $mensaje .= "Perfil actualizado exitosamente";
-            $tipo_mensaje = "success";
-            $redirigir = true;
-            
-            // Debug: Verificar que se guardó
-            if ($foto_nueva) {
-                $mensaje .= " | Foto guardada en: " . $foto_nueva;
-            }
+            $mensaje = "Perfil actualizado correctamente";
+            $tipoMensaje = "success";
         } else {
-            $mensaje = "Error al actualizar el perfil: " . $stmt->error;
-            $tipo_mensaje = "danger";
+            $mensaje = "Error al actualizar el perfil";
+            $tipoMensaje = "danger";
         }
         
         $stmt->close();
+        $conn->close();
     }
+}
+
+// Procesar cambio de contraseña
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['cambiar_password'])) {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "traspasemos";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
     
-    // Si se solicitó cambio de contraseña
-    if (!empty($_POST['clave_actual']) && !empty($_POST['clave_nueva'])) {
-        $clave_actual = $_POST['clave_actual'];
-        $clave_nueva = $_POST['clave_nueva'];
-        $clave_confirmar = $_POST['clave_confirmar'];
+    if ($conn->connect_error) {
+        $mensaje = "Error en la conexión a la base de datos";
+        $tipoMensaje = "danger";
+    } else {
+        $conn->set_charset("utf8mb4");
         
-        // Verificar contraseña actual
+        $usuario_id = $_SESSION['usuario_id'];
+        $password_actual = $_POST['password_actual'] ?? '';
+        $password_nueva = $_POST['password_nueva'] ?? '';
+        $password_confirmar = $_POST['password_confirmar'] ?? '';
+        
+        // Obtener contraseña actual de la base de datos
         $sql = "SELECT clave FROM usuarios WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        
-        if ($stmt === false) {
-            $mensaje .= " | Error al verificar contraseña: " . $conn->error;
-            $tipo_mensaje = "danger";
-        } else {
-            $stmt->bind_param("i", $usuario_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $usuario = $result->fetch_assoc();
-            
-            // Verificar si la clave está hasheada o es MD5
-            $clave_valida = false;
-            if ($usuario && password_verify($clave_actual, $usuario['clave'])) {
-                $clave_valida = true;
-            } elseif ($usuario && md5($clave_actual) === $usuario['clave']) {
-                $clave_valida = true;
-            }
-            
-            if ($clave_valida) {
-                if ($clave_nueva === $clave_confirmar) {
-                    $clave_hash = password_hash($clave_nueva, PASSWORD_DEFAULT);
-                    $sql = "UPDATE usuarios SET clave = ? WHERE id = ?";
-                    $stmt2 = $conn->prepare($sql);
-                    
-                    if ($stmt2 === false) {
-                        $mensaje .= " | Error al actualizar contraseña: " . $conn->error;
-                        $tipo_mensaje = "warning";
-                    } else {
-                        $stmt2->bind_param("si", $clave_hash, $usuario_id);
-                        
-                        if ($stmt2->execute()) {
-                            $mensaje .= " | Contraseña actualizada exitosamente";
-                            $tipo_mensaje = "success";
-                            $redirigir = true;
-                        } else {
-                            $mensaje .= " | Error al actualizar la contraseña";
-                            $tipo_mensaje = "warning";
-                        }
-                        $stmt2->close();
-                    }
-                } else {
-                    $mensaje .= " | Las contraseñas nuevas no coinciden";
-                    $tipo_mensaje = "warning";
-                }
-            } else {
-                $mensaje .= " | La contraseña actual es incorrecta";
-                $tipo_mensaje = "warning";
-            }
-            
-            $stmt->close();
-        }
-    }
-    
-    // Recargar datos del usuario
-    $sql = "SELECT * FROM usuarios WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    
-    if ($stmt === false) {
-        $mensaje .= " | Error al recargar datos: " . $conn->error;
-        $tipo_mensaje = "warning";
-    } else {
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
         $result = $stmt->get_result();
-        $usuario_data = $result->fetch_assoc();
+        
+        if ($result && $result->num_rows === 1) {
+            $usuario = $result->fetch_assoc();
+            
+            // Verificar si la contraseña está en MD5 o en password_hash
+            $password_valida = false;
+            if (password_verify($password_actual, $usuario['clave'])) {
+                $password_valida = true;
+            } elseif (md5($password_actual) === $usuario['clave']) {
+                $password_valida = true;
+            }
+            
+            if ($password_valida) {
+                if ($password_nueva === $password_confirmar) {
+                    if (strlen($password_nueva) >= 6) {
+                        $password_hash = password_hash($password_nueva, PASSWORD_DEFAULT);
+                        
+                        $sql_update = "UPDATE usuarios SET clave = ? WHERE id = ?";
+                        $stmt_update = $conn->prepare($sql_update);
+                        $stmt_update->bind_param("si", $password_hash, $usuario_id);
+                        
+                        if ($stmt_update->execute()) {
+                            $mensaje = "Contraseña actualizada correctamente";
+                            $tipoMensaje = "success";
+                        } else {
+                            $mensaje = "Error al actualizar la contraseña";
+                            $tipoMensaje = "danger";
+                        }
+                        
+                        $stmt_update->close();
+                    } else {
+                        $mensaje = "La nueva contraseña debe tener al menos 6 caracteres";
+                        $tipoMensaje = "warning";
+                    }
+                } else {
+                    $mensaje = "Las contraseñas nuevas no coinciden";
+                    $tipoMensaje = "warning";
+                }
+            } else {
+                $mensaje = "La contraseña actual es incorrecta";
+                $tipoMensaje = "danger";
+            }
+        }
+        
         $stmt->close();
-    }
-    
-    if ($redirigir && $tipo_mensaje === 'success') {
-        header("refresh:2;url=index.php");
+        $conn->close();
     }
 }
 
-// Variables para el formulario
-$nombre = $usuario_data['nombre_completo'] ?? 'Usuario';
-$correo = $usuario_data['correo'] ?? '';
-$identificacion = $usuario_data['identificacion'] ?? '';
-$tipo_usuario = $usuario_data['tipo_usuario'] ?? 'Usuario';
-
-// Verificar si la columna foto_perfil existe y tiene valor
-if (isset($usuario_data['foto_perfil']) && !empty($usuario_data['foto_perfil']) && file_exists($usuario_data['foto_perfil'])) {
-    $foto = $usuario_data['foto_perfil'];
-} else {
-    $foto = 'img/default.png';
-}
-
-$conn->close();
+$nombre = $_SESSION['usuario'];
+$foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
 ?>
 
 <!DOCTYPE html>
@@ -279,39 +183,26 @@ $conn->close();
     <link href="css/sb-admin-2.css" rel="stylesheet">
     
     <style>
-        .profile-img-container {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 20px;
-        }
-        .profile-img {
+        .profile-img-preview {
             width: 150px;
             height: 150px;
             object-fit: cover;
-            border: 4px solid #4e73df;
-        }
-        .img-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
             border-radius: 50%;
+            border: 5px solid #4e73df;
+            margin: 20px auto;
+            display: block;
+        }
+        .custom-file-upload {
+            display: inline-block;
+            padding: 6px 12px;
             cursor: pointer;
-        }
-        .profile-img-container:hover .img-overlay {
-            opacity: 1;
-        }
-        .img-overlay i {
+            background-color: #4e73df;
             color: white;
-            font-size: 2rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .custom-file-upload:hover {
+            background-color: #2e59d9;
         }
     </style>
 </head>
@@ -457,11 +348,15 @@ $conn->close();
                                 <!-- Foto y nombre -->
                                 <div class="d-flex align-items-center">
                                     <img class="img-profile rounded-circle mr-2"
-                                         src="<?php echo htmlspecialchars($foto); ?>"
+                                         src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' 
+                                                  ? htmlspecialchars($_SESSION['foto']) 
+                                                  : 'img/default.png'; ?>"
                                          alt="Foto de perfil"
                                          style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                        <?php echo htmlspecialchars($nombre); ?>
+                                        <?php echo isset($_SESSION['usuario']) 
+                                                ? htmlspecialchars($_SESSION['usuario']) 
+                                                : 'Usuario'; ?>
                                     </span>
                                 </div>
                             </a>
@@ -474,7 +369,7 @@ $conn->close();
                                     Mi Perfil
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="logout.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Cerrar Sesión
                                 </a>
@@ -487,17 +382,27 @@ $conn->close();
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <!-- Imagen de Bienvenida -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card shadow">
+                                <div class="text-center my-auto py-4">
+                                    <img src="img/logo2.png" alt="Logo Traspasemos" height="200" width="200">
+                                    <h3 style="font-family: 'Times New Roman', serif;">BIENVENIDOS</h3>
+                                    <p class="text-muted">Gestiona tu perfil y configura tu cuenta</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Mi Perfil</h1>
                     </div>
 
-                    <?php if ($mensaje): ?>
-                    <div class="alert alert-<?php echo $tipo_mensaje; ?> alert-dismissible fade show" role="alert">
-                        <strong><?php echo $mensaje; ?></strong>
-                        <?php if ($redirigir && $tipo_mensaje === 'success'): ?>
-                            <br><small>Redirigiendo al inicio en 2 segundos...</small>
-                        <?php endif; ?>
+                    <?php if ($mensaje != ''): ?>
+                    <div class="alert alert-<?php echo $tipoMensaje; ?> alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle"></i> <?php echo $mensaje; ?>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -506,84 +411,140 @@ $conn->close();
 
                     <div class="row">
                         <!-- Información del Perfil -->
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="card shadow mb-4">
-                                <div class="card-body text-center">
-                                    <div class="profile-img-container">
-                                        <img src="<?php echo htmlspecialchars($foto); ?>" 
-                                             alt="Foto de perfil" 
-                                             class="rounded-circle profile-img"
-                                             id="preview-img">
-                                        <div class="img-overlay" onclick="document.getElementById('foto-input').click()">
-                                            <i class="fas fa-camera"></i>
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-user-edit"></i> Información Personal
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="POST" action="perfil.php" enctype="multipart/form-data">
+                                        <!-- Foto de perfil -->
+                                        <div class="text-center mb-4">
+                                            <img id="preview-foto" 
+                                                 src="<?php echo htmlspecialchars($foto); ?>" 
+                                                 alt="Foto de perfil" 
+                                                 class="profile-img-preview">
+                                            <div class="mt-3">
+                                                <label for="foto" class="custom-file-upload">
+                                                    <i class="fas fa-camera"></i> Cambiar Foto
+                                                </label>
+                                                <input type="file" 
+                                                       id="foto" 
+                                                       name="foto" 
+                                                       accept="image/*" 
+                                                       style="display: none;" 
+                                                       onchange="previewImage(this)">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <h5 class="mb-3"><?php echo htmlspecialchars($nombre); ?></h5>
-                                    <p class="text-muted mb-1"><?php echo htmlspecialchars($tipo_usuario); ?></p>
-                                    <p class="text-muted mb-4"><?php echo htmlspecialchars($correo); ?></p>
+
+                                        <div class="form-group">
+                                            <label for="nombre_completo">Nombre Completo</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="nombre_completo" 
+                                                   name="nombre_completo" 
+                                                   value="<?php echo htmlspecialchars($_SESSION['usuario']); ?>" 
+                                                   required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="correo">Correo Electrónico</label>
+                                            <input type="email" 
+                                                   class="form-control" 
+                                                   id="correo" 
+                                                   name="correo" 
+                                                   value="<?php echo htmlspecialchars($_SESSION['correo']); ?>" 
+                                                   required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="identificacion">Identificación</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="identificacion" 
+                                                   name="identificacion" 
+                                                   value="<?php echo htmlspecialchars($_SESSION['identificacion']); ?>" 
+                                                   required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Tipo de Usuario</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   value="<?php echo htmlspecialchars($_SESSION['tipo_usuario']); ?>" 
+                                                   disabled>
+                                        </div>
+
+                                        <button type="submit" name="actualizar_perfil" class="btn btn-primary btn-block">
+                                            <i class="fas fa-save"></i> Guardar Cambios
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Editar Perfil -->
-                        <div class="col-lg-8">
+                        <!-- Cambiar Contraseña -->
+                        <div class="col-lg-6">
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Editar Información</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-key"></i> Cambiar Contraseña
+                                    </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form method="POST" enctype="multipart/form-data">
+                                    <form method="POST" action="perfil.php">
                                         <div class="form-group">
-                                            <label for="nombre_completo">Nombre Completo</label>
-                                            <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" 
-                                                   value="<?php echo htmlspecialchars($nombre); ?>" required>
+                                            <label for="password_actual">Contraseña Actual</label>
+                                            <input type="password" 
+                                                   class="form-control" 
+                                                   id="password_actual" 
+                                                   name="password_actual" 
+                                                   required>
                                         </div>
-                                        
+
                                         <div class="form-group">
-                                            <label for="identificacion">Identificación</label>
-                                            <input type="text" class="form-control" id="identificacion" name="identificacion" 
-                                                   value="<?php echo htmlspecialchars($identificacion); ?>" required>
+                                            <label for="password_nueva">Nueva Contraseña</label>
+                                            <input type="password" 
+                                                   class="form-control" 
+                                                   id="password_nueva" 
+                                                   name="password_nueva" 
+                                                   minlength="6"
+                                                   required>
+                                            <small class="form-text text-muted">
+                                                Mínimo 6 caracteres
+                                            </small>
                                         </div>
-                                        
+
                                         <div class="form-group">
-                                            <label for="correo">Correo Electrónico</label>
-                                            <input type="email" class="form-control" id="correo" name="correo" 
-                                                   value="<?php echo htmlspecialchars($correo); ?>" required>
+                                            <label for="password_confirmar">Confirmar Nueva Contraseña</label>
+                                            <input type="password" 
+                                                   class="form-control" 
+                                                   id="password_confirmar" 
+                                                   name="password_confirmar" 
+                                                   minlength="6"
+                                                   required>
                                         </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="foto-input">Foto de Perfil</label>
-                                            <input type="file" class="form-control-file" id="foto-input" name="foto" accept="image/*">
-                                            <small class="form-text text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF</small>
-                                        </div>
-                                        
-                                        <hr>
-                                        
-                                        <h6 class="font-weight-bold text-primary mb-3">Cambiar Contraseña (Opcional)</h6>
-                                        
-                                        <div class="form-group">
-                                            <label for="clave_actual">Contraseña Actual</label>
-                                            <input type="password" class="form-control" id="clave_actual" name="clave_actual" 
-                                                   placeholder="Dejar en blanco si no desea cambiarla">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="clave_nueva">Nueva Contraseña</label>
-                                            <input type="password" class="form-control" id="clave_nueva" name="clave_nueva">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="clave_confirmar">Confirmar Nueva Contraseña</label>
-                                            <input type="password" class="form-control" id="clave_confirmar" name="clave_confirmar">
-                                        </div>
-                                        
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> Guardar Cambios
+
+                                        <button type="submit" name="cambiar_password" class="btn btn-warning btn-block">
+                                            <i class="fas fa-lock"></i> Cambiar Contraseña
                                         </button>
-                                        <a href="index.php" class="btn btn-secondary">
-                                            <i class="fas fa-times"></i> Cancelar
-                                        </a>
                                     </form>
+                                </div>
+                            </div>
+
+                            <!-- Información adicional -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-info-circle"></i> Información de la Cuenta
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>ID de Usuario:</strong> <?php echo htmlspecialchars($_SESSION['usuario_id']); ?></p>
+                                    <p><strong>Tipo de Usuario:</strong> <?php echo htmlspecialchars($_SESSION['tipo_usuario']); ?></p>
+                                    <p><strong>Correo:</strong> <?php echo htmlspecialchars($_SESSION['correo']); ?></p>
                                 </div>
                             </div>
                         </div>
@@ -616,25 +577,6 @@ $conn->close();
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel">¿Cerrar Sesión?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">¿Está seguro que desea cerrar sesión?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-                    <a class="btn btn-primary" href="logout.php">Cerrar Sesión</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -646,17 +588,31 @@ $conn->close();
     <script src="js/sb-admin-2.min.js"></script>
 
     <script>
-    // Vista previa de la imagen
-    document.getElementById('foto-input').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview-img').src = e.target.result;
+        // Previsualizar imagen antes de subir
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('preview-foto').src = e.target.result;
+                }
+                
+                reader.readAsDataURL(input.files[0]);
             }
-            reader.readAsDataURL(file);
         }
-    });
+
+        // Validar que las contraseñas coincidan
+        document.querySelector('form[action="perfil.php"]').addEventListener('submit', function(e) {
+            var passwordNueva = document.getElementById('password_nueva');
+            var passwordConfirmar = document.getElementById('password_confirmar');
+            
+            if (passwordNueva && passwordConfirmar) {
+                if (passwordNueva.value !== passwordConfirmar.value) {
+                    e.preventDefault();
+                    alert('Las contraseñas no coinciden');
+                }
+            }
+        });
     </script>
 
 </body>
