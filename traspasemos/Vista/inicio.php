@@ -3,10 +3,7 @@ session_start();
 
 // Procesar logout si se solicita
 if (isset($_GET['logout'])) {
-    // Destruir todas las variables de sesión
     $_SESSION = array();
-    
-    // Si se desea destruir la sesión completamente, borre también la cookie de sesión
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();
         setcookie(session_name(), '', time() - 42000,
@@ -14,16 +11,12 @@ if (isset($_GET['logout'])) {
             $params["secure"], $params["httponly"]
         );
     }
-    
-    // Finalmente, destruir la sesión
     session_destroy();
-    
-    // Redirigir a la página de inicio
     header("Location: inicio.php");
     exit();
 }
 
-// Procesar login si se envió el formulario
+// Procesar login
 $loginMessage = '';
 $mostrarModal = false;
 
@@ -53,7 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
         if ($result && $result->num_rows === 1) {
             $usuario = $result->fetch_assoc();
             
-            // Verificar contraseña (MD5 o password_hash)
             $password_valida = false;
             if (password_verify($clave, $usuario['clave'])) {
                 $password_valida = true;
@@ -62,14 +54,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
             }
             
             if ($password_valida) {
-                // Guardar toda la información del usuario en la sesión
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario'] = $usuario['nombre_completo'];
                 $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
                 $_SESSION['correo'] = $usuario['correo'];
                 $_SESSION['identificacion'] = $usuario['identificacion'];
                 
-                // Cargar foto de perfil correctamente
                 if (isset($usuario['foto_perfil']) && !empty($usuario['foto_perfil']) && file_exists('TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'])) {
                     $_SESSION['foto'] = 'TABLERO_ADMINISTRATIVO/Admon/' . $usuario['foto_perfil'];
                 } elseif (isset($usuario['foto']) && !empty($usuario['foto'])) {
@@ -78,9 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                     $_SESSION['foto'] = 'img/default.png';
                 }
 
-                // Redirigir según tipo de usuario
                 if ($usuario['tipo_usuario'] === 'Administrador') {
-                    header("Location: /traspasemos-git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    header("Location: TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Docente') {
                     header("Location: TABLERO_DOCENTE/index.php");
@@ -89,7 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                     header("Location: TABLERO_ESTUDIANTE/index.php");
                     exit();
                 } else {
-                    // Tipo de usuario desconocido, mostrar mensaje
                     $loginMessage = "<div class='alert alert-warning w-100 text-center'>⚠️ Tipo de usuario no configurado</div>";
                     $mostrarModal = true;
                 }
@@ -108,43 +96,86 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
 }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <link rel="stylesheet" href="css/bootstrap.css">
-
     <script src="https://kit.fontawesome.com/aa77aa11e4.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
     <style>
-        .nav-link{
+        /* Estilos del menú de navegación */
+        .nav-link {
             transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 10px 15px !important;
+            border-radius: 5px;
         }
-        .nav-link:hover{
-            transform: translateY(-3px);
-            color: #1fbeac !important;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.3);
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff !important;
+            font-weight: 600;
+        }
+        
+        /* Estilos de botones */
         .btn:hover {
             transform: translateY(-2px) scale(1.05);
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
+        
         .navbar-brand:hover {
             transform: scale(1.05);
             transition: all 0.3s ease;
         }
+        
+        /* Dropdown del usuario */
+        .dropdown-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        
+        .dropdown-item {
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #0d6efd;
+            color: white !important;
+            transform: translateX(5px);
+        }
+        
+        .dropdown-item.text-danger:hover {
+            background-color: #dc3545;
+            color: white !important;
+        }
+        
+        /* Otros estilos */
         .Mititulo {
             text-align: center;
         }
+        
         .card-img-top {
             height: 250px;
             object-fit: cover;    
         }
+        
         .user-profile-img {
             width: 35px;
             height: 35px;
@@ -153,8 +184,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
             border: 2px solid #fff;
             margin-right: 8px;
         }
+        
         .dropdown-menu {
             min-width: 200px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Animaciones suaves */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
     </style>
     
