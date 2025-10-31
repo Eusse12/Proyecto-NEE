@@ -112,7 +112,6 @@ if (isset($_GET['editar'])) {
 $estudiantes = $conn->query("SELECT * FROM datosestud ORDER BY nombre_completo ASC");
 
 // Consultar datos para los select
-$ciudades = $conn->query("SELECT id, nombre FROM ciudad ORDER BY nombre ASC");
 $departamentos = $conn->query("SELECT id, nombre FROM departamento ORDER BY nombre ASC");
 $grupos = $conn->query("SELECT id, descripcion FROM grupo ORDER BY descripcion ASC");
 $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY nombre_completo ASC");
@@ -385,7 +384,7 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
                             <div class="form-row">
                                 <div class="form-group col-md-3">
                                     <label>Departamento</label>
-                                    <select name="id_departamento" class="form-control">
+                                    <select name="id_departamento" id="select_departamento" class="form-control">
                                         <option value="0">-- Seleccione --</option>
                                         <?php 
                                         $departamentos->data_seek(0);
@@ -399,16 +398,8 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>Ciudad</label>
-                                    <select name="id_ciudad" class="form-control">
-                                        <option value="0">-- Seleccione --</option>
-                                        <?php 
-                                        $ciudades->data_seek(0);
-                                        while($ciu = $ciudades->fetch_assoc()): 
-                                        ?>
-                                            <option value="<?= $ciu['id'] ?>" <?= ($editarEstudiante && $editarEstudiante['id_ciudad'] == $ciu['id']) ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($ciu['nombre']) ?>
-                                            </option>
-                                        <?php endwhile; ?>
+                                    <select name="id_ciudad" id="select_ciudad" class="form-control">
+                                        <option value="0">-- Primero seleccione departamento --</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-3">
@@ -564,6 +555,73 @@ window.addEventListener('DOMContentLoaded', function() {
     if (fechaNacInput.value) {
         fechaNacInput.dispatchEvent(new Event('change'));
     }
+});
+
+// ============================================
+// FILTRO DE CIUDADES POR DEPARTAMENTO
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    const selectDepartamento = document.getElementById('select_departamento');
+    const selectCiudad = document.getElementById('select_ciudad');
+    
+    // Función para cargar ciudades según departamento
+    function cargarCiudades(idDepartamento, idCiudadSeleccionada = null) {
+        if (!idDepartamento || idDepartamento == '0') {
+            selectCiudad.innerHTML = '<option value="0">-- Primero seleccione departamento --</option>';
+            return;
+        }
+        
+        // Mostrar mensaje de carga
+        selectCiudad.innerHTML = '<option value="0">Cargando ciudades...</option>';
+        selectCiudad.disabled = true;
+        
+        // Realizar petición AJAX
+        fetch(`get_ciudades.php?id_departamento=${idDepartamento}`)
+            .then(response => response.json())
+            .then(ciudades => {
+                selectCiudad.innerHTML = '<option value="0">-- Seleccione --</option>';
+                
+                if (ciudades.length > 0) {
+                    ciudades.forEach(ciudad => {
+                        const option = document.createElement('option');
+                        option.value = ciudad.id;
+                        option.textContent = ciudad.nombre;
+                        
+                        // Si hay una ciudad que debe estar seleccionada
+                        if (idCiudadSeleccionada && ciudad.id == idCiudadSeleccionada) {
+                            option.selected = true;
+                        }
+                        
+                        selectCiudad.appendChild(option);
+                    });
+                } else {
+                    selectCiudad.innerHTML = '<option value="0">No hay ciudades disponibles</option>';
+                }
+                
+                selectCiudad.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error al cargar ciudades:', error);
+                selectCiudad.innerHTML = '<option value="0">Error al cargar ciudades</option>';
+                selectCiudad.disabled = false;
+                alert('Error al cargar las ciudades. Por favor, intente nuevamente.');
+            });
+    }
+    
+    // Evento cuando cambia el departamento
+    selectDepartamento.addEventListener('change', function() {
+        cargarCiudades(this.value);
+    });
+    
+    // Si estamos editando un estudiante, cargar sus ciudades
+    <?php if ($editarEstudiante && $editarEstudiante['id_departamento']): ?>
+    const idDepartamentoActual = '<?= $editarEstudiante['id_departamento'] ?>';
+    const idCiudadActual = '<?= $editarEstudiante['id_ciudad'] ?>';
+    
+    if (idDepartamentoActual && idDepartamentoActual != '0') {
+        cargarCiudades(idDepartamentoActual, idCiudadActual);
+    }
+    <?php endif; ?>
 });
 </script>
 

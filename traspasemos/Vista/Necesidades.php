@@ -127,10 +127,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                 }
 
                 if ($usuario['tipo_usuario'] === 'Administrador') {
-                    header("Location: TABLERO_ADMINISTRATIVO/Admon/index.php");
+                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Docente') {
-                    header("Location: TABLERO_DOCENTE/index.php");
+                    header("Location: /traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php");
                     exit();
                 } elseif ($usuario['tipo_usuario'] === 'Estudiante') {
                     header("Location: TABLERO_ESTUDIANTE/index.php");
@@ -372,11 +372,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php if ($_SESSION['tipo_usuario'] === 'Administrador'): ?>
-                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php">
+                                        <li><a class="dropdown-item" href="/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php">
                                             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                         </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Docente'): ?>
-                                        <li><a class="dropdown-item" href="TABLERO_DOCENTE/index.php">
+                                        <li><a class="dropdown-item" href="/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php">
                                             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                         </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Estudiante'): ?>
