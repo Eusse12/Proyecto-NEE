@@ -354,7 +354,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                                     
                                     // Si la foto está en TABLERO_ADMINISTRATIVO, ajustar la ruta
                                     if (strpos($foto_mostrar, 'imagenes_perfil/') !== false && !file_exists($foto_mostrar)) {
-                                        $foto_mostrar = 'TABLERO_ADMINISTRATIVO/Admon/' . $foto_mostrar;
+                                        $foto_mostrar = '/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/' . $foto_mostrar;
                                     }
                                     ?>
                                     <img src="<?php echo htmlspecialchars($foto_mostrar); ?>" 
