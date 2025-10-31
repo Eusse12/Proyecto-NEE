@@ -230,6 +230,14 @@ $foto = $_SESSION['foto'];
                                 <div class="text-center my-auto py-5">
                                     <img src="img/logo2.png" alt="Logo" height="300" width="300">
                                     <h3 style="font-family: 'Times New Roman', serif;">BIENVENIDOS</h3>
+                                    
+                                    <!-- Botón para ir a inicio.php -->
+                                    <div class="mt-4">
+                                        <a href="/traspasemos_git/Proyecto-NEE/traspasemos/Vista/inicio.php" 
+                                           class="btn btn-primary btn-lg shadow-sm">
+                                            <i class="fas fa-globe"></i> Visitar Página Principal
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
