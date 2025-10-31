@@ -1,6 +1,35 @@
 <?php
 session_start();
 
+// 🔹 CARGAR FOTO DE PERFIL SI EL USUARIO YA ESTÁ LOGUEADO
+if (isset($_SESSION['usuario_id']) && !isset($_SESSION['foto'])) {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "traspasemos";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+    
+    if (!$conn->connect_error) {
+        $conn->set_charset("utf8mb4");
+        $usuario_id = $_SESSION['usuario_id'];
+        
+        $sql = "SELECT foto FROM usuarios WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result && $result->num_rows === 1) {
+            $usuario = $result->fetch_assoc();
+            $_SESSION['foto'] = $usuario['foto'] ?? 'img/default.png';
+        }
+        
+        $stmt->close();
+        $conn->close();
+    }
+}
+
 // Procesar logout si se solicita
 if (isset($_GET['logout'])) {
     $_SESSION = array();
@@ -61,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                 $_SESSION['correo'] = $usuario['correo'];
                 $_SESSION['identificacion'] = $usuario['identificacion'];
                 
-                // Cargar foto de perfil
+                // 🔹 Cargar foto de perfil
                 if (isset($usuario['foto']) && !empty($usuario['foto'])) {
                     $_SESSION['foto'] = $usuario['foto'];
                 } else {
@@ -288,9 +317,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                             <!-- Usuario logueado -->
                             <div class="dropdown">
                                 <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] != '' ? htmlspecialchars($_SESSION['foto']) : 'img/default.png'; ?>" 
+                                    <?php
+                                    // 🔹 Mostrar foto de perfil con ruta correcta
+                                    $foto_mostrar = isset($_SESSION['foto']) && $_SESSION['foto'] != '' 
+                                        ? $_SESSION['foto'] 
+                                        : 'img/default.png';
+                                    
+                                    // Si la foto está en TABLERO_ADMINISTRATIVO, ajustar la ruta
+                                    if (strpos($foto_mostrar, 'imagenes_perfil/') !== false && !file_exists($foto_mostrar)) {
+                                        $foto_mostrar = 'TABLERO_ADMINISTRATIVO/Admon/' . $foto_mostrar;
+                                    }
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($foto_mostrar); ?>" 
                                          alt="Foto de perfil" 
-                                         class="user-profile-img">
+                                         class="user-profile-img"
+                                         onerror="this.src='img/default.png'">
                                     <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
@@ -302,7 +343,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php if ($_SESSION['tipo_usuario'] === 'Administrador'): ?>
-                                        <li><a class="dropdown-item" href="/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php">
+                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php">
                                             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                         </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Docente'): ?>
