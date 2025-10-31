@@ -17,6 +17,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Redirigir a la página de inicio con la ruta correcta
-header("Location: /traspasemos-git/Proyecto-NEE/traspasemos/Vista/inicio.php");
+header("Location: /traspasemos_git/Proyecto-NEE/traspasemos/Vista/inicio.php");
 exit();
 ?>
