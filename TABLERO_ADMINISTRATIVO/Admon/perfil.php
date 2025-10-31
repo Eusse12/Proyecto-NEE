@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             
             $mensaje = "Perfil actualizado exitosamente";
             $tipo_mensaje = "success";
-            $redirigir = true; // ✅ Activar redirección
+            $redirigir = true;
         } else {
             $mensaje = "Error al actualizar el perfil";
             $tipo_mensaje = "danger";
@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     if ($stmt->execute()) {
                         $mensaje .= " | Contraseña actualizada exitosamente";
                         $tipo_mensaje = "success";
-                        $redirigir = true; // ✅ Activar redirección
+                        $redirigir = true;
                     } else {
                         $mensaje .= " | Error al actualizar la contraseña";
                         $tipo_mensaje = "warning";
@@ -124,7 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         
         $conn->close();
         
-        // ✅ Redirigir al index después de 2 segundos si todo salió bien
         if ($redirigir && $tipo_mensaje === 'success') {
             header("refresh:2;url=index.php");
         }
@@ -158,39 +157,181 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
     <link href="css/sb-admin-2.css" rel="stylesheet">
     
     <style>
+        /* Mejorar el card de perfil */
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
         .profile-img-container {
             position: relative;
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             margin: 0 auto 20px;
         }
+        
         .profile-img {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             object-fit: cover;
-            border: 4px solid #4e73df;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
+        
         .img-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: all 0.3s ease;
             border-radius: 50%;
             cursor: pointer;
         }
+        
         .profile-img-container:hover .img-overlay {
             opacity: 1;
         }
+        
         .img-overlay i {
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        .profile-card h5 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-card .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+        }
+        
+        /* Mejorar el formulario */
+        .edit-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .edit-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+        }
+        
+        .form-control {
+            border: 2px solid #e3e6f0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        /* Botón personalizado para subir foto */
+        .custom-file-upload {
+            display: inline-block;
+            padding: 12px 25px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: none;
+        }
+        
+        .custom-file-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .custom-file-upload i {
+            margin-right: 8px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-name {
+            display: inline-block;
+            margin-left: 15px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Mejorar botones */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+        
+        /* Separador de secciones */
+        .section-divider {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #667eea, transparent);
+            margin: 30px 0;
+        }
+        
+        .password-section-title {
+            color: #667eea;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Animación para alertas */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert {
+            animation: slideDown 0.3s ease;
+            border-radius: 10px;
+            border: none;
         }
     </style>
 </head>
@@ -368,12 +509,21 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Mi Perfil</h1>
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <i class="fas fa-user-circle mr-2"></i>Mi Perfil
+                        </h1>
                     </div>
 
                     <?php if ($mensaje): ?>
                     <div class="alert alert-<?php echo $tipo_mensaje; ?> alert-dismissible fade show" role="alert">
-                        <strong><?php echo $mensaje; ?></strong>
+                        <strong>
+                            <?php if ($tipo_mensaje === 'success'): ?>
+                                <i class="fas fa-check-circle mr-2"></i>
+                            <?php else: ?>
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <?php endif; ?>
+                            <?php echo $mensaje; ?>
+                        </strong>
                         <?php if ($redirigir && $tipo_mensaje === 'success'): ?>
                             <br><small>Redirigiendo al inicio en 2 segundos...</small>
                         <?php endif; ?>
@@ -386,8 +536,8 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
                     <div class="row">
                         <!-- Información del Perfil -->
                         <div class="col-lg-4">
-                            <div class="card shadow mb-4">
-                                <div class="card-body text-center">
+                            <div class="card shadow mb-4 profile-card">
+                                <div class="card-body text-center py-5">
                                     <div class="profile-img-container">
                                         <img src="<?php echo htmlspecialchars($foto); ?>" 
                                              alt="Foto de perfil" 
@@ -398,70 +548,106 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
                                         </div>
                                     </div>
                                     <h5 class="mb-3"><?php echo htmlspecialchars($nombre); ?></h5>
-                                    <p class="text-muted mb-1"><?php echo htmlspecialchars($tipo_usuario); ?></p>
-                                    <p class="text-muted mb-4"><?php echo htmlspecialchars($correo); ?></p>
+                                    <span class="badge mb-3"><?php echo htmlspecialchars($tipo_usuario); ?></span>
+                                    <p class="mb-2">
+                                        <i class="fas fa-envelope mr-2"></i>
+                                        <?php echo htmlspecialchars($correo); ?>
+                                    </p>
+                                    <p class="mb-0">
+                                        <i class="fas fa-id-card mr-2"></i>
+                                        <?php echo htmlspecialchars($identificacion); ?>
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Editar Perfil -->
                         <div class="col-lg-8">
-                            <div class="card shadow mb-4">
+                            <div class="card shadow mb-4 edit-card">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Editar Información</h6>
+                                    <h6 class="m-0 font-weight-bold">
+                                        <i class="fas fa-edit mr-2"></i>Editar Información
+                                    </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body p-4">
                                     <form method="POST" enctype="multipart/form-data">
                                         <div class="form-group">
-                                            <label for="nombre_completo">Nombre Completo</label>
+                                            <label for="nombre_completo">
+                                                <i class="fas fa-user mr-2 text-primary"></i>Nombre Completo
+                                            </label>
                                             <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" 
                                                    value="<?php echo htmlspecialchars($nombre); ?>" required>
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="identificacion">Identificación</label>
+                                            <label for="identificacion">
+                                                <i class="fas fa-id-card mr-2 text-primary"></i>Identificación
+                                            </label>
                                             <input type="text" class="form-control" id="identificacion" name="identificacion" 
                                                    value="<?php echo htmlspecialchars($identificacion); ?>" required>
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="correo">Correo Electrónico</label>
+                                            <label for="correo">
+                                                <i class="fas fa-envelope mr-2 text-primary"></i>Correo Electrónico
+                                            </label>
                                             <input type="email" class="form-control" id="correo" name="correo" 
                                                    value="<?php echo htmlspecialchars($correo); ?>" required>
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="foto-input">Foto de Perfil</label>
-                                            <input type="file" class="form-control-file" id="foto-input" name="foto" accept="image/*">
-                                            <small class="form-text text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF</small>
+                                            <label>
+                                                <i class="fas fa-image mr-2 text-primary"></i>Foto de Perfil
+                                            </label>
+                                            <div class="d-flex align-items-center">
+                                                <label for="foto-input" class="custom-file-upload mb-0">
+                                                    <i class="fas fa-camera"></i>Elegir Foto de Perfil
+                                                </label>
+                                                <span class="file-name" id="file-name">Ningún archivo seleccionado</span>
+                                            </div>
+                                            <input type="file" id="foto-input" name="foto" accept="image/*">
+                                            <small class="form-text text-muted mt-2">
+                                                <i class="fas fa-info-circle mr-1"></i>Formatos permitidos: JPG, JPEG, PNG, GIF
+                                            </small>
                                         </div>
                                         
-                                        <hr>
+                                        <hr class="section-divider">
                                         
-                                        <h6 class="font-weight-bold text-primary mb-3">Cambiar Contraseña (Opcional)</h6>
+                                        <h6 class="password-section-title mb-3">
+                                            <i class="fas fa-lock"></i>
+                                            Cambiar Contraseña (Opcional)
+                                        </h6>
                                         
                                         <div class="form-group">
-                                            <label for="clave_actual">Contraseña Actual</label>
+                                            <label for="clave_actual">
+                                                <i class="fas fa-key mr-2 text-primary"></i>Contraseña Actual
+                                            </label>
                                             <input type="password" class="form-control" id="clave_actual" name="clave_actual" 
                                                    placeholder="Dejar en blanco si no desea cambiarla">
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="clave_nueva">Nueva Contraseña</label>
+                                            <label for="clave_nueva">
+                                                <i class="fas fa-lock mr-2 text-primary"></i>Nueva Contraseña
+                                            </label>
                                             <input type="password" class="form-control" id="clave_nueva" name="clave_nueva">
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="clave_confirmar">Confirmar Nueva Contraseña</label>
+                                            <label for="clave_confirmar">
+                                                <i class="fas fa-lock mr-2 text-primary"></i>Confirmar Nueva Contraseña
+                                            </label>
                                             <input type="password" class="form-control" id="clave_confirmar" name="clave_confirmar">
                                         </div>
                                         
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> Guardar Cambios
-                                        </button>
-                                        <a href="index.php" class="btn btn-secondary">
-                                            <i class="fas fa-times"></i> Cancelar
-                                        </a>
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save mr-2"></i>Guardar Cambios
+                                            </button>
+                                            <a href="index.php" class="btn btn-secondary">
+                                                <i class="fas fa-times mr-2"></i>Cancelar
+                                            </a>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -525,15 +711,27 @@ $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
     <script src="js/sb-admin-2.min.js"></script>
 
     <script>
-    // Vista previa de la imagen
+    // Vista previa de la imagen y mostrar nombre del archivo
     document.getElementById('foto-input').addEventListener('change', function(e) {
         const file = e.target.files[0];
+        const fileNameSpan = document.getElementById('file-name');
+        
         if (file) {
+            // Actualizar nombre del archivo
+            fileNameSpan.textContent = file.name;
+            fileNameSpan.style.color = '#667eea';
+            fileNameSpan.style.fontStyle = 'normal';
+            
+            // Vista previa de la imagen
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('preview-img').src = e.target.result;
             }
             reader.readAsDataURL(file);
+        } else {
+            fileNameSpan.textContent = 'Ningún archivo seleccionado';
+            fileNameSpan.style.color = '#6c757d';
+            fileNameSpan.style.fontStyle = 'italic';
         }
     });
     </script>
