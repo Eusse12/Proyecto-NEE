@@ -30,6 +30,35 @@ if (isset($_SESSION['usuario_id']) && !isset($_SESSION['foto'])) {
     }
 }
 
+// 🔹 CARGAR FOTO DE PERFIL SI EL USUARIO YA ESTÁ LOGUEADO
+if (isset($_SESSION['usuario_id']) && !isset($_SESSION['foto'])) {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $dbname = "traspasemos";
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+    
+    if (!$conn->connect_error) {
+        $conn->set_charset("utf8mb4");
+        $usuario_id = $_SESSION['usuario_id'];
+        
+        $sql = "SELECT foto FROM usuarios WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result && $result->num_rows === 1) {
+            $usuario = $result->fetch_assoc();
+            $_SESSION['foto'] = $usuario['foto'] ?? 'img/default.png';
+        }
+        
+        $stmt->close();
+        $conn->close();
+    }
+}
+
 // Procesar logout si se solicita
 if (isset($_GET['logout'])) {
     $_SESSION = array();
