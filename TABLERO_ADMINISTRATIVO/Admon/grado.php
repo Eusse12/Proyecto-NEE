@@ -1,10 +1,9 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../../inicio.php");
+    header("Location: /traspasemos_git/Proyecto-NEE/traspasemos/Vista/inicio.php");
     exit;
 }
-
 $nombre = $_SESSION['usuario'];
 $foto = isset($_SESSION['foto']) ? $_SESSION['foto'] : 'img/default.png';
 // Configuración de la base de datos

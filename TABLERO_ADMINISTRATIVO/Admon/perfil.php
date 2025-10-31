@@ -1,10 +1,9 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../../inicio.php");
+    header("Location: /traspasemos_git/Proyecto-NEE/traspasemos/Vista/inicio.php");
     exit;
 }
-
 // Procesar actualización de perfil
 $mensaje = '';
 $tipo_mensaje = '';
