@@ -245,34 +245,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     
-                                    <!-- Opción Mi Perfil - redirige según el tipo de usuario -->
+                                    <!-- Dashboard - redirige según el tipo de usuario -->
                                     <?php if ($_SESSION['tipo_usuario'] === 'Administrador'): ?>
-                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php">
-                                            <i class="fas fa-user fa-fw me-2"></i> Mi Perfil
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="TABLERO_ADMINISTRATIVO/Admon/index.php">
+                                        <li><a class="dropdown-item" href="/traspasemos_git/Proyecto-NEE/TABLERO_ADMINISTRATIVO/Admon/index.php">
                                             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                         </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Docente'): ?>
                                         <li><a class="dropdown-item" href="TABLERO_DOCENTE/index.php">
-                                            <i class="fas fa-user fa-fw me-2"></i> Mi Perfil
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="TABLERO_DOCENTE/index.php">
-                                            <i class="fas fa-chalkboard-teacher me-2"></i> Mi Panel
+                                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                         </a></li>
                                     <?php elseif ($_SESSION['tipo_usuario'] === 'Estudiante'): ?>
                                         <li><a class="dropdown-item" href="TABLERO_ESTUDIANTE/index.php">
-                                            <i class="fas fa-user fa-fw me-2"></i> Mi Perfil
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="TABLERO_ESTUDIANTE/index.php">
-                                            <i class="fas fa-graduation-cap me-2"></i> Mi Panel
+                                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                         </a></li>
                                     <?php endif; ?>
-                                    
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="inicio.php?logout=true">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
-                                    </a></li>
                                 </ul>
                             </div>
                         <?php else: ?>
@@ -540,8 +526,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['correo']) && isset($_
         </div>
     </footer>
 
+    <!-- Scripts de Bootstrap - SOLO UNO -->
     <script src="js/bootstrap.bundle.js"></script>
-    <script src="js/bootstrap.min.js"></script>
 
     <?php if ($mostrarModal): ?>
     <script>
