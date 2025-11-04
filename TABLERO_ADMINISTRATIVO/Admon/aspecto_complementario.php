@@ -33,126 +33,146 @@ $result = $conn->query($sql);
 <body id="page-top">
 
 <div id="wrapper">
-      <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <!-- Logo -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-            <div class="sidebar-brand-icon">
-                <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
-            </div>
+   <!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- Logo -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+        <div class="sidebar-brand-icon">
+            <img src="img/logo.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+        </div>
+    </a>
+
+    <hr class="sidebar-divider my-0">
+
+    <!-- Inicio -->
+    <li class="nav-item">
+        <a class="nav-link" href="index.php">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
         </a>
+    </li>
 
-        <hr class="sidebar-divider my-0">
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Gestión de Usuarios</div>
 
-        <!-- Inicio -->
-        <li class="nav-item">
-            <a class="nav-link" href="index.php">
-                <i class="fas fa-home"></i>
-                <span>Inicio</span>
-            </a>
-        </li>
+    <!-- Usuarios -->
+    <li class="nav-item">
+        <a class="nav-link" href="Usuarios.php">
+            <i class="fas fa-users"></i>
+            <span>Usuarios</span>
+        </a>
+    </li>
 
-        <hr class="sidebar-divider">
+    <!-- Tipo de Usuario -->
+    <li class="nav-item">
+        <a class="nav-link" href="tipo_usuario.php">
+            <i class="fas fa-user-shield"></i>
+            <span>Tipo de Usuario</span>
+        </a>
+    </li>
 
-        <!-- Usuarios -->
-        <li class="nav-item">
-            <a class="nav-link" href="Usuarios.php">
-                <i class="fas fa-users"></i>
-                <span>Usuarios</span>
-            </a>
-        </li>
+    <!-- Acudiente -->
+    <li class="nav-item">
+        <a class="nav-link" href="acudiente.php">
+            <i class="fas fa-user-tie"></i>
+            <span>Acudientes</span>
+        </a>
+    </li>
 
-        <hr class="sidebar-divider">
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Estructura Académica</div>
 
-        <!-- Grado -->
-        <li class="nav-item">
-            <a class="nav-link" href="grado.php">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Grado</span>
-            </a>
-        </li>
+    <!-- Sede -->
+    <li class="nav-item">
+        <a class="nav-link" href="Sede.php">
+            <i class="fas fa-school"></i>
+            <span>Sedes</span>
+        </a>
+    </li>
 
-        <!-- Grupo -->
-        <li class="nav-item">
-            <a class="nav-link" href="Grupo.php">
-                <i class="fas fa-users-cog"></i>
-                <span>Grupos</span>
-            </a>
-        </li>
+    <!-- Grado -->
+    <li class="nav-item">
+        <a class="nav-link" href="grado.php">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Grados</span>
+        </a>
+    </li>
 
-        <!-- Sede -->
-        <li class="nav-item">
-            <a class="nav-link" href="Sede.php">
-                <i class="fas fa-school"></i>
-                <span>Sede</span>
-            </a>
-        </li>
+    <!-- Grupo -->
+    <li class="nav-item">
+        <a class="nav-link" href="Grupo.php">
+            <i class="fas fa-users-cog"></i>
+            <span>Grupos</span>
+        </a>
+    </li>
 
-        <!-- Remisión -->
-        <li class="nav-item">
-            <a class="nav-link" href="remision.php">
-                <i class="fas fa-file-medical"></i>
-                <span>Remisiones</span>
-            </a>
-        </li>
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">NEE y Seguimiento</div>
 
-        <!-- Académico -->
-        <li class="nav-item">
-            <a class="nav-link" href="aspecto_academico.php">
-                <i class="fas fa-book-open"></i>
-                <span>Aspectos Académicos</span>
-            </a>
-        </li>
+    <!-- NEE -->
+    <li class="nav-item">
+        <a class="nav-link" href="nee.php">
+            <i class="fas fa-brain"></i>
+            <span>NEE</span>
+        </a>
+    </li>
 
-        <!-- Aspectos Complementarios -->
-        <li class="nav-item active">
-            <a class="nav-link" href="aspecto_complementario.php">
-                <i class="fas fa-puzzle-piece"></i>
-                <span>Aspectos Complementarios</span>
-            </a>
-        </li>
+    <!-- Remisión -->
+    <li class="nav-item">
+        <a class="nav-link" href="remision.php">
+            <i class="fas fa-file-medical"></i>
+            <span>Remisiones</span>
+        </a>
+    </li>
 
-        <!-- Acudiente -->
-        <li class="nav-item">
-            <a class="nav-link" href="acudiente.php">
-                <i class="fas fa-user-tie"></i>
-                <span>Acudiente</span>
-            </a>
-        </li>
+    <!-- Seguimiento -->
+    <li class="nav-item">
+        <a class="nav-link" href="seguimiento.php">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Seguimientos</span>
+        </a>
+    </li>
 
-        <!-- seguimiento -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Aspectos Educativos</div>
 
-        <li class="nav-item ">
-            <a class="nav-link" href="seguimiento.php">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Seguimiento</span>
-            </a>
-        </li>
+    <!-- Académico -->
+    <li class="nav-item">
+        <a class="nav-link" href="aspecto_academico.php">
+            <i class="fas fa-book-open"></i>
+            <span>Aspectos Académicos</span>
+        </a>
+    </li>
 
-        <hr class="sidebar-divider">
+    <!-- Aspectos Complementarios -->
+    <li class="nav-item active">
+        <a class="nav-link" href="aspecto_complementario.php">
+            <i class="fas fa-puzzle-piece"></i>
+            <span>Aspectos Complementarios</span>
+        </a>
+    </li>
 
-        <!-- Configuración -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
-               aria-expanded="true" aria-controls="collapseConfig">
-                <i class="fas fa-cogs"></i>
-                <span>Configuración</span>
-            </a>
-            <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Catálogos:</h6>
-                    <a class="collapse-item" href="tipo_documento.php">
-                        <i class="fas fa-id-card"></i> Tipo de Documento
-                    </a>
-                    <a class="collapse-item" href="tipo_usuario.php">
-                        <i class="fas fa-user-shield"></i> Tipo de Usuario
-                    </a>
-                </div>
+    <hr class="sidebar-divider">
+
+    <!-- Configuración -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
+           aria-expanded="true" aria-controls="collapseConfig">
+            <i class="fas fa-cogs"></i>
+            <span>Configuración</span>
+        </a>
+        <div id="collapseConfig" class="collapse" aria-labelledby="headingConfig" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Catálogos:</h6>
+                <a class="collapse-item" href="tipo_documento.php">
+                    <i class="fas fa-id-card"></i> Tipo de Documento
+                </a>
             </div>
-        </li>
+        </div>
+    </li>
 
-        <hr class="sidebar-divider d-none d-md-block">
-    </ul>
+    <hr class="sidebar-divider d-none d-md-block">
+</ul>
 
   <!-- Content Wrapper -->
   <div id="content-wrapper" class="d-flex flex-column">
