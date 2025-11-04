@@ -66,11 +66,14 @@ $estudiantes = $conn->query($query);
         </a>
     </li>
 
-    <!-- Tipo de Usuario -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Estudiantes</div>
+
+    <!-- Agregar Estudiante -->
     <li class="nav-item">
         <a class="nav-link" href="tipo_usuario.php">
-            <i class="fas fa-user-shield"></i>
-            <span>Tipo de Usuario</span>
+            <i class="fas fa-user-plus"></i>
+            <span>Agregar Estudiante</span>
         </a>
     </li>
 
@@ -158,7 +161,7 @@ $estudiantes = $conn->query($query);
     <hr class="sidebar-divider">
 
     <!-- Configuración -->
-    <li class="nav-item">
+    <li class="nav-item active">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseConfig"
            aria-expanded="true" aria-controls="collapseConfig">
             <i class="fas fa-cogs"></i>

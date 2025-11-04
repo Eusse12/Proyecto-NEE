@@ -159,11 +159,14 @@ $acudientes = $conn->query("SELECT id, nombre_completo FROM acudiente ORDER BY n
         </a>
     </li>
 
-    <!-- Tipo de Usuario -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Estudiantes</div>
+
+    <!-- Agregar Estudiante -->
     <li class="nav-item active">
         <a class="nav-link" href="tipo_usuario.php">
-            <i class="fas fa-user-shield"></i>
-            <span>Tipo de Usuario</span>
+            <i class="fas fa-user-plus"></i>
+            <span>Agregar Estudiante</span>
         </a>
     </li>
 

@@ -296,11 +296,14 @@ function obtenerValor($campo, $remision_editar, $post_data = null) {
         </a>
     </li>
 
-    <!-- Tipo de Usuario -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Estudiantes</div>
+
+    <!-- Agregar Estudiante -->
     <li class="nav-item">
         <a class="nav-link" href="tipo_usuario.php">
-            <i class="fas fa-user-shield"></i>
-            <span>Tipo de Usuario</span>
+            <i class="fas fa-user-plus"></i>
+            <span>Agregar Estudiante</span>
         </a>
     </li>
 
@@ -332,7 +335,7 @@ function obtenerValor($campo, $remision_editar, $post_data = null) {
     </li>
 
     <!-- Grupo -->
-    <li class="nav-item ">
+    <li class="nav-item">
         <a class="nav-link" href="Grupo.php">
             <i class="fas fa-users-cog"></i>
             <span>Grupos</span>

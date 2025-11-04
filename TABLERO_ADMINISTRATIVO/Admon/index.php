@@ -83,11 +83,14 @@ $foto = $_SESSION['foto'];
         </a>
     </li>
 
-    <!-- Tipo de Usuario -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Estudiantes</div>
+
+    <!-- Agregar Estudiante -->
     <li class="nav-item">
         <a class="nav-link" href="tipo_usuario.php">
-            <i class="fas fa-user-shield"></i>
-            <span>Tipo de Usuario</span>
+            <i class="fas fa-user-plus"></i>
+            <span>Agregar Estudiante</span>
         </a>
     </li>
 

@@ -135,11 +135,14 @@ $sedes = $conn->query("SELECT id, nombre, direccion FROM sede ORDER BY id ASC");
         </a>
     </li>
 
-    <!-- Tipo de Usuario -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Estudiantes</div>
+
+    <!-- Agregar Estudiante -->
     <li class="nav-item">
         <a class="nav-link" href="tipo_usuario.php">
-            <i class="fas fa-user-shield"></i>
-            <span>Tipo de Usuario</span>
+            <i class="fas fa-user-plus"></i>
+            <span>Agregar Estudiante</span>
         </a>
     </li>
 
@@ -171,7 +174,7 @@ $sedes = $conn->query("SELECT id, nombre, direccion FROM sede ORDER BY id ASC");
     </li>
 
     <!-- Grupo -->
-    <li class="nav-item ">
+    <li class="nav-item">
         <a class="nav-link" href="Grupo.php">
             <i class="fas fa-users-cog"></i>
             <span>Grupos</span>
